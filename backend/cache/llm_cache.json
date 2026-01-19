@@ -1,0 +1,16 @@
+{
+  "breakdown:AAPL": {
+    "value": "Apple Inc. (AAPL) is trading lower at $182.15. This dip is likely reacting to recent news about the company's ongoing supply chain issues and potential impact on future product launches. This price action provides a perfect real-time example of Mega-Cap Stability, which we will explore next.",
+    "expires_at": 1768832702.598604,
+    "created_at": 1768746302.598604
+  },
+  "concept:AAPL": {
+    "value": {
+      "name": "Mega-Cap Stability",
+      "trigger_id": "mega_cap_stability",
+      "explanation": "When looking at AAPL, the key concept to understand is Mega-Cap Stability."
+    },
+    "expires_at": 1768824951.2187462,
+    "created_at": 1768803351.2187462
+  }
+}

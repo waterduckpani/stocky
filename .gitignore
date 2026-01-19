@@ -1,0 +1,12 @@
+# Architecture specific
+.tmp/
+.env
+credentials.json
+token.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/

@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+yfinance
+curl_cffi
+pydantic
+feedparser
+httpx
