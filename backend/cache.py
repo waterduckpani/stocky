@@ -13,9 +13,9 @@ CACHE_DIR = Path(__file__).parent / "cache"
 CACHE_FILE = CACHE_DIR / "llm_cache.json"
 
 # TTL values in seconds
-TTL_BREAKDOWN = int(os.getenv("CACHE_TTL_BREAKDOWN", 86400))  # 24 hours
-TTL_CONCEPT = int(os.getenv("CACHE_TTL_CONCEPT", 21600))      # 6 hours
-TTL_QUIZ = int(os.getenv("CACHE_TTL_QUIZ", 604800))           # 7 days
+TTL_BREAKDOWN = int(os.getenv("CACHE_TTL_BREAKDOWN", 300))     # 5 minutes (keep prices fresh)
+TTL_CONCEPT = int(os.getenv("CACHE_TTL_CONCEPT", 21600))       # 6 hours
+TTL_QUIZ = int(os.getenv("CACHE_TTL_QUIZ", 604800))            # 7 days
 
 
 def _ensure_cache_dir():

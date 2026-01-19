@@ -363,38 +363,44 @@ async def generate_content(symbol: str):
     # Check Ollama connection
     ollama_available = await check_connection()
     
-    # === KEY CONCEPT (Deterministic Lesson Trigger Engine with Cooldown) ===
-    from lesson_triggers import StockData as LessonStockData, prepare_lesson_prompt, get_lesson_topic
-    from prompts import generate_breakdown_prompt
+    # === SMART CONCEPT SELECTOR (30-Concept Library with Anti-Repetition) ===
+    from concept_library import StockContext
+    from smart_selector import select_best_concept, generate_lesson_prompt
     from supabase_client import get_recent_lessons, record_lesson_view, get_or_create_anonymous_user_id
     
     # Get user ID (demo: anonymous for now)
     user_id = get_or_create_anonymous_user_id()
     
-    # Fetch recently viewed lessons for cooldown
-    recently_viewed = get_recent_lessons(user_id, limit=10)
+    # Fetch recently viewed concept IDs for rotation
+    recently_viewed = get_recent_lessons(user_id, limit=5)
     
-    # Build StockData for lesson trigger engine
-    lesson_stock = LessonStockData(
+    # Build StockContext for smart selector
+    stock_context = StockContext(
         symbol=symbol,
         name=company_name,
         price=price,
         change_percent=change_percent,
-        pe_ratio=info.get('trailingPE') if 'info' in dir() else None,
+        volume=info.get('volume', 0) if 'info' in dir() else 0,
+        avg_volume=info.get('averageVolume', 0) if 'info' in dir() else 0,
         market_cap=market_cap,
-        beta=info.get('beta') if 'info' in dir() else None,
+        pe_ratio=info.get('trailingPE') if 'info' in dir() else None,
         dividend_yield=info.get('dividendYield') if 'info' in dir() else None,
         week_52_high=week_52_high if 'week_52_high' in dir() else None,
-        week_52_low=week_52_low if 'week_52_low' in dir() else None
+        week_52_low=week_52_low if 'week_52_low' in dir() else None,
+        beta=info.get('beta') if 'info' in dir() else None,
+        sector=sector,
+        has_news=len(news) > 0 if news else False,
+        news_sentiment="neutral"  # TODO: Add sentiment analysis
     )
     
-    # Get lesson topic deterministically (BEFORE breakdown), respecting cooldown
-    lesson_result = prepare_lesson_prompt(lesson_stock, recently_viewed)
-    lesson_topic = lesson_result['topic']
-    trigger_id = lesson_result['trigger_id']
+    # Select best concept with rotation (blocks last 5, dampens same category)
+    selected_concept, selection_metadata = select_best_concept(stock_context, recently_viewed)
     
-    # Record this lesson view asynchronously (fire and forget)
-    record_lesson_view(user_id, trigger_id, symbol)
+    lesson_topic = selected_concept.name
+    concept_id = selected_concept.id
+    
+    # Record this concept view for rotation tracking
+    record_lesson_view(user_id, concept_id, symbol)
     
     # === SMART CONTEXT (Market correlation + News) ===
     from smart_context import build_stock_context
@@ -406,6 +412,7 @@ async def generate_content(symbol: str):
     smart_context = build_stock_context(change_percent, news_headlines)
     
     # === BREAKDOWN (Structured 3-sentence narrative bridging to topic) ===
+    from prompts import generate_breakdown_prompt, FALLBACK_BREAKDOWN
     cache_key_breakdown = f"breakdown:{symbol}"
     breakdown = get_cached(cache_key_breakdown)
     
@@ -426,25 +433,26 @@ async def generate_content(symbol: str):
         else:
             breakdown = FALLBACK_BREAKDOWN.format(company_name=company_name)
     
-    # === KEY CONCEPT (Use already-prepared lesson) ===
+    # === KEY CONCEPT (Use smart-selected concept) ===
     cache_key_concept = f"concept:{symbol}"
     concept_data = get_cached(cache_key_concept)
     
     if not concept_data:
-        # lesson_result was already prepared before breakdown
-        concept_name = lesson_result['topic']
-        trigger_id = lesson_result['trigger_id']
+        # Use the concept selected by smart_selector
+        concept_name = selected_concept.name
         
         if ollama_available:
-            # Use the pre-generated prompt from trigger engine
-            concept_explanation = await generate_text(lesson_result['prompt'], max_tokens=120)
+            # Generate lesson prompt using selected concept
+            lesson_prompt = generate_lesson_prompt(selected_concept, stock_context)
+            concept_explanation = await generate_text(lesson_prompt, max_tokens=120)
         else:
-            concept_explanation = f"When looking at {symbol}, the key concept to understand is {concept_name}."
+            concept_explanation = selected_concept.beginner_explanation
         
         concept_data = {
             "name": concept_name,
-            "trigger_id": trigger_id,
-            "explanation": concept_explanation or f"Understanding {concept_name} helps you make sense of what you're seeing with {symbol}."
+            "concept_id": concept_id,
+            "category": selected_concept.category.value,
+            "explanation": concept_explanation or selected_concept.beginner_explanation
         }
         
         if concept_explanation:

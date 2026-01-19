@@ -132,6 +132,8 @@ DOWN Stock: "NVIDIA is trading slightly lower at $186.23. This dip is likely jus
 UP Stock: "Apple is trading higher at $195.20, up on positive sentiment. This gain reflects the broader market mood. This price action provides a perfect real-time example of Momentum, which we will explore next."
 
 CONTEXT:
+- Price: ${price:.2f}
+- Direction: {direction_phrase}
 - Reason: {reason}
 - Topic: {topic}
 
