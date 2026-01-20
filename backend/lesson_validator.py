@@ -68,7 +68,13 @@ def validate_lesson(
     if not has_topic:
         issues.append(f"Topic not mentioned: '{concept_name}'")
     
-    passed = length_ok and has_formatting and has_topic
+    # Check 4: Tone Check (Banned Phrases)
+    banned_phrases = ["consider how you want", "ask yourself"]
+    found_banned = [phrase for phrase in banned_phrases if phrase in content.lower()]
+    if found_banned:
+        issues.append(f"Tone check failed: Found banned phrase(s) {found_banned}")
+
+    passed = length_ok and has_formatting and has_topic and not found_banned
     
     return ValidationResult(
         passed=passed,

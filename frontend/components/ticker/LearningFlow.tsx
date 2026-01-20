@@ -7,6 +7,7 @@ import { StepConcept } from "./steps/StepConcept"
 import { StepNews } from "./steps/StepNews"
 import { StepVisual } from "./steps/StepVisual"
 import { QuizSection } from "./QuizSection"
+import { FeedbackWidget } from "./FeedbackWidget"
 import { cn } from "@/lib/utils"
 
 interface LearningFlowProps {
@@ -18,10 +19,27 @@ interface LearningFlowProps {
 export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProps) {
     const [currentStep, setCurrentStep] = useState(0)
 
+    // Extract content ID for feedback (if available)
+    const contentId = llmContent?.content_id || null
+    const isAiGenerated = llmContent?.is_ai_generated !== false // Default to true
+
     // 5-step learning flow
     const steps = [
         { id: "intro", title: "The Breakdown", component: <StepIntro symbol={symbol} stockData={stockData} breakdown={llmContent?.breakdown} /> },
-        { id: "concept", title: "Key Concept", component: <StepConcept symbol={symbol} stockData={stockData} concept={llmContent?.concept} /> },
+        {
+            id: "concept",
+            title: "Key Concept",
+            component: (
+                <div className="space-y-4">
+                    <StepConcept symbol={symbol} stockData={stockData} concept={llmContent?.concept} />
+                    <FeedbackWidget
+                        contentId={contentId}
+                        isAiGenerated={isAiGenerated}
+                        conceptName={llmContent?.concept?.name || "this lesson"}
+                    />
+                </div>
+            )
+        },
         { id: "news", title: "News & Sentiment", component: <StepNews symbol={symbol} stockData={stockData} news={llmContent?.news} /> },
         { id: "visual", title: "Chart Analysis", component: <StepVisual symbol={symbol} stockData={stockData} /> },
         { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} questions={llmContent?.quiz} /> },

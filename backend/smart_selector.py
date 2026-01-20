@@ -112,13 +112,20 @@ def generate_lesson_prompt(concept: Concept, context: StockContext) -> str:
     """
     return f"""Explain "{concept.name}" to a smart adult who has NEVER invested before.
 
-Tone: Professional, conversational, and jargon-free. Like explaining to a friend at a coffee shop.
+STYLE RULES:
+- NO RHETORICAL QUESTIONS: Never end with "Ask yourself..." or "Are you looking for...?".
+- NO DIRECT ADVICE: Do not say "You should consider..." or "This helps you...".
+- OBJECTIVE AUTHORITY: State the value proposition as a fact.
+    Bad: "This helps you avoid losing money."
+    Good: "Investors use this metric to identify downside risk."
+- NO BEGINNER TALK: Do not reference "beginners" or "starting out." Treat the reader like an intelligent peer.
 
 Context: The user is looking at {context.name} ({context.symbol}), which is {"up" if context.change_percent >= 0 else "down"} {abs(context.change_percent):.1f}% today.
 
-Structure:
-1. First sentence: Define the concept using everyday words.
-2. Second sentence: Use {context.name} as a real example.
+CRITICAL STRUCTURE:
+1. Define the concept simply using everyday words.
+2. Conclude with the Strategic Implication. Explain why Institutional Investors care about this data point. Be definitive.
+3. Use {context.name} as a real-world example to make it click.
 
 BANNED WORDS:
 - Financial jargon: "large-cap", "small-cap", "dividend", "yield", "P/E ratio", "volatility", "portfolio", "bullish", "bearish"
@@ -128,7 +135,8 @@ Reference explanation (rephrase, don't copy):
 {concept.beginner_explanation}
 
 Rules:
-- Maximum 2-3 sentences.
+- Limit your response to 150 words. Be concise.
+- Maximum 3-4 sentences.
 - Professional but simple.
 - No intro like "Here's an explanation" - just start.
 """

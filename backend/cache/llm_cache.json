@@ -1,68 +1,101 @@
 {
-  "breakdown:AAPL": {
-    "value": "Apple Inc. (AAPL) is trading at $254.47, a dip of 1.05%. This pullback is likely reacting to recent news about the company's latest product release. The broader market has been focused on other tech giants, causing AAPL to take a step back, which serves as a valuable lesson in understanding Sector Rotation.",
-    "expires_at": 1768807005.086794,
-    "created_at": 1768806705.086795
+  "breakdown:NVDA": {
+    "value": "NVIDIA Corporation is taking a breather today, trading at $186.10 with a slight decline of -0.54%. This consolidation marks a pause in the recent upswing, where NVDA rose by over 5% last week. As mega-caps like NVIDIA, Apple, and Amazon often exhibit stability during periods of market volatility, traders should be on high alert for potential entry points or reevaluation of positions to maintain their long-term strategy.",
+    "expires_at": 1768887004.724023,
+    "created_at": 1768886704.724024
   },
-  "concept:AAPL": {
+  "concept:NVDA": {
     "value": {
-      "name": "Sector Rotation",
-      "concept_id": "MM01",
-      "category": "market_mechanics",
-      "explanation": "Sector rotation is a strategy where investors move their investments from one sector to another based on the current economic conditions. For example, if interest rates are rising and making bonds less attractive, investors might shift some of their money into technology stocks like Apple, which often perform well during periods of uncertainty."
+      "name": "Mega-Cap Stability",
+      "concept_id": "FU03",
+      "category": "fundamentals",
+      "explanation": "Mega-Cap Stability refers to the reduced risk of significant price declines associated with investing in extremely large and diversified companies. These behemoths, worth over a trillion dollars, are less susceptible to market fluctuations due to their immense scale.\n\nInstitutional Investors care about Mega-Cap Stability because it enables them to maintain position size during downturns without incurring substantial losses. For example, NVIDIA Corporation's market capitalization of over $250 billion makes it a mega-cap company. As the stock price dropped 0.5% today, its large size and diversified business model helped mitigate this decline. This stability is crucial for institutional investors seeking to manage risk and maintain returns during market volatility."
     },
-    "expires_at": 1768828306.945301,
-    "created_at": 1768806706.945301
+    "expires_at": 1768908308.5085351,
+    "created_at": 1768886708.508536
   },
-  "breakdown:TSM": {
-    "value": "Taiwan Semiconductor Manufacturing (TSM) is trading at $342.40, higher by 0.22%. This gain reflects the broader market's ongoing trend of growth and expansion, as TSM experiences normal day-to-day movement. This price action provides a perfect real-time example of All-Time Highs, which we will explore next.",
-    "expires_at": 1768807154.4240892,
-    "created_at": 1768806854.4240892
-  },
-  "concept:TSM": {
-    "value": {
-      "name": "All-Time Highs",
-      "concept_id": "PA05",
-      "category": "price_action",
-      "explanation": "When a stock reaches its highest price ever, it means that the total value of all shares sold has surpassed its previous record high. For instance, if Taiwan Semiconductor Manufacturing (TSM) closes at a new high today, that means every single share you bought in TSM over time has now increased in value by 0.2%, making your investment worth more than when you first purchased it.\n\nThis can create a sense of momentum, drawing even more investors to buy the stock or prompting some sellers to lock in profits, depending on their individual strategies and goals."
-    },
-    "expires_at": 1768828457.312484,
-    "created_at": 1768806857.312484
-  },
-  "quiz:TSM": {
+  "quiz:NVDA": {
     "value": [
       {
-        "question": "What percentage of TSM's value represents its all-time high?",
+        "question": "According to the lesson, why do institutional investors care about Mega-Cap Stability?",
         "options": [
-          "5%",
-          "0.22%",
-          "10%",
-          "20%"
+          "They can invest in smaller companies",
+          "Mega-cap stability enables them to maintain position size during downturns without incurring substantial losses",
+          "Institutional investors seek high returns only"
         ],
         "correctIndex": 1
       },
       {
-        "question": "Why do mega-cap companies like TSM tend to be stable over time?",
+        "question": "Why is NVIDIA Corporation considered a mega-cap company?",
         "options": [
-          "Price swings are caused by market cap fluctuations.",
-          "Momentum is essential for long-term growth.",
-          "The effect of size on stability.",
-          "Dividends are a key driver of value creation."
+          "It has a market capitalization of $100 billion",
+          "Its stock price dropped 0.5% today, making it a mega-cap company",
+          "NVIDIA's diversified business model makes it a large company"
         ],
-        "correctIndex": 3
+        "correctIndex": 2
       },
       {
-        "question": "What is the primary benefit of holding TSM at an all-time high?",
+        "question": "What is the effect of Mega-Cap Stability on market fluctuations?",
         "options": [
-          "Increased risk due to price volatility.",
-          "Potential for long-term growth through dividend payments.",
-          "A lower cost basis compared to current prices.",
-          "Passive income generated by retained dividends."
+          "Mega-caps are more susceptible to market fluctuations",
+          "Mega-caps are less susceptible to market fluctuations due to their immense scale",
+          "The concept of Mega-Cap Stability doesn't exist"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "expires_at": 1769491514.723179,
+    "created_at": 1768886714.723179
+  },
+  "breakdown:CIPLA.NS": {
+    "value": "CIPLA LTD is taking a breather today, trading at \u20b91387.20 with a slight decline of -0.37%. This consolidation follows a recent rally that saw the stock jump by over 5% last week, and traders are pausing to reassess after the recent surge. As we've seen time and time again in volatile markets, buying the dip can be a savvy strategy for those looking to capitalize on the potential for a rebound.",
+    "expires_at": 1768887073.7979221,
+    "created_at": 1768886773.7979221
+  },
+  "concept:CIPLA.NS": {
+    "value": {
+      "name": "Buying the Dip",
+      "concept_id": "PA04",
+      "category": "price_action",
+      "explanation": "Buying the dip refers to purchasing a stock after it has declined in value, with the expectation that its price will recover.\n\nInstitutional investors use this metric to identify downside risk. For example, CIPLA LTD is down 0.4% today. If these investors were to \"buy the dip,\" they would purchase CIPLA LTD at its current low price, hoping it will rebound."
+    },
+    "expires_at": 1768908376.617286,
+    "created_at": 1768886776.617286
+  },
+  "quiz:CIPLA.NS": {
+    "value": [
+      {
+        "question": "According to the lesson, what does 'buying the dip' mean?",
+        "options": [
+          "Purchasing a stock after it has declined in value",
+          "Selling a stock before it has declined in value",
+          "Buying a stock at its current high price",
+          "The opposite of purchasing a stock"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "Why do institutional investors 'buy the dip'?",
+        "options": [
+          "To sell their stocks immediately",
+          "To avoid losses on their investments",
+          "To purchase a stock after it has declined in value, with the expectation that its price will recover",
+          "To invest in only stable companies"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "What percentage of decline must a stock have to trigger 'buying the dip'?",
+        "options": [
+          "Any amount",
+          "More than 10% in a day",
+          "At least 0.4% today",
+          "Exactly 5% this week"
         ],
         "correctIndex": 3
       }
     ],
-    "expires_at": 1769411662.4721222,
-    "created_at": 1768806862.472123
+    "expires_at": 1769491582.191454,
+    "created_at": 1768886782.191454
   }
 }

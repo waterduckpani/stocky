@@ -5,6 +5,7 @@ from datetime import datetime
 import math
 import feedparser
 from urllib.parse import quote
+import httpx
 
 app = FastAPI()
 
@@ -66,6 +67,39 @@ def fetch_google_news(query: str, limit: int = 3):
         print(f"Error fetching Google News: {e}")
         return []
 
+@app.get("/api/search")
+async def search_ticker(q: str):
+    """
+    Proxies the search query to Yahoo Finance's autocomplete API.
+    Returns a list of { symbol, name, exchange, type }.
+    """
+    url = f"https://query2.finance.yahoo.com/v1/finance/search"
+    params = {
+        "q": q,
+        "quotesCount": 10,
+        "newsCount": 0,
+        "enableFuzzyQuery": "true",
+        "quotesQueryId": "tss_match_phrase_query"
+    }
+    headers = {"User-Agent": "Mozilla/5.0"}
+    
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, params=params, headers=headers)
+        data = resp.json()
+    
+    # Extract clean list
+    results = []
+    if "quotes" in data:
+        for item in data["quotes"]:
+            # Filter out non-equity/ETF items if needed
+            results.append({
+                "symbol": item.get("symbol"),
+                "name": item.get("shortname") or item.get("longname"),
+                "exchange": item.get("exchange"),
+                "type": item.get("quoteType")
+            })
+    return {"results": results}
+
 @app.get("/api/ticker/{symbol}")
 async def get_ticker_data(symbol: str):
     try:
@@ -74,6 +108,11 @@ async def get_ticker_data(symbol: str):
         
         # Get basic info
         info = ticker.info
+        
+        # Currency extraction
+        currency_code = info.get('currency', 'USD')
+        currency_map = {'INR': '₹', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'USD': '$'}
+        currency_symbol = currency_map.get(currency_code, '$')
         
         # Get recent history (1mo for the chart)
         history = ticker.history(period="1mo")
@@ -92,6 +131,7 @@ async def get_ticker_data(symbol: str):
         response = {
             "symbol": symbol.upper(),
             "name": info.get('shortName') or info.get('longName') or symbol.upper(),
+            "currency": currency_symbol,
             "price": info.get('currentPrice') or info.get('regularMarketPrice') or 0,
             "change": round((info.get('currentPrice', 0) - info.get('previousClose', 0)), 2),
             "changePercent": round(((info.get('currentPrice', 0) - info.get('previousClose', 0)) / info.get('previousClose', 1)) * 100, 2),
@@ -291,6 +331,29 @@ async def get_popular_stocks():
 # LLM CONTENT GENERATION
 # =============================================================================
 from ollama_client import generate_text, generate_json, check_connection
+from utils import validate_and_fix_text
+import asyncio
+
+async def generate_text_safe(prompt: str, max_tokens: int = 300) -> str:
+    """
+    Generate text with retry logic for cutoffs.
+    Boosts tokens if cutoff detected (ends without punctuation).
+    """
+    current_tokens = max_tokens
+    for attempt in range(3):
+        response = await generate_text(prompt, max_tokens=current_tokens)
+        
+        # Self-Healing Check
+        valid_text = validate_and_fix_text(response)
+        if valid_text:
+            return valid_text
+            
+        # If failed, boost tokens and retry
+        print(f"Text cutoff detected (Attempt {attempt+1}). Retrying with more tokens...")
+        current_tokens += 150
+        
+    # Force a period if all else fails
+    return (response or "") + "."
 from cache import get_cached, set_cached, TTL_BREAKDOWN, TTL_CONCEPT, TTL_QUIZ
 from prompts import (
     BREAKDOWN_PROMPT, CONCEPT_PROMPT, QUIZ_PROMPT,
@@ -314,6 +377,11 @@ async def generate_content(symbol: str):
         sector = info.get('sector') or 'Unknown'
         quote_type = info.get('quoteType', 'EQUITY')
         is_crypto = quote_type == 'CRYPTOCURRENCY'
+        
+        # Currency extraction
+        currency_code = info.get('currency', 'USD')
+        currency_map = {'INR': '₹', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'USD': '$'}
+        currency_symbol = currency_map.get(currency_code, '$')
         
         # Price and change data
         price = info.get('currentPrice') or info.get('regularMarketPrice') or 0
@@ -425,8 +493,8 @@ async def generate_content(symbol: str):
                 'price': price,
                 'change_percent': change_percent
             }
-            prompt = generate_breakdown_prompt(stock_data_for_prompt, lesson_topic, smart_context)
-            breakdown = await generate_text(prompt, max_tokens=150)
+            prompt = generate_breakdown_prompt(stock_data_for_prompt, lesson_topic, smart_context, currency_symbol)
+            breakdown = await generate_text_safe(prompt, max_tokens=300)
         
         if breakdown:
             set_cached(cache_key_breakdown, breakdown, TTL_BREAKDOWN)
@@ -444,7 +512,7 @@ async def generate_content(symbol: str):
         if ollama_available:
             # Generate lesson prompt using selected concept
             lesson_prompt = generate_lesson_prompt(selected_concept, stock_context)
-            concept_explanation = await generate_text(lesson_prompt, max_tokens=120)
+            concept_explanation = await generate_text_safe(lesson_prompt, max_tokens=150)
         else:
             concept_explanation = selected_concept.beginner_explanation
         
@@ -468,11 +536,13 @@ async def generate_content(symbol: str):
         change_info = f"{change_percent}% {'up' if change_percent >= 0 else 'down'} today"
         
         if ollama_available:
+            lesson_text = concept_data.get("explanation", "")
             prompt = QUIZ_PROMPT.format(
                 company_name=company_name,
                 symbol=symbol,
                 concept_name=current_concept,
-                change_info=change_info
+                change_info=change_info,
+                lesson_text=lesson_text
             )
             quiz = await generate_json(prompt)
         
@@ -488,6 +558,21 @@ async def generate_content(symbol: str):
                     "correctIndex": q["correctIndex"]
                 })
     
+    # === SAVE CONTENT TO DB FOR FEEDBACK ===
+    content_id = None
+    is_ai_generated = True  # Currently all content is AI-generated
+    
+    if ollama_available:
+        # Save to DB for feedback tracking
+        from content_retriever import save_generated_content
+        content_id = await save_generated_content(
+            concept_id=concept_id,
+            stock_symbol=symbol,
+            breakdown=breakdown,
+            lesson=concept_data.get("explanation", ""),
+            quiz=quiz
+        )
+    
     return {
         "symbol": symbol,
         "company_name": company_name,
@@ -495,8 +580,36 @@ async def generate_content(symbol: str):
         "concept": concept_data,
         "news": news,
         "quiz": quiz,
-        "ollama_available": ollama_available
+        "ollama_available": ollama_available,
+        "content_id": content_id,
+        "is_ai_generated": is_ai_generated
     }
+
+@app.post("/api/feedback")
+async def submit_feedback(content_id: str, vote: str, user_id: str = None):
+    """
+    Submit feedback for AI-generated content.
+    
+    Args:
+        content_id: UUID of the generated content
+        vote: 'up' or 'down'
+        user_id: Optional user identifier
+    
+    Returns:
+        Success status and new score
+    """
+    from content_retriever import update_quality_score
+    
+    if vote not in ["up", "down"]:
+        raise HTTPException(status_code=400, detail="Vote must be 'up' or 'down'")
+    
+    increment = 1 if vote == "up" else -1
+    success = await update_quality_score(content_id, increment)
+    
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to update feedback")
+    
+    return {"success": True, "vote": vote}
 
 @app.get("/api/health")
 async def health_check():

@@ -74,70 +74,27 @@ def get_movement_context(change_percent: float) -> str:
             ])
 
 
-def generate_breakdown_prompt(stock: dict, topic: str, smart_context: dict = None) -> str:
+def generate_breakdown_prompt(stock: dict, topic: str, smart_context: dict = None, currency_symbol: str = "$") -> str:
     """
-    Generate a smart breakdown prompt that uses real market context:
-    1. State the status (up/down, price)
-    2. Explain WHY using smart context (news, market correlation, fear, or normal)
-    3. Bridge to the lesson topic
-    
-    Args:
-        stock: Stock data dict with name, symbol, price, change_percent
-        topic: The lesson topic to bridge to
-        smart_context: Optional dict from smart_context.build_stock_context()
+    Generate a dynamic market analyst breakdown.
     """
     name = stock.get('name', stock.get('symbol', 'This stock'))
     symbol = stock.get('symbol', '')
     price = stock.get('price', 0)
     change_percent = stock.get('change_percent', 0)
     
-    # Determine direction phrase
-    if change_percent >= 0:
-        direction_phrase = f"up {abs(change_percent):.2f}%" if change_percent > 0.1 else "trading flat"
-    else:
-        direction_phrase = f"down {abs(change_percent):.2f}%"
-    
-    # Get smart reasoning or fallback
-    if smart_context and hasattr(smart_context, 'reason_text'):
-        reason = smart_context.reason_text
-        reason_type = smart_context.reason_type
-    else:
-        reason = get_movement_context(change_percent)
-        reason_type = "normal"
-    
-    # Determine direction constraint
-    if change_percent >= 0:
-        direction_constraint = "The stock is UP. You MUST use words like 'gain', 'rise', 'green', 'higher'. You must NEVER use 'dip', 'slide', 'lower', 'down', 'drop'."
-    else:
-        direction_constraint = "The stock is DOWN. You MUST use words like 'dip', 'pullback', 'lower', 'down'. You must NEVER use 'gain', 'rise', 'green', 'higher'."
-    
-    return f"""You are writing a brief stock breakdown for someone who has NEVER invested before.
+    return f"""Act as a senior market analyst on a trading floor. Give me a 3-sentence pulse check on {name} ({symbol}).
 
-TASK: Write exactly 3 sentences about {name} ({symbol}).
+DATA: Price {currency_symbol}{price:.2f}, Change {change_percent}%.
+Target Lesson Topic: {topic}
 
-STRUCTURE (CRITICAL):
-- Sentence 1: State the price and direction simply
-- Sentence 2: Explain WHY this is happening: "{reason}"
-- Sentence 3: Bridge to the lesson. You MUST use this exact format: "This price action provides a perfect real-time example of {topic}, which we will explore next."
+STYLE RULES:
+1. VARIETY: Do NOT start with "{symbol} is trading at...". Start with the movement (e.g., "{name} is taking a breather today..." or "Bulls are charging into {symbol}...").
+2. CONTEXT: If the move is small (<1%), call it "consolidation" or "flat". If large (>3%), call it a "rally" or "correction".
+3. NO ROBOTIC FILLER: Do not say "This dip is likely due to normal market movement." Say "Traders are pausing to reassess after the recent rally."
+4. BRIDGE: The 3rd sentence MUST bridge naturally to the lesson topic: "{topic}".
 
-DIRECTION CONSTRAINT (CRITICAL):
-{direction_constraint}
-
-JARGON RULES:
-- Do NOT say "S&P 500", "index", "VIX", or "volatility"
-- Use simple phrases like: "the broader market", "most stocks"
-
-GOLD STANDARD EXAMPLES:
-DOWN Stock: "NVIDIA is trading slightly lower at $186.23. This dip is likely just following the broader market. This price action provides a perfect real-time example of Mega-Cap Stability, which we will explore next."
-UP Stock: "Apple is trading higher at $195.20, up on positive sentiment. This gain reflects the broader market mood. This price action provides a perfect real-time example of Momentum, which we will explore next."
-
-CONTEXT:
-- Price: ${price:.2f}
-- Direction: {direction_phrase}
-- Reason: {reason}
-- Topic: {topic}
-
-Start directly with the stock name. Write 3 sentences now:"""
+Write the 3 sentences now:"""
 
 
 # Legacy prompt for fallback (keeping for compatibility)
@@ -251,47 +208,44 @@ Rules:
 # =============================================================================
 # QUIZ PROMPT (Step 5 - Test THE SPECIFIC CONCEPT taught, not generic investing)
 # =============================================================================
-QUIZ_PROMPT = """Create 3 quiz questions that test understanding of: "{concept_name}"
+QUIZ_PROMPT = """Create 3 quiz questions based EXACTLY on the text below.
 
-The user just learned about:
+REFERENCE LESSON:
+"{lesson_text}"
+
+CONTEXT:
+- Stock: {company_name} ({symbol})
 - Concept: {concept_name}
-- Example used: {company_name} ({symbol})
-- Context: {change_info}
 
-CRITICAL CONSTRAINT:
-ALL 3 questions MUST be specifically about "{concept_name}".
-Do NOT ask generic questions about portfolios, savings accounts, or bonds UNLESS they directly relate to "{concept_name}".
+CRITICAL RULES:
+1. SOURCE OF TRUTH: You MUST ONLY ask questions whose answers are explicitly found in the "REFERENCE LESSON" text above.
+2. NO OUTSIDE KNOWLEDGE: If the text doesn't mention it, do not ask about it.
+3. VERIFICATION: Double-check that `options[correctIndex]` is the undeniably correct answer based on the text.
 
-TOPIC-SPECIFIC EXAMPLES:
-- If topic is "Mega-Cap Stability": Ask about why big companies are stable, market cap effects.
-- If topic is "Volatility": Ask about what causes price swings, what momentum means.
-- If topic is "Dividends": Ask about what dividends are, passive income.
+CRITICAL LOGIC STEP:
+1. First, write the CORRECT answer based verbatim on the text.
+2. Then, write 3 plausible but WRONG distractors.
+3. Shuffle them into the options list.
+4. Triple-Check: Does options[correctIndex] match the Correct Answer?
 
-BAD QUESTIONS (never ask these):
-- "What is a bond?" (off-topic unless topic is about bonds)
-- "Should you diversify?" (too generic)
+CONSTRAINT: The Correct Answer MUST be a paraphrase of the text. Do not invent "facts" like "promises low prices forever".
 
-RULES:
-- 4 options each, only ONE correct answer
-- correctIndex must be 0, 1, 2, or 3 (zero-indexed)
-- Vary the correct answer position
-
-Respond with ONLY this JSON:
+JSON FORMAT:
 [
   {{
-    "question": "Question about {concept_name}?",
-    "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correctIndex": 0
+    "question": "According to the lesson, why...",
+    "options": ["Wrong A", "Correct Answer", "Wrong B", "Wrong C"],
+    "correctIndex": 1
   }},
   {{
-    "question": "Another {concept_name} question?",
+    "question": "Another question from the text?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
     "correctIndex": 2
   }},
   {{
-    "question": "Third {concept_name} question?",
+    "question": "Final question from the text?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correctIndex": 1
+    "correctIndex": 0
   }}
 ]"""
 
