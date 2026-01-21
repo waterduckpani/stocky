@@ -114,14 +114,93 @@ async def get_ticker_data(symbol: str):
         currency_map = {'INR': '₹', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'USD': '$'}
         currency_symbol = currency_map.get(currency_code, '$')
         
-        # Get recent history (1mo for the chart)
-        history = ticker.history(period="1mo")
+        # Get recent history (6mo for technicals)
+        history = ticker.history(period="6mo")
         chart_data = []
-        for date, row in history.iterrows():
-            chart_data.append({
-                "date": date.strftime("%b %d"),
-                "price": round(row['Close'], 2)
-            })
+        
+        # === TECHNICAL ANALYSIS CALCULATION ===
+        technicals = {
+            "rsi": {"value": 50, "label": "Neutral"},
+            "macd": {"value": 0.00, "signal": "Neutral"},
+            "ma50": {"value": 0, "trend": "Neutral"},
+            "volume": {"value": format_large_number(info.get('volume', 0)), "relative": "1.0x Avg"},
+            "sentiment": {"score": 50, "label": "Neutral"}
+        }
+
+        try:
+            if not history.empty:
+                # Prepare chart data (last 1mo for display)
+                one_month_ago = datetime.now().timestamp() - (30 * 24 * 60 * 60)
+                # Filter for chart: roughly last 22 trading days or simple slicing
+                recent_hist = history.tail(30) 
+                
+                for date, row in recent_hist.iterrows():
+                    chart_data.append({
+                        "date": date.strftime("%b %d"),
+                        "price": round(row['Close'], 2)
+                    })
+                
+                closes = history['Close']
+                volumes = history['Volume']
+                
+                # RSI (14)
+                delta = closes.diff()
+                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                rs = gain / loss
+                rs = rs.fillna(0)
+                rsi_series = 100 - (100 / (1 + rs))
+                rsi_val = rsi_series.iloc[-1] if not rsi_series.empty else 50
+                rsi_label = "Overbought" if rsi_val > 70 else ("Oversold" if rsi_val < 30 else "Neutral")
+                
+                # MA(50)
+                ma50_val = closes.rolling(window=50).mean().iloc[-1]
+                current_price = closes.iloc[-1]
+                ma50_trend = "Above" if current_price > ma50_val else "Below"
+                
+                # MACD
+                ema12 = closes.ewm(span=12, adjust=False).mean()
+                ema26 = closes.ewm(span=26, adjust=False).mean()
+                macd_line = ema12 - ema26
+                signal_line = macd_line.ewm(span=9, adjust=False).mean()
+                macd_val = macd_line.iloc[-1]
+                signal_val = signal_line.iloc[-1]
+                macd_signal = "Bullish" if macd_val > signal_val else "Bearish"
+
+                # Volume Relative (20-day avg)
+                avg_vol = volumes.rolling(window=20).mean().iloc[-1]
+                curr_vol = volumes.iloc[-1]
+                rel_vol = round(curr_vol / avg_vol, 1) if avg_vol and avg_vol > 0 else 1.0
+                
+                # Sentiment (from Analyst Recommendation or Technicals)
+                rec_key = info.get('recommendationKey', 'none').lower()
+                sentiment_label = "Neutral"
+                sentiment_score = 50
+                
+                change_percent = round(((info.get('currentPrice', 0) - info.get('previousClose', 0)) / info.get('previousClose', 1)) * 100, 2)
+
+                if rec_key in ['buy', 'strong_buy']:
+                    sentiment_label = "Bullish"
+                    sentiment_score = 75
+                elif rec_key in ['sell', 'underperform']:
+                    sentiment_label = "Bearish"
+                    sentiment_score = 25
+                elif change_percent > 2:
+                    sentiment_label = "Bullish"
+                    sentiment_score = 70
+                elif change_percent < -2:
+                    sentiment_label = "Bearish"
+                    sentiment_score = 30
+                
+                technicals = {
+                    "rsi": {"value": round(rsi_val, 1), "label": rsi_label},
+                    "macd": {"value": round(macd_val, 2), "signal": macd_signal},
+                    "ma50": {"value": round(ma50_val, 2), "trend": ma50_trend},
+                    "volume": {"value": format_large_number(curr_vol), "relative": f"{rel_vol}x Avg"},
+                    "sentiment": {"score": sentiment_score, "label": sentiment_label}
+                }
+        except Exception as tech_e:
+            print(f"Technicals calculation error: {tech_e}")
 
         # Get news from Google News RSS
         company_name = info.get('shortName') or info.get('longName') or symbol
@@ -140,7 +219,8 @@ async def get_ticker_data(symbol: str):
             "marketCap": format_large_number(info.get('marketCap', 0)),
             "peRatio": round(info.get('trailingPE', 0), 2) if info.get('trailingPE') else "N/A",
             "chart": chart_data,
-            "news": formatted_news
+            "news": formatted_news,
+            "technicals": technicals
         }
         
         return response
@@ -168,7 +248,14 @@ async def get_ticker_data(symbol: str):
             "news": [
                 {"title": "Stock Market Rally Continues", "publisher": "Finance Daily", "link": "#", "time": "2h ago"},
                 {"title": "Tech Sector Leads Gains", "publisher": "Market Watch", "link": "#", "time": "4h ago"}
-            ]
+            ],
+            "technicals": {
+                "rsi": {"value": 55, "label": "Neutral"},
+                "macd": {"value": 0.50, "signal": "Bullish"},
+                "ma50": {"value": 145.00, "trend": "Above"},
+                "volume": {"value": "10M", "relative": "1.2x Avg"},
+                "sentiment": {"score": 60, "label": "Bullish"}
+            }
         }
         return mock_response
         # raise HTTPException(status_code=500, detail=str(e))
@@ -403,10 +490,11 @@ async def generate_content(symbol: str):
         
         # === TECHNICAL ANALYSIS ===
         technicals = {
-            "rsi": {"value": 0, "label": "Neutral"},
-            "macd": {"value": 0, "signal": "Neutral"},
-            "ma50": {"value": 0, "trend": "Neutral"},
-            "volume": {"value": 0, "relative": "1.0x Avg"}
+            "rsi": {"value": 50, "label": "Neutral"},
+            "macd": {"value": 0.00, "signal": "Neutral"},
+            "ma50": {"value": round(price, 2), "trend": "Neutral"},
+            "volume": {"value": format_large_number(info.get('volume', 0)), "relative": "1.0x Avg"},
+            "sentiment": {"score": 50, "label": "Neutral"}
         }
         
         try:
@@ -446,11 +534,30 @@ async def generate_content(symbol: str):
                 curr_vol = volumes.iloc[-1]
                 rel_vol = round(curr_vol / avg_vol, 1) if avg_vol and avg_vol > 0 else 1.0
                 
+                # Sentiment (from Analyst Recommendation or Technicals)
+                rec_key = info.get('recommendationKey', 'none').lower()
+                sentiment_label = "Neutral"
+                sentiment_score = 50
+                
+                if rec_key in ['buy', 'strong_buy']:
+                    sentiment_label = "Bullish"
+                    sentiment_score = 75
+                elif rec_key in ['sell', 'underperform']:
+                    sentiment_label = "Bearish"
+                    sentiment_score = 25
+                elif change_percent > 2:
+                    sentiment_label = "Bullish"
+                    sentiment_score = 70
+                elif change_percent < -2:
+                    sentiment_label = "Bearish"
+                    sentiment_score = 30
+                
                 technicals = {
                     "rsi": {"value": round(rsi_val, 1), "label": rsi_label},
                     "macd": {"value": round(macd_val, 2), "signal": macd_signal},
                     "ma50": {"value": round(ma50_val, 2), "trend": ma50_trend},
-                    "volume": {"value": format_large_number(curr_vol), "relative": f"{rel_vol}x Avg"}
+                    "volume": {"value": format_large_number(curr_vol), "relative": f"{rel_vol}x Avg"},
+                    "sentiment": {"score": sentiment_score, "label": sentiment_label}
                 }
         except Exception as e:
             print(f"Error calculating technicals: {e}")
@@ -473,7 +580,18 @@ async def generate_content(symbol: str):
         week_52_range = 'N/A'
         ytd_return = 0
         is_crypto = 'BTC' in symbol or 'ETH' in symbol or 'CRYPTO' in symbol.upper()
-        stock_data = {"is_crypto": is_crypto}
+        
+        # Robust Fallback with Technicals
+        stock_data = {
+            "is_crypto": is_crypto,
+            "technicals": {
+                "rsi": {"value": 50, "label": "Neutral"},
+                "macd": {"value": 0, "signal": "Neutral"},
+                "ma50": {"value": 0, "trend": "Neutral"},
+                "volume": {"value": "0", "relative": "1.0x Avg"},
+                "sentiment": {"score": 50, "label": "Neutral"}
+            }
+        }
     
     # Get news for sentiment display
     news = fetch_google_news(company_name, limit=3)
