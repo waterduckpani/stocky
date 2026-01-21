@@ -336,3 +336,83 @@ DEBUG: Inserting content for concept lesson_2_exchange
 DEBUG: Insert result data: [{'id': '6c1ac003-55fe-426d-9caa-00744148c095', 'trigger_id': None, 'content_type': None, 'payload': None, 'difficulty_level': 'beginner', 'quality_score': 0, 'verified': False, 'created_at': '2026-01-21T09:35:13.259253+00:00', 'concept_id': 'lesson_2_exchange', 'stock_symbol': '1810.HK', 'breakdown': "Now that you know what a Ticker is, let's learn where they live: The Exchange.", 'lesson': "You are looking at **XIAOMI-W**, which lives on the **International Exchange**. Why? Because it is a **global leader on its home turf**. Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In the US, there are two main 'stores'. The US has two giants:\n\n• **NYSE:** Historic Blue Chips (Reliable Giants).\n• **Nasdaq:** Modern Tech (Digital Innovators). Your broker is just the messenger. They act like a personal shopper, running to the right exchange instantly to complete your trade.", 'quiz': [{'options': ['Agriculture stocks', 'Tech companies and digital trading', 'Physical floor trading', 'Only selling Bitcoin'], 'question': 'What is the Nasdaq known for?', 'correctIndex': 1}, {'options': ['The NYSE (New York Stock Exchange)', 'The Nasdaq', 'The Crypto Exchange', 'The Flea Market'], 'question': 'Where would you likely find Coca-Cola?', 'correctIndex': 0}, {'options': ['A company that makes casino chips', 'A new, risky startup', 'A large, well-established/historic company', 'A tech company'], 'question': "What is a 'Blue Chip' company?", 'correctIndex': 2}, {'options': ['The Nasdaq', 'The NYSE', 'International Exchange', 'The Moon'], 'question': 'Based on what you learned, which exchange does XIAOMI-W list on?', 'correctIndex': 2}], 'updated_at': '2026-01-21T09:35:13.259253+00:00'}]
 DEBUG: Saved content with ID: 6c1ac003-55fe-426d-9caa-00744148c095
 INFO:     127.0.0.1:58095 - "GET /api/generate/1810.HK HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'static_curriculum.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39416]
+/Users/bharat/Desktop/Antigravity/stocky/backend/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [39598]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'smart_selector.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39598]
+/Users/bharat/Desktop/Antigravity/stocky/backend/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [39621]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'smart_selector.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39621]
+/Users/bharat/Desktop/Antigravity/stocky/backend/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [39629]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:58183 - "GET /api/popular HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58192 - "GET /api/search?q=xiaomi HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58191 - "GET /api/search?q=xiaomi HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58192 - "GET /api/ticker/1810.HK HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58190 - "GET /api/search?q=xi HTTP/1.1" 200 OK
+🔰 Beginner User detected: Serving Static Lesson 2 (Exchange)
+DEBUG: Inserting content for concept lesson_2_exchange
+DEBUG: Insert result data: [{'id': 'b51ff8ab-eb95-4aab-b2bf-74245004f097', 'trigger_id': None, 'content_type': None, 'payload': None, 'difficulty_level': 'beginner', 'quality_score': 0, 'verified': False, 'created_at': '2026-01-21T09:38:01.290271+00:00', 'concept_id': 'lesson_2_exchange', 'stock_symbol': '1810.HK', 'breakdown': "Now that you know what a Ticker is, let's learn where they live: The Exchange.", 'lesson': "You are looking at this stock on its home turf: the **Hong Kong Stock Exchange**.\n\nTo understand how *all* exchanges work, let's look at the world's two most famous examples. Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In the US, there are two main 'stores'. The Global Standard:\nThe US market is unique because it splits companies into two teams:\n• NYSE: Blue Chips.\n• Nasdaq: Tech. Your broker is just the messenger. They act like a personal shopper, running to the right exchange instantly to complete your trade.", 'quiz': [{'options': ['Agriculture stocks', 'Tech companies and digital trading', 'Physical floor trading', 'Only selling Bitcoin'], 'question': 'What is the Nasdaq known for?', 'correctIndex': 1}, {'options': ['The NYSE (New York Stock Exchange)', 'The Nasdaq', 'The Crypto Exchange', 'The Flea Market'], 'question': 'Where would you likely find Coca-Cola?', 'correctIndex': 0}, {'options': ['A company that makes casino chips', 'A new, risky startup', 'A large, well-established/historic company', 'A tech company'], 'question': "What is a 'Blue Chip' company?", 'correctIndex': 2}, {'options': ['The Nasdaq', 'The NYSE', 'Hong Kong Stock Exchange', 'The Moon'], 'question': 'Based on what you learned, which exchange does XIAOMI-W list on?', 'correctIndex': 2}], 'updated_at': '2026-01-21T09:38:01.290271+00:00'}]
+DEBUG: Saved content with ID: b51ff8ab-eb95-4aab-b2bf-74245004f097
+INFO:     127.0.0.1:58183 - "GET /api/generate/1810.HK HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'smart_selector.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39629]
+/Users/bharat/Desktop/Antigravity/stocky/backend/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [39663]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'static_curriculum.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39663]
+/Users/bharat/Desktop/Antigravity/stocky/backend/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [39689]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:58375 - "GET /api/ticker/1810.HK HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58375 - "GET /api/ticker/1810.HK HTTP/1.1" 200 OK
+🔰 Beginner User detected: Serving Static Lesson 2 (Exchange)
+DEBUG: Inserting content for concept lesson_2_exchange
+DEBUG: Insert result data: [{'id': 'aabe7fc5-9099-449e-b2f3-ca8b3b5f6b8b', 'trigger_id': None, 'content_type': None, 'payload': None, 'difficulty_level': 'beginner', 'quality_score': 0, 'verified': False, 'created_at': '2026-01-21T09:40:48.548451+00:00', 'concept_id': 'lesson_2_exchange', 'stock_symbol': '1810.HK', 'breakdown': "Now that you know what a Ticker is, let's learn where they live: The Exchange.", 'lesson': "You are looking at **XIAOMI-W** on its home turf: the **Hong Kong Stock Exchange**.\n\nTo understand how *all* exchanges work, let's look at the world's two most famous examples. Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In the US, there are two main 'stores'. The Global Standard:\nThe US market is unique because it splits companies into two teams:\n• NYSE: Blue Chips.\n• Nasdaq: Tech. You will often hear this term. It comes from poker, where blue chips have the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of success. These are typically the 'Safe Giants' found on the NYSE. Your broker is just the messenger. They act like a personal shopper, running to the right exchange instantly to complete your trade.", 'quiz': [{'options': ['Agriculture stocks', 'Tech companies and digital trading', 'Physical floor trading', 'Only selling Bitcoin'], 'question': 'What is the Nasdaq known for?', 'correctIndex': 1}, {'options': ['The NYSE (New York Stock Exchange)', 'The Nasdaq', 'The Crypto Exchange', 'The Flea Market'], 'question': 'Where would you likely find Coca-Cola?', 'correctIndex': 0}, {'options': ['A company that makes casino chips', 'A new, risky startup', 'A large, well-established/historic company', 'A tech company'], 'question': "What is a 'Blue Chip' company?", 'correctIndex': 2}, {'options': ['The Nasdaq', 'The NYSE', 'Hong Kong Stock Exchange', 'The Moon'], 'question': 'Based on what you learned, which exchange does XIAOMI-W list on?', 'correctIndex': 2}], 'updated_at': '2026-01-21T09:40:48.548451+00:00'}]
+DEBUG: Saved content with ID: aabe7fc5-9099-449e-b2f3-ca8b3b5f6b8b
+🔰 Beginner User detected: Serving Static Lesson 2 (Exchange)
+DEBUG: Inserting content for concept lesson_2_exchange
+DEBUG: Insert result data: [{'id': '886e02e4-aca7-4594-85c1-a3607749d1bf', 'trigger_id': None, 'content_type': None, 'payload': None, 'difficulty_level': 'beginner', 'quality_score': 0, 'verified': False, 'created_at': '2026-01-21T09:40:49.111619+00:00', 'concept_id': 'lesson_2_exchange', 'stock_symbol': '1810.HK', 'breakdown': "Now that you know what a Ticker is, let's learn where they live: The Exchange.", 'lesson': "You are looking at **XIAOMI-W** on its home turf: the **Hong Kong Stock Exchange**.\n\nTo understand how *all* exchanges work, let's look at the world's two most famous examples. Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In the US, there are two main 'stores'. The Global Standard:\nThe US market is unique because it splits companies into two teams:\n• NYSE: Blue Chips.\n• Nasdaq: Tech. You will often hear this term. It comes from poker, where blue chips have the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of success. These are typically the 'Safe Giants' found on the NYSE. Your broker is just the messenger. They act like a personal shopper, running to the right exchange instantly to complete your trade.", 'quiz': [{'options': ['Agriculture stocks', 'Tech companies and digital trading', 'Physical floor trading', 'Only selling Bitcoin'], 'question': 'What is the Nasdaq known for?', 'correctIndex': 1}, {'options': ['The NYSE (New York Stock Exchange)', 'The Nasdaq', 'The Crypto Exchange', 'The Flea Market'], 'question': 'Where would you likely find Coca-Cola?', 'correctIndex': 0}, {'options': ['A company that makes casino chips', 'A new, risky startup', 'A large, well-established/historic company', 'A tech company'], 'question': "What is a 'Blue Chip' company?", 'correctIndex': 2}, {'options': ['The Nasdaq', 'The NYSE', 'Hong Kong Stock Exchange', 'The Moon'], 'question': 'Based on what you learned, which exchange does XIAOMI-W list on?', 'correctIndex': 2}], 'updated_at': '2026-01-21T09:40:49.111619+00:00'}]
+DEBUG: Saved content with ID: 886e02e4-aca7-4594-85c1-a3607749d1bf
+INFO:     127.0.0.1:58386 - "GET /api/generate/1810.HK HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58406 - "GET /api/popular HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58407 - "GET /api/search?q=apple HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58406 - "GET /api/ticker/AAPL HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58408 - "GET /api/search?q=apple HTTP/1.1" 200 OK
+🔰 Beginner User detected: Serving Static Lesson 2 (Exchange)
+DEBUG: Inserting content for concept lesson_2_exchange
+DEBUG: Insert result data: [{'id': '6e0e3265-0977-4bfe-b74e-79bfd09200f4', 'trigger_id': None, 'content_type': None, 'payload': None, 'difficulty_level': 'beginner', 'quality_score': 0, 'verified': False, 'created_at': '2026-01-21T09:42:03.950651+00:00', 'concept_id': 'lesson_2_exchange', 'stock_symbol': 'AAPL', 'breakdown': "Now that you know what a Ticker is, let's learn where they live: The Exchange.", 'lesson': "You are looking at **Apple Inc.**, which lives on the **Nasdaq**. Why? Because it is a **modern Tech Innovator**. Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In the US, there are two main 'stores'. The Global Standard:\nThe US market is unique because it splits companies into two teams:\n• NYSE: Blue Chips.\n• Nasdaq: Tech. You will often hear this term. It comes from poker, where blue chips have the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of success. These are typically the 'Safe Giants' found on the NYSE. Your broker is just the messenger. They act like a personal shopper, running to the right exchange instantly to complete your trade.", 'quiz': [{'options': ['Agriculture stocks', 'Tech companies and digital trading', 'Physical floor trading', 'Only selling Bitcoin'], 'question': 'What is the Nasdaq known for?', 'correctIndex': 1}, {'options': ['The NYSE (New York Stock Exchange)', 'The Nasdaq', 'The Crypto Exchange', 'The Flea Market'], 'question': 'Where would you likely find Coca-Cola?', 'correctIndex': 0}, {'options': ['A company that makes casino chips', 'A new, risky startup', 'A large, well-established/historic company', 'A tech company'], 'question': "What is a 'Blue Chip' company?", 'correctIndex': 2}, {'options': ['The NYSE', 'The Nasdaq', 'The London Stock Exchange', 'A local farmers market'], 'question': 'Based on what you learned, which exchange does Apple Inc. list on?', 'correctIndex': 1}], 'updated_at': '2026-01-21T09:42:03.950651+00:00'}]
+DEBUG: Saved content with ID: 6e0e3265-0977-4bfe-b74e-79bfd09200f4
+INFO:     127.0.0.1:58407 - "GET /api/generate/AAPL HTTP/1.1" 200 OK

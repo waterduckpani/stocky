@@ -72,7 +72,7 @@ TIER_1_LESSONS = [
                 {
                    "title": "The Context",
                    "icon": "Target",
-                   "text": "You are looking at **{company_name}**, which lives on the **{exchange}**. Why? Because it is a **{category}**."
+                   "text": "{pivot_text}"
                 },
                 {
                    "title": "The Analogy",
@@ -82,7 +82,12 @@ TIER_1_LESSONS = [
                 {
                    "title": "The Rivals",
                    "icon": "Scale",
-                   "text": "The US has two giants:\n\n• **NYSE:** Historic Blue Chips (Reliable Giants).\n• **Nasdaq:** Modern Tech (Digital Innovators)."
+                   "text": "The Global Standard:\nThe US market is unique because it splits companies into two teams:\n• NYSE: Blue Chips.\n• Nasdaq: Tech."
+                },
+                {
+                   "title": "Jargon: Blue Chips",
+                   "icon": "Gem",
+                   "text": "You will often hear this term. It comes from poker, where blue chips have the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of success. These are typically the 'Safe Giants' found on the NYSE."
                 },
                 {
                    "title": "The Action",

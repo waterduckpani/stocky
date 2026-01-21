@@ -13,6 +13,66 @@ from concept_library import (
 )
 
 
+
+def get_exchange_context(symbol: str, name: str) -> dict:
+    """
+    Determines the "home turf" exchange and appropriate game mode.
+    Returns:
+        {
+            "exchange": "London Stock Exchange",
+            "pivot_text": "...",
+            "game_mode": "US_Standard" | "India_Dual"
+        }
+    """
+    # 1. Check Suffix for International Stocks
+    if "." in symbol:
+        suffix = "." + symbol.split(".")[-1].upper()
+        
+        # The Global Atlas
+        exchange_map = {
+            ".HK": "Hong Kong Stock Exchange",
+            ".TO": "Toronto Stock Exchange",
+            ".L":  "London Stock Exchange",
+            ".DE": "Deutsche Börse (Germany)",
+            ".PA": "Euronext Paris",
+            ".T":  "Tokyo Stock Exchange",
+            ".SS": "Shanghai Stock Exchange",
+            ".KS": "Korean Stock Exchange",
+            ".NS": "National Stock Exchange of India",
+            ".BO": "Bombay Stock Exchange"
+        }
+        
+        home_exchange = exchange_map.get(suffix, "International Exchange")
+        
+        # Special Case: India (Has its own full mode)
+        if suffix in [".NS", ".BO"]:
+             return {
+                "exchange": home_exchange,
+                "pivot_text": f"You are looking at **{name}**, a market leader in India. It lives on the **{home_exchange}**.",
+                "game_mode": "India_Dual"
+            }
+
+        # THE PIVOT: Acknowledge Local -> Pivot to Global
+        return {
+            "exchange": home_exchange,
+            "pivot_text": (
+                f"You are looking at **{name}** on its home turf: the **{home_exchange}**.\n\n"
+                "To understand how *all* exchanges work, let's look at the world's two most famous examples."
+            ),
+            "game_mode": "US_Standard" 
+        }
+
+    # 2. US Logic (Standard)
+    target_exchange = "Nasdaq" if len(symbol) >= 4 else "NYSE"
+    target_category = "modern Tech Innovator" if len(symbol) >= 4 else "historic 'Blue Chip' Giant"
+    
+    return {
+        "exchange": target_exchange,
+        "pivot_text": f"You are looking at **{name}**, which lives on the **{target_exchange}**. Why? Because it is a **{target_category}**.",
+        "game_mode": "US_Standard"
+    }
+
+
 def apply_rotation_penalties(
     scores: dict[str, int],
     user_history: list[str]
@@ -72,33 +132,14 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # Inject Context (Chameleon Mode)
         if lesson["id"] == "lesson_2_exchange":
             # === LESSON 2: THE EXCHANGE (CAROUSEL LOGIC) ===
-            symbol = context.symbol
-            name = context.name
+            # === LESSON 2: THE EXCHANGE (GLOBAL PIVOT LOGIC) ===
+            exchange_ctx = get_exchange_context(context.symbol, context.name)
             
-            # Default values (Targeting formatting)
-            target_exchange = "US Market"
-            target_category = "Public Company"
-            
-            # Bucket C: International (Has Suffix)
-            if "." in symbol:
-                suffix = "." + symbol.split(".")[1]
-                suffix_map = {
-                    ".NS": "National Stock Exchange of India",
-                    ".BO": "Bombay Stock Exchange",
-                    ".L": "London Stock Exchange",
-                    ".TO": "Toronto Stock Exchange",
-                    ".KS": "Korean Stock Exchange",
-                    ".DE": "Deutsche Börse Xetra"
-                }
-                home_exchange = suffix_map.get(suffix, "International Exchange")
-                target_exchange = home_exchange
-                target_category = "global leader on its home turf"
-                
-                # Special Logic for INDIA (NSE/BSE)
-                if suffix in [".NS", ".BO"]:
-                   target_exchange = home_exchange
-                   target_category = "market leader in India"
+            # Inject Pivot Text into Slide 1
+            lesson["concept"]["slides"][0]["text"] = exchange_ctx["pivot_text"]
 
+            # Handle India Special Case (NSE/BSE Split)
+            if exchange_ctx.get("game_mode") == "India_Dual":
                    # Update Slide 1 (The Analogy) for India Context
                    lesson["concept"]["slides"][1]["text"] = "Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In India, there are two main 'stores'."
 
@@ -109,8 +150,8 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                        "text": "India's market is split between two giants:\n\n• **NSE:** Modern & Digital (Like Nasdaq).\n• **BSE:** Historic & Vast (Like NYSE)."
                    }
                    
-                   # Overwrite Game Config for India (Existing Logic)
-                   lesson["game_config"]["instruction"] = f"Sort {name} into the correct bin (NSE) to start."
+                   # Overwrite Game Config for India
+                   lesson["game_config"]["instruction"] = f"Sort {context.name} into the correct bin (NSE) to start."
                    lesson["game_config"]["market_sort_config"] = {
                        "bins": [
                            {"id": "BSE", "label": "BSE", "description": "Asia's Oldest\nHistoric Giants", "color": "amber"},
@@ -128,7 +169,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                        ]
                    }
                    
-                   # Overwrite Quiz for India Context (Existing Logic)
+                   # Overwrite Quiz for India Context
                    lesson["quiz"] = [
                        {
                            "question": "What is the NSE (National Stock Exchange) known for?",
@@ -161,77 +202,36 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                            "correctIndex": 2
                        }
                    ]
-
-            # Bucket A: US Tech (4+ letters, No Suffix)
-            elif len(symbol) >= 4:
-                target_exchange = "Nasdaq"
-                target_category = "modern Tech Innovator"
             
-            # Bucket B: US Classic (1-3 letters, No Suffix)
-            else:
-                target_exchange = "NYSE"
-                target_category = "historic 'Blue Chip' Giant"
-
-            # Inject into Slide 0 (The Context)
-            slide_0_text = lesson["concept"]["slides"][0]["text"]
-            lesson["concept"]["slides"][0]["text"] = slide_0_text.format(
-                company_name=name,
-                exchange=target_exchange,
-                category=target_category
-            )
-
-            # Update Game Instruction (Generic)
-            if "market_sort_config" not in lesson["game_config"]:
-                 lesson["game_config"]["instruction"] = f"Sort {name} into the correct bin (NYSE) to start."
-
-            # Inject Dynamic 4th Question
+            # Additional Quiz Question Logic (Dynamic)
             dynamic_question = {}
-            if "." in symbol: # International
-                if symbol.endswith(".NS") or symbol.endswith(".BO"):
-                     dynamic_question = {
-                        "question": f"Which exchange is known as the modern market leader in India?",
-                        "options": [
-                            "The NSE (National Stock Exchange)",
-                            "The BSE (Bombay Stock Exchange)",
-                            "The New Delhi Market",
-                            "The spices market"
-                        ],
-                        "correctIndex": 0
-                    }
-                else:
-                    dynamic_question = {
-                        "question": f"Based on what you learned, which exchange does {name} list on?",
-                        "options": [
-                            "The Nasdaq",
-                            "The NYSE",
-                            home_exchange,
-                            "The Moon"
-                        ],
-                        "correctIndex": 2
-                    }
-            elif len(symbol) >= 4: # Nasdaq
-                dynamic_question = {
-                    "question": f"Based on what you learned, which exchange does {name} list on?",
-                    "options": [
-                        "The NYSE",
-                        "The Nasdaq",
-                        "The London Stock Exchange",
-                        "A local farmers market"
-                    ],
-                    "correctIndex": 1
-                }
-            else: # NYSE
-                dynamic_question = {
-                    "question": f"Based on what you learned, which exchange does {name} list on?",
-                    "options": [
-                        "The NYSE",
-                        "The Nasdaq",
-                        "The Tokyo Stock Exchange",
-                        "An online crypto forum"
-                    ],
+            if exchange_ctx.get("game_mode") == "India_Dual":
+                 dynamic_question = {
+                    "question": f"Which exchange is known as the modern market leader in India?",
+                    "options": ["The NSE (National Stock Exchange)", "The BSE (Bombay Stock Exchange)", "The New Delhi Market", "The spices market"],
                     "correctIndex": 0
                 }
-            
+            elif exchange_ctx.get("exchange") == "Nasdaq":
+                 dynamic_question = {
+                    "question": f"Based on what you learned, which exchange does {context.name} list on?",
+                    "options": ["The NYSE", "The Nasdaq", "The London Stock Exchange", "A local farmers market"],
+                    "correctIndex": 1
+                }
+            elif exchange_ctx.get("exchange") == "NYSE":
+                 dynamic_question = {
+                    "question": f"Based on what you learned, which exchange does {context.name} list on?",
+                    "options": ["The NYSE", "The Nasdaq", "The Tokyo Stock Exchange", "An online crypto forum"],
+                    "correctIndex": 0
+                }
+            else:
+                 # Generic International Question
+                 home = exchange_ctx.get("exchange", "International Exchange")
+                 dynamic_question = {
+                    "question": f"Based on what you learned, which exchange does {context.name} list on?",
+                    "options": ["The Nasdaq", "The NYSE", home, "The Moon"],
+                    "correctIndex": 2
+                }
+
             if dynamic_question:
                 lesson["quiz"].append(dynamic_question)
 
