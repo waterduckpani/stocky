@@ -97,5 +97,56 @@
     ],
     "expires_at": 1769491582.191454,
     "created_at": 1768886782.191454
+  },
+  "concept:AAPL": {
+    "value": {
+      "name": "News Reaction",
+      "concept_id": "MM09",
+      "category": "market_mechanics",
+      "explanation": "News Reaction refers to how stocks respond immediately after a major news event, often with the opposite outcome of what was expected. For example, Apple Inc.'s (AAPL) 1.1% drop today is unusual, given its generally strong performance. Typically, good news would cause prices to rise, while bad news would cause them to fall. Institutional investors care about this data point because it helps them understand the potential for future price movements and make more informed investment decisions. By identifying instances of News Reaction, they can refine their expectations and adjust their strategies accordingly, giving them a competitive edge in the market."
+    },
+    "expires_at": 1768916717.8368561,
+    "created_at": 1768895117.8368561
+  },
+  "quiz:AAPL": {
+    "value": [
+      {
+        "question": "According to the lesson, why would an institutional investor care about News Reaction?",
+        "options": [
+          "Because it's a new stock",
+          "Because it helps them understand future price movements and make informed investment decisions",
+          "Because it's a small market fluctuation",
+          "Because it's always positive news"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "What would cause Apple Inc.'s (AAPL) prices to rise?",
+        "options": [
+          "Good news",
+          "Bad news",
+          "New stock price",
+          "Market fluctuations"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "According to the lesson, what is unusual about Apple Inc.'s (AAPL) 1.1% drop today?",
+        "options": [
+          "It's a new record high",
+          "It's always a good sign",
+          "A small market fluctuation",
+          "Typically, it would cause prices to rise"
+        ],
+        "correctIndex": 3
+      }
+    ],
+    "expires_at": 1769499923.474556,
+    "created_at": 1768895123.474556
+  },
+  "breakdown:AAPL": {
+    "value": "Apple Inc. is taking a breather today, trading at $255.52 with a -1.05% change, consolidating after its recent rally. Traders are pausing to reassess after the strong run, which has fueled speculation about future dividend increases. With Apple's dividend yield currently sitting at around 2.1%, investors will be watching closely for any signs of an increase in payout, as this could provide a boost to income-generating portfolios.",
+    "expires_at": 1768896474.7721758,
+    "created_at": 1768896174.7721758
   }
 }

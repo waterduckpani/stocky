@@ -179,35 +179,45 @@ POPULAR_SYMBOLS = ["AAPL", "GOOGL", "MSFT", "TSLA", "AMZN", "META", "NVDA"]
 
 @app.get("/api/search")
 async def search_stocks(q: str):
-    """Search for stocks by name or symbol."""
+    """Search for stocks by name or symbol using Yahoo Finance API."""
     if not q or len(q) < 1:
         return {"results": []}
     
     try:
-        # Use yfinance search functionality
-        import yfinance.screener as screener
+        import requests
         
-        # Try direct ticker lookup first
-        query = q.upper().strip()
+        # Use Yahoo Finance Typeahead API for robust global search
+        url = "https://query2.finance.yahoo.com/v1/finance/search"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        params = {
+            "q": q,
+            "quotesCount": 10,
+            "newsCount": 0,
+            "enableFuzzyQuery": "false",
+            "quotesQueryId": "tss_match_phrase_query" 
+        }
+        
+        response = requests.get(url, headers=headers, params=params, timeout=5)
+        data = response.json()
+        
         results = []
+        if "quotes" in data:
+            for item in data["quotes"]:
+                # Only include Equities and ETFs to reduce noise
+                if item.get("quoteType") in ["EQUITY", "ETF", "MUTUALFUND"]:
+                    results.append({
+                        "symbol": item.get("symbol"),
+                        "name": item.get("shortname") or item.get("longname") or item.get("symbol"),
+                        "exchange": item.get("exchange", "N/A"),
+                        "type": item.get("quoteType", "EQUITY")
+                    })
         
-        # Check if it's a direct symbol match
-        try:
-            ticker = yf.Ticker(query)
-            info = ticker.info
-            if info and info.get('shortName'):
-                results.append({
-                    "symbol": query,
-                    "name": info.get('shortName') or info.get('longName', ''),
-                    "exchange": info.get('exchange', 'N/A'),
-                    "type": info.get('quoteType', 'EQUITY')
-                })
-        except:
-            pass
-        
-        # If no direct match or query looks like a name, search more broadly
-        if len(results) == 0 or not q.isupper():
-            # Common company name to ticker mappings
+        # Fallback: maintain the popular mapping for very common potential misspellings or common names
+        # if the API returns nothing or as a booster
+        if not results:
+             # Common company name to ticker mappings
             name_mappings = {
                 "apple": "AAPL", "microsoft": "MSFT", "google": "GOOGL",
                 "alphabet": "GOOGL", "amazon": "AMZN", "tesla": "TSLA",
@@ -218,44 +228,29 @@ async def search_stocks(q: str):
                 "intel": "INTC", "amd": "AMD", "paypal": "PYPL",
                 "visa": "V", "mastercard": "MA", "jpmorgan": "JPM",
                 "bank of america": "BAC", "wells fargo": "WFC",
-                "goldman sachs": "GS", "morgan stanley": "MS"
+                "goldman sachs": "GS", "morgan stanley": "MS",
+                "airtel": "BHARTIARTL.NS", "reliance": "RELIANCE.NS",
+                "tata motors": "TATAMOTORS.NS", "hdfc": "HDFCBANK.NS",
+                "infosys": "INFY.NS", "icici": "ICICIBANK.NS",
+                "samsung": "005930.KS", "sony": "SONY", "toyota": "TM"
             }
-            
-            query_lower = q.lower().strip()
-            if query_lower in name_mappings:
-                symbol = name_mappings[query_lower]
-                try:
+            q_lower = q.lower().strip()
+            if q_lower in name_mappings:
+                 import yfinance as yf
+                 symbol = name_mappings[q_lower]
+                 try:
                     ticker = yf.Ticker(symbol)
                     info = ticker.info
-                    if info and info.get('shortName'):
-                        results = [{
-                            "symbol": symbol,
-                            "name": info.get('shortName') or info.get('longName', ''),
-                            "exchange": info.get('exchange', 'N/A'),
-                            "type": info.get('quoteType', 'EQUITY')
-                        }]
-                except:
-                    pass
-            else:
-                # Fuzzy match against our known tickers
-                for name, symbol in name_mappings.items():
-                    if query_lower in name:
-                        try:
-                            ticker = yf.Ticker(symbol)
-                            info = ticker.info
-                            if info and info.get('shortName'):
-                                results.append({
-                                    "symbol": symbol,
-                                    "name": info.get('shortName') or info.get('longName', ''),
-                                    "exchange": info.get('exchange', 'N/A'),
-                                    "type": info.get('quoteType', 'EQUITY')
-                                })
-                        except:
-                            pass
-                        if len(results) >= 5:
-                            break
-        
-        return {"results": results[:5]}
+                    results.append({
+                        "symbol": symbol,
+                        "name": info.get('shortName'),
+                        "exchange": info.get('exchange'),
+                        "type": "EQUITY"
+                    })
+                 except:
+                     pass
+
+        return {"results": results[:8]}
     
     except Exception as e:
         print(f"Search error: {e}")
@@ -406,12 +401,67 @@ async def generate_content(symbol: str):
         market_cap = info.get('marketCap') or 0
         market_cap_str = format_large_number(market_cap) if market_cap else 'N/A'
         
+        # === TECHNICAL ANALYSIS ===
+        technicals = {
+            "rsi": {"value": 0, "label": "Neutral"},
+            "macd": {"value": 0, "signal": "Neutral"},
+            "ma50": {"value": 0, "trend": "Neutral"},
+            "volume": {"value": 0, "relative": "1.0x Avg"}
+        }
+        
+        try:
+            # Fetch 6 months history for calculations
+            hist = ticker.history(period="6mo")
+            if not hist.empty:
+                closes = hist['Close']
+                volumes = hist['Volume']
+                
+                # RSI (14) - Simple Rolling
+                delta = closes.diff()
+                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                rs = gain / loss
+                # Avoid div by zero
+                rs = rs.fillna(0)
+                rsi_series = 100 - (100 / (1 + rs))
+                rsi_val = rsi_series.iloc[-1] if not rsi_series.empty else 50
+                rsi_label = "Overbought" if rsi_val > 70 else ("Oversold" if rsi_val < 30 else "Neutral")
+                
+                # MA(50)
+                ma50_val = closes.rolling(window=50).mean().iloc[-1]
+                current_price = closes.iloc[-1]
+                ma50_trend = "Above" if current_price > ma50_val else "Below"
+                
+                # MACD (12, 26, 9)
+                ema12 = closes.ewm(span=12, adjust=False).mean()
+                ema26 = closes.ewm(span=26, adjust=False).mean()
+                macd_line = ema12 - ema26
+                signal_line = macd_line.ewm(span=9, adjust=False).mean()
+                macd_val = macd_line.iloc[-1]
+                signal_val = signal_line.iloc[-1]
+                macd_signal = "Bullish" if macd_val > signal_val else "Bearish"
+
+                # Volume Relative (20-day avg)
+                avg_vol = volumes.rolling(window=20).mean().iloc[-1]
+                curr_vol = volumes.iloc[-1]
+                rel_vol = round(curr_vol / avg_vol, 1) if avg_vol and avg_vol > 0 else 1.0
+                
+                technicals = {
+                    "rsi": {"value": round(rsi_val, 1), "label": rsi_label},
+                    "macd": {"value": round(macd_val, 2), "signal": macd_signal},
+                    "ma50": {"value": round(ma50_val, 2), "trend": ma50_trend},
+                    "volume": {"value": format_large_number(curr_vol), "relative": f"{rel_vol}x Avg"}
+                }
+        except Exception as e:
+            print(f"Error calculating technicals: {e}")
+        
         # Stock data for concept selection
         stock_data = {
             "change_percent": change_percent,
             "market_cap_raw": market_cap,
             "ytd_return": ytd_return,
-            "is_crypto": is_crypto
+            "is_crypto": is_crypto,
+            "technicals": technicals
         }
     except Exception as e:
         print(f"Error fetching stock data for {symbol}: {e}")
@@ -464,8 +514,17 @@ async def generate_content(symbol: str):
     # Select best concept with rotation (blocks last 5, dampens same category)
     selected_concept, selection_metadata = select_best_concept(stock_context, recently_viewed)
     
-    lesson_topic = selected_concept.name
-    concept_id = selected_concept.id
+    # Check if static lesson (beginner flow)
+    is_static = selection_metadata.get("type") == "static"
+    
+    if is_static:
+        lesson_topic = selected_concept["title"]
+        concept_id = selected_concept["id"]
+        game_config = selected_concept.get("game_config")
+    else:
+        lesson_topic = selected_concept.name
+        concept_id = selected_concept.id
+        game_config = None
     
     # Record this concept view for rotation tracking
     record_lesson_view(user_id, concept_id, symbol)
@@ -479,75 +538,105 @@ async def generate_content(symbol: str):
     # Build smart context with market data + news
     smart_context = build_stock_context(change_percent, news_headlines)
     
-    # === BREAKDOWN (Structured 3-sentence narrative bridging to topic) ===
-    from prompts import generate_breakdown_prompt, FALLBACK_BREAKDOWN
-    cache_key_breakdown = f"breakdown:{symbol}"
-    breakdown = get_cached(cache_key_breakdown)
-    
-    if not breakdown:
-        if ollama_available:
-            # Use new structured prompt with smart context
-            stock_data_for_prompt = {
-                'name': company_name,
-                'symbol': symbol,
-                'price': price,
-                'change_percent': change_percent
-            }
-            prompt = generate_breakdown_prompt(stock_data_for_prompt, lesson_topic, smart_context, currency_symbol)
-            breakdown = await generate_text_safe(prompt, max_tokens=300)
+    # === BREAKDOWN ===
+    if is_static:
+        breakdown = selected_concept.get("breakdown", "Let's start your journey.")
+    else:
+        from prompts import generate_breakdown_prompt, FALLBACK_BREAKDOWN
+        cache_key_breakdown = f"breakdown:{symbol}"
+        breakdown = get_cached(cache_key_breakdown)
         
-        if breakdown:
-            set_cached(cache_key_breakdown, breakdown, TTL_BREAKDOWN)
-        else:
-            breakdown = FALLBACK_BREAKDOWN.format(company_name=company_name)
+        if not breakdown:
+            if ollama_available:
+                # Use new structured prompt with smart context
+                stock_data_for_prompt = {
+                    'name': company_name,
+                    'symbol': symbol,
+                    'price': price,
+                    'change_percent': change_percent
+                }
+                prompt = generate_breakdown_prompt(stock_data_for_prompt, lesson_topic, smart_context, currency_symbol)
+                breakdown = await generate_text_safe(prompt, max_tokens=300)
+            
+            if breakdown:
+                set_cached(cache_key_breakdown, breakdown, TTL_BREAKDOWN)
+            else:
+                breakdown = FALLBACK_BREAKDOWN.format(company_name=company_name)
     
-    # === KEY CONCEPT (Use smart-selected concept) ===
-    cache_key_concept = f"concept:{symbol}"
-    concept_data = get_cached(cache_key_concept)
-    
-    if not concept_data:
-        # Use the concept selected by smart_selector
-        concept_name = selected_concept.name
+    # === KEY CONCEPT ===
+    if is_static:
+        # Handle Carousel vs Text
+        raw_concept = selected_concept["concept"]
+        explanation_text = raw_concept.get("explanation", "")
         
-        if ollama_available:
-            # Generate lesson prompt using selected concept
-            lesson_prompt = generate_lesson_prompt(selected_concept, stock_context)
-            concept_explanation = await generate_text_safe(lesson_prompt, max_tokens=150)
-        else:
-            concept_explanation = selected_concept.beginner_explanation
+        # If carousel, construct text fallback and pass slides
+        slides = []
+        concept_type = "text"
         
+        if raw_concept.get("type") == "carousel":
+            concept_type = "carousel"
+            slides = raw_concept.get("slides", [])
+            # Create fallback explanation from slides
+            explanation_text = " ".join([s.get("text", "") for s in slides])
+
         concept_data = {
-            "name": concept_name,
+            "name": lesson_topic,
             "concept_id": concept_id,
-            "category": selected_concept.category.value,
-            "explanation": concept_explanation or selected_concept.beginner_explanation
+            "category": "fundamentals",
+            "explanation": explanation_text,
+            "type": concept_type,
+            "slides": slides
         }
+    else:
+        cache_key_concept = f"concept:{symbol}"
+        concept_data = get_cached(cache_key_concept)
         
-        if concept_explanation:
-            set_cached(cache_key_concept, concept_data, TTL_CONCEPT)
+        if not concept_data:
+            # Use the concept selected by smart_selector
+            concept_name = selected_concept.name
+            
+            if ollama_available:
+                # Generate lesson prompt using selected concept
+                lesson_prompt = generate_lesson_prompt(selected_concept, stock_context)
+                concept_explanation = await generate_text_safe(lesson_prompt, max_tokens=150)
+            else:
+                concept_explanation = selected_concept.beginner_explanation
+            
+            concept_data = {
+                "name": concept_name,
+                "concept_id": concept_id,
+                "category": selected_concept.category.value,
+                "explanation": concept_explanation or selected_concept.beginner_explanation
+            }
+            
+            if concept_explanation:
+                set_cached(cache_key_concept, concept_data, TTL_CONCEPT)
     
-    # === QUIZ (Contextual - based on concept taught) ===
-    cache_key_quiz = f"quiz:{symbol}"
-    quiz = get_cached(cache_key_quiz)
-    
-    if not quiz:
-        # Get concept name for context
-        current_concept = concept_data.get("name", "stock ownership") if isinstance(concept_data, dict) else "stock ownership"
-        change_info = f"{change_percent}% {'up' if change_percent >= 0 else 'down'} today"
+    # === QUIZ ===
+    if is_static:
+        quiz = selected_concept["quiz"]
+    else:
+        cache_key_quiz = f"quiz:{symbol}"
+        quiz = get_cached(cache_key_quiz)
         
-        if ollama_available:
-            lesson_text = concept_data.get("explanation", "")
-            prompt = QUIZ_PROMPT.format(
-                company_name=company_name,
-                symbol=symbol,
-                concept_name=current_concept,
-                change_info=change_info,
-                lesson_text=lesson_text
-            )
-            quiz = await generate_json(prompt)
-        
-        if quiz and isinstance(quiz, list) and len(quiz) >= 3:
-            set_cached(cache_key_quiz, quiz, TTL_QUIZ)
+        if not quiz:
+            # Get concept name for context
+            current_concept = concept_data.get("name", "stock ownership") if isinstance(concept_data, dict) else "stock ownership"
+            change_info = f"{change_percent}% {'up' if change_percent >= 0 else 'down'} today"
+            
+            if ollama_available:
+                lesson_text = concept_data.get("explanation", "")
+                prompt = QUIZ_PROMPT.format(
+                    company_name=company_name,
+                    symbol=symbol,
+                    concept_name=current_concept,
+                    change_info=change_info,
+                    lesson_text=lesson_text
+                )
+                quiz = await generate_json(prompt)
+            
+            if quiz and isinstance(quiz, list) and len(quiz) >= 3:
+                set_cached(cache_key_quiz, quiz, TTL_QUIZ)
         else:
             # Use fallback with company-specific values
             quiz = []
@@ -573,16 +662,20 @@ async def generate_content(symbol: str):
             quiz=quiz
         )
     
+    # Format news for output
+    formatted_news = [{"title": item["title"], "link": item["link"]} for item in news] if news else []
+
     return {
         "symbol": symbol,
         "company_name": company_name,
+        "stock_data": stock_data,
         "breakdown": breakdown,
+        "news": formatted_news,
         "concept": concept_data,
-        "news": news,
         "quiz": quiz,
-        "ollama_available": ollama_available,
         "content_id": content_id,
-        "is_ai_generated": is_ai_generated
+        "is_ai_generated": is_ai_generated,
+        "game_config": game_config  # New field for interactive lessons
     }
 
 @app.post("/api/feedback")

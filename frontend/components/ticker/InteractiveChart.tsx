@@ -44,9 +44,8 @@ const CustomDot = (props: any) => {
 
 export function InteractiveChart({ data = [] }: InteractiveChartProps) {
     return (
-        <div className="bg-card rounded-3xl p-6 border-2 border-foreground shadow-pop h-[350px] flex flex-col">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-foreground">Price Journey</h3>
+        <div className="w-full h-full flex flex-col">
+            <div className="flex justify-end items-center mb-2 px-2 pt-2">
                 <div className="flex gap-2">
                     {["1M", "3M", "1Y", "ALL"].map((period) => (
                         <button
@@ -99,7 +98,7 @@ export function InteractiveChart({ data = [] }: InteractiveChartProps) {
                 </ResponsiveContainer>
             </div>
 
-            <div className="mt-2 text-center text-xs font-medium text-muted-foreground">
+            <div className="mt-2 text-center text-xs font-medium text-muted-foreground pb-2">
                 Hover over the <span className="inline-block w-4 h-4 bg-secondary text-white rounded-full text-[10px] leading-4 align-middle mx-1">?</span> points to see what drove the price.
             </div>
         </div>

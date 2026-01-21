@@ -53,9 +53,9 @@ const user = {
 
 export function Sidebar() {
     return (
-        <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:border-r-2 lg:border-foreground/10 lg:bg-card">
+        <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:border-r-2 lg:border-foreground/10 lg:bg-card z-50">
             {/* Logo */}
-            <div className="flex items-center gap-3 px-6 h-16 border-b-2 border-foreground/10">
+            <div className="flex items-center gap-3 px-6 h-16 border-b-2 border-foreground/10 shrink-0">
                 <div className="h-10 w-10 rounded-xl bg-violet-500 border-2 border-foreground shadow-pop flex items-center justify-center">
                     <span className="text-white font-bold text-lg">S</span>
                 </div>
@@ -63,7 +63,7 @@ export function Sidebar() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-4 py-6 space-y-2">
+            <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                 {navigation.map((item) => (
                     <a
                         key={item.name}

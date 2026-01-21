@@ -7,7 +7,9 @@ import { StepConcept } from "./steps/StepConcept"
 import { StepNews } from "./steps/StepNews"
 import { StepVisual } from "./steps/StepVisual"
 import { QuizSection } from "./QuizSection"
-import { FeedbackWidget } from "./FeedbackWidget"
+import { MarketSort } from "../games/MarketSort"
+import { TickerHuntGame } from "../games/TickerHunt"
+import { CapClashGame } from "../games/CapClash"
 import { cn } from "@/lib/utils"
 
 interface LearningFlowProps {
@@ -23,51 +25,84 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
     const contentId = llmContent?.content_id || null
     const isAiGenerated = llmContent?.is_ai_generated !== false // Default to true
 
-    // 5-step learning flow
-    const steps = [
-        { id: "intro", title: "The Breakdown", component: <StepIntro symbol={symbol} stockData={stockData} breakdown={llmContent?.breakdown} /> },
+    // Handlers
+    const handleNext = () => {
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        setCurrentStep(prev => prev + 1)
+    }
+
+    const handlePrev = () => {
+        if (currentStep > 0) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            setCurrentStep(prev => prev - 1)
+        }
+    }
+
+    // Define steps
+    let steps = [
+        { id: "visual", title: "Chart Analysis", component: <StepVisual symbol={symbol} stockData={stockData} /> },
         {
             id: "concept",
             title: "Key Concept",
             component: (
                 <div className="space-y-4">
                     <StepConcept symbol={symbol} stockData={stockData} concept={llmContent?.concept} />
-                    <FeedbackWidget
-                        contentId={contentId}
-                        isAiGenerated={isAiGenerated}
-                        conceptName={llmContent?.concept?.name || "this lesson"}
-                    />
                 </div>
             )
-        },
-        { id: "news", title: "News & Sentiment", component: <StepNews symbol={symbol} stockData={stockData} news={llmContent?.news} /> },
-        { id: "visual", title: "Chart Analysis", component: <StepVisual symbol={symbol} stockData={stockData} /> },
-        { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} questions={llmContent?.quiz} /> },
+        }
     ]
 
-    const handleNext = () => {
-        if (currentStep < steps.length - 1) {
-            setCurrentStep(prev => prev + 1)
-            window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Inject Game if configured
+    if (llmContent?.game_config) {
+        const gameConfig = llmContent.game_config
+        let GameComponent = null
+
+        switch (gameConfig.type) {
+            case "market_sort":
+                GameComponent = <MarketSort onComplete={handleNext} config={gameConfig.market_sort_config} />
+                break
+            case "ticker_hunt":
+                GameComponent = <TickerHuntGame
+                    target={symbol}
+                    companyName={stockData.shortName || symbol}
+                    instruction={gameConfig.instruction}
+                    onComplete={handleNext}
+                />
+                break
+            case "cap_clash":
+                GameComponent = <CapClashGame
+                    instruction={gameConfig.instruction}
+                    onComplete={handleNext}
+                />
+                break
+        }
+
+        if (GameComponent) {
+            steps.push({
+                id: "game",
+                title: "Mini Game",
+                component: GameComponent
+            })
         }
     }
 
-    const handlePrev = () => {
-        if (currentStep > 0) {
-            setCurrentStep(prev => prev - 1)
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-    }
+    // Add Quiz last
+    steps.push(
+        { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} questions={llmContent?.quiz} /> }
+    )
 
-    const progress = ((currentStep + 1) / steps.length) * 100
+    // Prevent index out of bounds
+    const safeCurrentStep = Math.min(currentStep, steps.length - 1)
+    const progress = ((safeCurrentStep + 1) / steps.length) * 100
 
     return (
         <div className="max-w-3xl mx-auto pb-24">
             {/* Progress Bar */}
             <div className="mb-8">
                 <div className="flex justify-between text-sm font-bold text-muted-foreground mb-2 px-1">
-                    <span>Step {currentStep + 1} of {steps.length}</span>
-                    <span className="text-primary">{steps[currentStep].title}</span>
+                    <span>Step {safeCurrentStep + 1} of {steps.length}</span>
+                    <span className="text-primary">{steps[safeCurrentStep].title}</span>
                 </div>
                 <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <div
@@ -79,19 +114,19 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
 
             {/* Step Content */}
             <div className="min-h-[400px]">
-                {steps[currentStep].component}
+                {steps[safeCurrentStep].component}
             </div>
 
             {/* Navigation Controls */}
-            {currentStep < steps.length - 1 && (
+            {safeCurrentStep < steps.length - 1 && (
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t-2 border-foreground/10 lg:pl-72 z-40">
                     <div className="max-w-3xl mx-auto flex justify-between gap-4">
                         <button
                             onClick={handlePrev}
-                            disabled={currentStep === 0}
+                            disabled={safeCurrentStep === 0}
                             className={cn(
                                 "flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all",
-                                currentStep === 0
+                                safeCurrentStep === 0
                                     ? "text-muted-foreground opacity-50 cursor-not-allowed"
                                     : "bg-muted hover:bg-muted/80 text-foreground"
                             )}
@@ -102,10 +137,10 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
 
                         <button
                             onClick={handleNext}
-                            className="flex-[2] py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:shadow-none hover:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                            className="flex-1 py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                         >
-                            Continue
-                            <ArrowRight className="w-5 h-5" />
+                            Next
+                            <ArrowRight className="w-5 h-5" strokeWidth={3} />
                         </button>
                     </div>
                 </div>

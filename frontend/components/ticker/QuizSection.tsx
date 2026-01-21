@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Check, X, Trophy, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +22,8 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
     const [isAnswered, setIsAnswered] = useState(false)
     const [score, setScore] = useState(0)
     const [completed, setCompleted] = useState(false)
+
+    const router = useRouter()
 
     // Use provided questions or fallback to defaults
     const questions = providedQuestions && providedQuestions.length >= 3 ? providedQuestions : [
@@ -70,7 +73,7 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
                 <h3 className="text-2xl font-bold text-foreground mb-2">Challenge Complete!</h3>
                 <p className="text-muted-foreground font-medium mb-6">You scored {score}/{questions.length} on the {symbol} knowledge check.</p>
                 <button
-                    onClick={() => window.location.reload()}
+                    onClick={() => router.push('/')}
                     className="bg-foreground text-background px-6 py-3 rounded-xl font-bold hover:bg-foreground/90 transition-colors"
                 >
                     Back to Dashboard

@@ -21,9 +21,10 @@ interface SearchResult {
 
 interface StockSearchProps {
     className?: string
+    onStockSelect?: (symbol: string) => void
 }
 
-export function StockSearch({ className }: StockSearchProps) {
+export function StockSearch({ className, onStockSelect }: StockSearchProps) {
     const [query, setQuery] = useState("")
     const [isFocused, setIsFocused] = useState(false)
     const [popularStocks, setPopularStocks] = useState<Stock[]>([])
@@ -73,7 +74,11 @@ export function StockSearch({ className }: StockSearchProps) {
     }, [query])
 
     const handleSelect = (symbol: string) => {
-        router.push(`/ticker/${symbol}`)
+        if (onStockSelect) {
+            onStockSelect(symbol)
+        } else {
+            router.push(`/ticker/${symbol}`)
+        }
         setQuery("")
         setIsFocused(false)
         setError(null)
@@ -82,17 +87,35 @@ export function StockSearch({ className }: StockSearchProps) {
     const handleKeyDown = async (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && query.trim()) {
             e.preventDefault()
+
+            // Optimization: If we already have results visible for this query, pick the top one
+            if (searchResults.length > 0) {
+                handleSelect(searchResults[0].symbol)
+                return
+            }
+
+            // Otherwise, perform a fresh search to find the best match
             setIsSearching(true)
             setError(null)
 
             try {
-                const res = await fetch(`http://localhost:8000/api/validate/${encodeURIComponent(query.trim())}`)
+                // Use SEARCH API to find best match instead of strict validation
+                const res = await fetch(`http://localhost:8000/api/search?q=${encodeURIComponent(query.trim())}`)
                 const data = await res.json()
 
-                if (data.valid) {
-                    handleSelect(data.symbol)
+                if (data.results && data.results.length > 0) {
+                    // Smart Select: default to the first (most relevant) result
+                    handleSelect(data.results[0].symbol)
                 } else {
-                    setError("Invalid ticker. Please try again.")
+                    // Fallback: Try strict validation just in case it's a direct valid ticker not in search index
+                    const validRes = await fetch(`http://localhost:8000/api/validate/${encodeURIComponent(query.trim())}`)
+                    const validData = await validRes.json()
+
+                    if (validData.valid) {
+                        handleSelect(validData.symbol)
+                    } else {
+                        setError("No matching stock found.")
+                    }
                 }
             } catch (err) {
                 setError("Connection error. Please try again.")
