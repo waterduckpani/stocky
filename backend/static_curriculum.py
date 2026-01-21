@@ -70,68 +70,68 @@ TIER_1_LESSONS = [
             "name": "The Stock Exchange",
             "slides": [
                 {
-                   "title": "The Context",
-                   "icon": "Target",
-                   "text": "{pivot_text}"
+                    "title": "The Context",
+                    "icon": "Target",
+                    "text": "{pivot_text}"
                 },
                 {
-                   "title": "The Analogy",
-                   "icon": "Store",
-                   "text": "Think of an Exchange as a specialized supermarket where shares of companies are bought and sold. In the US, there are two main 'stores'."
+                    "title": "The Analogy",
+                    "icon": "Store",
+                    "text": "Think of an Exchange as a specialized marketplace. Just as you don't buy sneakers at a grocery store, companies pick a specific 'home' based on their industry and identity."
                 },
                 {
-                   "title": "The Rivals",
-                   "icon": "Scale",
-                   "text": "The Global Standard:\nThe US market is unique because it splits companies into two teams:\n• NYSE: Blue Chips.\n• Nasdaq: Tech."
+                    "title": "The Two Giants",
+                    "icon": "Scale",
+                    "text": "The US Market sets the global standard with two rivals:\n\n🏛️ **NYSE (The Tradition):** A physical floor on Wall Street. Home to historic 'Blue Chip' industries.\n\n💻 **Nasdaq (The Future):** A 100% digital network. Home to modern Tech innovators."
                 },
                 {
-                   "title": "Jargon: Blue Chips",
-                   "icon": "Gem",
-                   "text": "You will often hear this term. It comes from poker, where blue chips have the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of success. These are typically the 'Safe Giants' found on the NYSE."
+                    "title": "Jargon: Blue Chips",
+                    "icon": "Gem",
+                    "text": "The term comes from poker, where blue chips hold the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of stability (like Coca-Cola). These are typically the 'Safe Giants' found on the NYSE."
                 },
                 {
-                   "title": "The Action",
-                   "icon": "Zap",
-                   "text": "Your broker is just the messenger. They act like a personal shopper, running to the right exchange instantly to complete your trade."
+                    "title": "How You Buy",
+                    "icon": "Zap",
+                    "text": "You don't need to visit the exchange yourself. When you tap 'Buy' on the app, your broker acts as a high-speed courier, sprinting to the right exchange to execute your deal instantly."
                 }
             ]
         },
-        "breakdown": "Now that you know what a Ticker is, let's learn where they live: The Exchange.",
+        "breakdown": "Now that you know the 'Where' (The Exchange), let's master the 'How'.",
         "news": [],
         "game_config": {
             "type": "market_sort",
-            "instruction": "Sort the companies to their correct home: NYSE (Physical) or Nasdaq (Tech)"
+            "instruction": "Sort the companies to their correct home: NYSE (Classic/Physical) or Nasdaq (Tech/Digital)"
         },
         "quiz": [
             {
-                "question": "What is the Nasdaq known for?",
+                "question": "What is the Nasdaq best known for?",
                 "options": [
-                    "Agriculture stocks",
+                    "Agriculture and Farming",
                     "Tech companies and digital trading",
-                    "Physical floor trading",
-                    "Only selling Bitcoin"
+                    "Physical floor trading with shouting",
+                    "Only international stocks"
                 ],
                 "correctIndex": 1
             },
             {
-                "question": "Where would you likely find Coca-Cola?",
+                "question": "Which company would most likely live on the NYSE?",
                 "options": [
-                    "The NYSE (New York Stock Exchange)",
-                    "The Nasdaq",
-                    "The Crypto Exchange",
-                    "The Flea Market"
+                    "A stable, historic 'Blue Chip' (e.g., Walmart)",
+                    "A brand new AI startup",
+                    "A cryptocurrency",
+                    "A small local bakery"
                 ],
                 "correctIndex": 0
             },
             {
-                "question": "What is a 'Blue Chip' company?",
+                "question": "Why are they called 'Blue Chips'?",
                 "options": [
-                    "A company that makes casino chips",
-                    "A new, risky startup",
-                    "A large, well-established/historic company",
-                    "A tech company"
+                    "Because the logos are usually blue",
+                    "They are named after high-value poker chips",
+                    "They make computer chips",
+                    "It's a random nickname"
                 ],
-                "correctIndex": 2
+                "correctIndex": 1
             }
         ]
     },

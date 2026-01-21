@@ -110,9 +110,14 @@ async def get_ticker_data(symbol: str):
         info = ticker.info
         
         # Currency extraction
-        currency_code = info.get('currency', 'USD')
-        currency_map = {'INR': '₹', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'USD': '$'}
-        currency_symbol = currency_map.get(currency_code, '$')
+        # currency_code = info.get('currency', 'USD')
+        # currency_map = {'INR': '₹', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'USD': '$'}
+        # currency_symbol = currency_map.get(currency_code, '$')
+        
+        # New Dynamic Currency Logic
+        from smart_selector import get_currency_config
+        currency_config = get_currency_config(symbol)
+        currency_symbol = currency_config["symbol"]
         
         # Get recent history (6mo for technicals)
         history = ticker.history(period="6mo")
@@ -220,7 +225,8 @@ async def get_ticker_data(symbol: str):
             "peRatio": round(info.get('trailingPE', 0), 2) if info.get('trailingPE') else "N/A",
             "chart": chart_data,
             "news": formatted_news,
-            "technicals": technicals
+            "technicals": technicals,
+            "currencyConfig": currency_config
         }
         
         return response
@@ -414,6 +420,7 @@ async def get_popular_stocks():
 # =============================================================================
 from ollama_client import generate_text, generate_json, check_connection
 from utils import validate_and_fix_text
+from smart_selector import get_currency_config
 import asyncio
 
 async def generate_text_safe(prompt: str, max_tokens: int = 300) -> str:

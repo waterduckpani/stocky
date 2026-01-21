@@ -2,6 +2,7 @@
 
 import { InteractiveChart } from "../InteractiveChart"
 import { ArrowUp, ArrowDown, Activity, BarChart3, TrendingUp, Layers, Heart } from "lucide-react"
+import { formatPrice } from "@/utils/formatters"
 
 interface StepVisualProps {
     symbol: string
@@ -83,7 +84,7 @@ export function StepVisual({ symbol, stockData }: StepVisualProps) {
                                 <Activity className="w-3.5 h-3.5 text-tertiary/50 group-hover:text-tertiary transition-colors" />
                             </div>
                             <div className="text-xl font-black text-foreground mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
-                                {tech.ma50?.value !== undefined ? tech.ma50.value : "--"}
+                                {tech.ma50?.value !== undefined ? formatPrice(tech.ma50.value, stockData.currencyConfig) : "--"}
                             </div>
                             <div className={`text-[10px] font-bold px-2 py-0.5 rounded-md w-fit text-foreground ${tech.ma50?.trend === "Above" ? "bg-quaternary/10 border border-quaternary/30" :
                                 "bg-secondary/10 border border-secondary/30"

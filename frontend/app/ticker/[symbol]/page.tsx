@@ -6,6 +6,7 @@ import { StockSearch } from "@/components/dashboard/StockSearch"
 import { LearningFlow } from "@/components/ticker/LearningFlow"
 import { ArrowLeft, Share2, Star } from "lucide-react"
 import Link from "next/link"
+import { formatPrice } from "@/utils/formatters"
 
 interface PageProps {
     params: Promise<{ symbol: string }>
@@ -143,7 +144,7 @@ export default function TickerPage({ params }: PageProps) {
                         </div>
                         <div className="text-left md:text-right">
                             <div className="text-3xl md:text-4xl font-black text-foreground">
-                                ${stockHeroData.price.toFixed(2)}
+                                {formatPrice(stockHeroData.price, data.currencyConfig)}
                             </div>
                             <div className={`inline-flex items-center gap-1 ${stockHeroData.isPositive ? 'bg-quaternary/10 text-quaternary' : 'bg-destructive/10 text-destructive'} px-3 py-1 rounded-lg font-bold text-sm mt-1`}>
                                 {stockHeroData.change} Today

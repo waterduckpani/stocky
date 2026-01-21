@@ -13,6 +13,30 @@ from concept_library import (
 )
 
 
+def get_currency_config(symbol: str) -> dict:
+    """
+    Determines currency config based on ticker suffix.
+    """
+    # Default (US)
+    if "." not in symbol:
+        return { "code": "USD", "symbol": "$", "decimals": 2 }
+
+    suffix = "." + symbol.split(".")[-1].upper()
+    
+    # The Currency Map
+    currency_map = {
+        ".NS": { "code": "INR", "symbol": "₹", "decimals": 2 },  # India
+        ".BO": { "code": "INR", "symbol": "₹", "decimals": 2 },
+        ".KS": { "code": "KRW", "symbol": "₩", "decimals": 0 },  # Korea (No decimals!)
+        ".T":  { "code": "JPY", "symbol": "¥", "decimals": 0 },  # Japan (No decimals!)
+        ".HK": { "code": "HKD", "symbol": "HK$", "decimals": 2 },
+        ".L":  { "code": "GBP", "symbol": "£", "decimals": 2 },  # UK
+        ".DE": { "code": "EUR", "symbol": "€", "decimals": 2 },  # Europe
+        ".TO": { "code": "CAD", "symbol": "C$", "decimals": 2 }, # Canada
+    }
+    
+    return currency_map.get(suffix, { "code": "USD", "symbol": "$", "decimals": 2 })
+
 
 def get_exchange_context(symbol: str, name: str) -> dict:
     """
@@ -46,9 +70,9 @@ def get_exchange_context(symbol: str, name: str) -> dict:
         
         # Special Case: India (Has its own full mode)
         if suffix in [".NS", ".BO"]:
-             return {
+            return {
                 "exchange": home_exchange,
-                "pivot_text": f"You are looking at **{name}**, a market leader in India. It lives on the **{home_exchange}**.",
+                "pivot_text": f"You are looking at **{name}**. It lives on the **{home_exchange}**.",
                 "game_mode": "India_Dual"
             }
 
@@ -149,6 +173,9 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                        "icon": "Scale",
                        "text": "India's market is split between two giants:\n\n• **NSE:** Modern & Digital (Like Nasdaq).\n• **BSE:** Historic & Vast (Like NYSE)."
                    }
+
+                   # Remove Blue Chip slide (Slide 3) as it only applies to US
+                   lesson["concept"]["slides"] = [s for s in lesson["concept"]["slides"] if s["title"] != "Jargon: Blue Chips"]
                    
                    # Overwrite Game Config for India
                    lesson["game_config"]["instruction"] = f"Sort {context.name} into the correct bin (NSE) to start."
