@@ -9,8 +9,31 @@ TIER_1_LESSONS = [
         "title": "The Ticker Symbol",
         "concept": {
             "name": "The Ticker Symbol",
-            "explanation": "You searched for {company_name}, but on the market, it is known by its unique code: {symbol}.\n\nThis is called a Ticker Symbol. Think of it like a website address.\n\n1. **The ID**: The first part ({base_ticker}) is the unique name, like 'Google'.\n2. **The Extension**: The ending ({suffix}) works like '.com' or '.in'. It tells you exactly where the stock lives.\n\nIn this case, the **{suffix}** tells you this stock trades on the **{exchange_name}**.\n\n**The Rule**: You need the full address to ensure you aren't buying the wrong company in the wrong country.",
-            "beginner_explanation": "A unique ID for a stock."
+            "category": "market_mechanics",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Context",
+                    "text": "You searched for **{company_name}**, but on the market, it is known as **{symbol}**.",
+                    "icon": "Tag",
+                    "image": "/images/ticker_tag.png"  # Placeholder
+                },
+                {
+                    "title": "The Analogy",
+                    "text": "Think of a Ticker like an **Airport Code** (e.g., LAX). It is a short, unique ID that ensures you arrive at the exact right destination.",
+                    "icon": "Plane"
+                },
+                {
+                    "title": "The Mechanics",
+                    "text": "Since **{symbol}** has no 'ending' (like .com), it trades on the standard **US Market**.", # Default (US)
+                    "icon": "Globe"
+                },
+                {
+                    "title": "The Rule",
+                    "text": "Names can be confusingly similar. Always trade using the **Ticker Code** to guarantee you buy the right asset.",
+                    "icon": "Shield"
+                }
+            ]
         },
         "breakdown": "This is your first lesson. We'll start with the basics: The Ticker Symbol.",
         "news": [],

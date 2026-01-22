@@ -148,10 +148,10 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         from static_curriculum import TIER_1_LESSONS
         import copy
         
-        print("🔰 Beginner User detected: Serving Static Lesson 2 (Exchange)")
+        print("🔰 Beginner User detected: Serving Static Lesson 1 (Ticker)")
         
-        # Clone Lesson 2
-        lesson = copy.deepcopy(TIER_1_LESSONS[1])
+        # Clone Lesson 1
+        lesson = copy.deepcopy(TIER_1_LESSONS[0])
         
         # Inject Context (Chameleon Mode)
         if lesson["id"] == "lesson_2_exchange":
@@ -262,50 +262,67 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             if dynamic_question:
                 lesson["quiz"].append(dynamic_question)
 
-        # Inject Context (Chameleon Mode) - only if lesson has a target to inject
-        elif "target" in lesson["game_config"] and "{symbol}" in lesson["game_config"]["target"]:
-            # Parse components
+        # Inject Context (Chameleon Mode) - Lesson 1 Specific
+        elif lesson["id"] == "lesson_1_ticker":
             symbol = context.symbol
             
-            if "." in symbol:
-                # Scenario B: International Stock (Suffix)
-                suffix = "." + symbol.split(".")[1]
+            # Safe Carousel Access
+            concept = lesson.get("concept", {})
+            if concept.get("type") == "carousel" and "slides" in concept:
+                slides = concept["slides"]
                 
-                # Simple Manual Map for Demo
-                suffix_map = {
-                    ".NS": "National Stock Exchange of India",
-                    ".BO": "Bombay Stock Exchange",
-                    ".L": "London Stock Exchange",
-                    ".TO": "Toronto Stock Exchange",
-                    ".KS": "Korean Stock Exchange",
-                    ".DE": "Deutsche Börse Xetra"
-                }
-                exchange_name = suffix_map.get(suffix, "International Exchange")
-                
-                explanation = (
-                    f"You searched for {context.name}, but on the market, it is known by its unique code: {context.symbol}.\n\n"
-                    "This is called a Ticker Symbol. Think of it like a website address. "
-                    f"The ending ({suffix}) acts like a country code (like '.kr' or '.in'). "
-                    f"In this case, the {suffix} tells you this stock lives on the {exchange_name}. "
-                    "You need the full address to ensure you don't buy the wrong stock in the wrong country."
-                )
-            else:
-                # Scenario A: Standard US Stock (No Suffix)
-                explanation = (
-                    f"You searched for {context.name}, but on the market, it is known by its unique code: {context.symbol}.\n\n"
-                    "This is called a Ticker Symbol. Think of it like a website address. "
-                    "Since this ticker has no special ending (like '.com' or '.in'), it means it trades on the standard US Market (NYSE/Nasdaq). "
-                    "Always check the code to ensure you are buying the right company."
-                )
+                # Slide 1: Context (Text Injection)
+                if len(slides) > 0:
+                    try:
+                        slides[0]["text"] = slides[0]["text"].format(
+                            company_name=context.name,
+                            symbol=symbol
+                        )
+                    except Exception as e:
+                        print(f"Error injecting Slide 1 context: {e}")
 
-            lesson["concept"]["explanation"] = explanation
+                # Slide 3: Mechanics (Dynamic Logic)
+                if len(slides) > 2:
+                    if "." in symbol:
+                        # Scenario B: International Stock (Suffix)
+                        suffix = "." + symbol.split(".")[-1].upper()
+                        
+                        # Simple Manual Map for Demo
+                        suffix_map = {
+                            ".NS": "National Stock Exchange of India",
+                            ".BO": "Bombay Stock Exchange",
+                            ".L": "London Stock Exchange",
+                            ".TO": "Toronto Stock Exchange",
+                            ".KS": "Korea",
+                            ".DE": "Germany",
+                            ".T": "Japan"
+                        }
+                        location = suffix_map.get(suffix, "International Markets")
+                        
+                        mechanics_text = f"The ending **{suffix}** acts like a country code (like '.kr' or '.in'), telling you this stock lives in **{location}**."
+                    else:
+                        # Scenario A: Standard US Stock (No Suffix)
+                        mechanics_text = f"Since **{symbol}** has no 'ending' (like .com), it trades on the standard **US Market**."
+
+                    slides[2]["text"] = mechanics_text
             
-            lesson["game_config"]["target"] = lesson["game_config"]["target"].format(
-                symbol=context.symbol
-            )
-            lesson["game_config"]["instruction"] = lesson["game_config"]["instruction"].format(
-                company_name=context.name
-            )
+            # Update Game Config Target
+            if "game_config" in lesson and "target" in lesson["game_config"]:
+                try:
+                    lesson["game_config"]["target"] = lesson["game_config"]["target"].format(
+                        symbol=context.symbol
+                    )
+                    lesson["game_config"]["instruction"] = lesson["game_config"]["instruction"].format(
+                        company_name=context.name
+                    )
+                except Exception as e:
+                    print(f"Error injecting game config: {e}")
+
+                # Construct fallback explanation from slides for AI consistency
+                explanation = " ".join([s.get("text", "") for s in slides])
+                lesson["concept"]["explanation"] = explanation
+            
+            # Note: Game Config updated safely above (lines 310-319)
             # Generate fake tickers
             sanitized_name = context.name.replace(" ", "").upper()
             fake_1 = sanitized_name[:3] if len(sanitized_name) >= 3 else "ABC"
