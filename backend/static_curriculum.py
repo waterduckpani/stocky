@@ -159,48 +159,123 @@ TIER_1_LESSONS = [
         ]
     },
     {
-        "id": "lesson_3_market_cap",
-        "title": "Market Cap",
+        "id": "lesson_3_supply_demand",
+        "title": "Supply & Demand",
         "concept": {
-            "name": "Market Capitalization",
-            "explanation": "Market Cap is just the 'price tag' for the entire company. \n\nThink of a company like a pizza. The share price is the cost of just one slice. But to know how big the pizza is, you need to multiply the price of a slice by the number of slices.\n\n**Formula:** Share Price × Total Number of Shares = Market Cap.\n\nInvestors use this to sort companies by size: Small Cap (Risky), Mid Cap (Growth), and Large Cap (Stable).",
-            "beginner_explanation": "The total value of the company."
+            "name": "Supply & Demand",
+            "category": "market_mechanics",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Constant Battle",
+                    "text": "Stock prices are not random. They represent a continuous **Tug-of-War** between Buyers (Bulls) and Sellers (Bears). Every tick up or down is a record of who won the battle in that specific moment.",
+                    "icon": "Swords"
+                },
+                {
+                    "title": "The Force of Demand",
+                    "text": "**Demand** represents the collective buying pressure. When investors believe a company is valuable, they compete to own shares. This competition creates scarcity, forcing buyers to bid higher prices to secure a stake.",
+                    "icon": "TrendingUp"
+                },
+                {
+                    "title": "The Force of Supply",
+                    "text": "**Supply** represents the selling pressure. When fear or profit-taking dominates, investors flood the market with shares. To find buyers for all this stock, sellers must lower their asking price, causing the chart to drop.",
+                    "icon": "TrendingDown"
+                }
+            ]
         },
-        "breakdown": "You know the Ticker and the Exchange. Now let's ask: How big is the company?",
+        "breakdown": "Prices don't move by magic. They move because of two simple forces: Supply and Demand.",
         "news": [],
         "game_config": {
-            "type": "cap_clash",
-            "instruction": "Which company is bigger? (Higher Market Cap)"
+            "type": "supply_demand_sandbox",
+            "target": "Create a Demand Spike!",
+            "instruction": "Slide RIGHT to create Demand (Hype). Slide LEFT to create Supply (Panic)."
         },
         "quiz": [
             {
-                "question": "What does Market Cap represent?",
-                "options": [
-                    "The price of one share",
-                    "The location of the headquarters",
-                    "The total value of the entire company",
-                    "The CEO's bonus"
-                ],
-                "correctIndex": 2
+                "question": "What happens when 'Demand' is higher than 'Supply'?",
+                "options": ["The price goes UP", "The price goes DOWN", "Nothing happens", "The market closes"],
+                "correctIndex": 0
             },
             {
-                "question": "If a pizza slice is $5 and there are 8 slices, what is the 'Market Cap'?",
-                "options": [
-                    "$5",
-                    "$13",
-                    "$40",
-                    "$8"
-                ],
-                "correctIndex": 2
+                "question": "If investors are scared and want to sell, what does this create?",
+                "options": ["High Demand", "High Supply", "Stable Prices", "New Shares"],
+                "correctIndex": 1
             },
             {
-                "question": "Which category is typically considered most stable?",
-                "options": [
-                    "Small Cap",
-                    "Large Cap",
-                    "Bottle Cap",
-                    "No Cap"
-                ],
+                "question": "A Green Bar on a chart means:",
+                "options": ["Sellers won that minute", "Buyers won that minute", "The market is closed", "It's a holiday"],
+                "correctIndex": 1
+            }
+        ]
+    },
+    {
+        "id": "lesson_4_sentiment",
+        "title": "Bull vs. Bear",
+        "concept": {
+            "name": "Market Current",
+            "category": "market_psychology",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Bull Market 🐂",
+                    "text": "A Bull Market is a period where stock prices are rising or expected to rise. It is driven by **optimism** and high investor confidence. In this environment, the 'path of least resistance' is **upward**.",
+                    "icon": "TrendingUp"
+                },
+                {
+                    "title": "The Bear Market 🐻",
+                    "text": "A Bear Market is defined by a sustained price drop, usually **20% or more**. Fear replaces confidence, and investors sell to protect cash, which often causes prices to fall even further.",
+                    "icon": "TrendingDown"
+                },
+                {
+                    "title": "Identifying the Trend 📈",
+                    "text": "Don't get distracted by daily 'wiggles'.\n\n**The Noise:** Single days that don't change the direction.\n**The Trend:** The clear path (Up/Down) over months.\n\nLook for **Higher Highs** or **Lower Lows** to see who is truly in control.",
+                    "icon": "Activity"
+                }
+            ]
+        },
+        "breakdown": "Don't swim against the tide. Let's learn to spot the difference.",
+        "news": [],
+        "game_config": {
+            "type": "trend_spotter",
+            "instruction": "Look at the Chart + News. Is this a Bull (Buy) or Bear (Sell) market?",
+            "scenarios": [
+                {
+                    "id": 1,
+                    "text": "Unemployment is at record lows. People are spending money freely.",
+                    "chart_cond": "uptrend",
+                    "correct": "bull",
+                    "explanation": "Strong economy = Optimism! 🐂"
+                },
+                {
+                    "id": 2,
+                    "text": "A major bank just collapsed. Panic is spreading across the news.",
+                    "chart_cond": "downtrend",
+                    "correct": "bear",
+                    "explanation": "Fear causes selling. Cash is king! 🐻"
+                },
+                {
+                    "id": 3,
+                    "text": "Prices dropped yesterday, but buyers are rushing in to get 'cheap' shares.",
+                    "chart_cond": "recovery",
+                    "correct": "bull",
+                    "explanation": "Buying the dip is a classic Bull move! 🚀"
+                }
+            ]
+        },
+        "quiz": [
+            {
+                "question": "In a Bull Market, what is the general specific mood?",
+                "options": ["Optimism and Greed", "Fear and Panic", "Boredom", "Hunger"],
+                "correctIndex": 0
+            },
+            {
+                "question": "If the 'Tide' is going out (Bear Market), what usually happens?",
+                "options": ["Prices hit new highs", "Prices generally fall", "Everyone buys more", "The market closes"],
+                "correctIndex": 1
+            },
+            {
+                "question": "Why is it called a 'Bull' market?",
+                "options": ["Bulls are slow", "Bulls attack by thrusting their horns UP", "Bulls assume the fetal position", "Bulls are red"],
                 "correctIndex": 1
             }
         ]

@@ -10,6 +10,9 @@ import { QuizSection } from "./QuizSection"
 import { MarketSort } from "../games/MarketSort"
 import { TickerHuntGame } from "../games/TickerHunt"
 import { CapClashGame } from "../games/CapClash"
+import SupplyDemandSandbox from "../games/SupplyDemandSandbox"
+import { TrendSpotter } from "../games/TrendSpotter"
+
 import { cn } from "@/lib/utils"
 
 interface LearningFlowProps {
@@ -62,12 +65,27 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
             case "market_sort":
                 GameComponent = <MarketSort onComplete={handleNext} config={gameConfig.market_sort_config} />
                 break
+            case "supply_demand_sandbox":
+                GameComponent = <SupplyDemandSandbox
+                    onComplete={handleNext}
+                    symbol={symbol}
+                    companyName={stockData.shortName || symbol}
+                    initialPrice={stockData.price || 150}
+                />
+                break
             case "ticker_hunt":
                 GameComponent = <TickerHuntGame
                     target={symbol}
                     companyName={stockData.shortName || symbol}
                     instruction={gameConfig.instruction}
                     onComplete={handleNext}
+                />
+                break
+            case "trend_spotter":
+                GameComponent = <TrendSpotter
+                    onComplete={handleNext}
+                    config={gameConfig}
+                    instruction={gameConfig.instruction}
                 />
                 break
             case "cap_clash":
@@ -87,9 +105,30 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
         }
     }
 
+    // Generate Dynamic 4th Question based on Real-time Data
+    const baseQuestions = llmContent?.quiz || []
+    let finalQuestions = [...baseQuestions]
+
+    if (stockData && stockData.changePercent !== undefined) {
+        const isPositive = stockData.change >= 0
+        const percent = Math.abs(stockData.changePercent).toFixed(2)
+        const direction = isPositive ? "up" : "down"
+
+        finalQuestions.push({
+            question: `Look at ${symbol} today: it is trading ${direction} by ${percent}%. Using the "Ocean" analogy from Lesson 4, what is the Tide doing?`,
+            options: [
+                "The Tide is coming IN (Bullish Optimism) 🌊",
+                "The Tide is going OUT (Bearish Fear) 📉",
+                "The Ocean is completely dry",
+                "There is no tide today"
+            ],
+            correctIndex: isPositive ? 0 : 1
+        })
+    }
+
     // Add Quiz last
     steps.push(
-        { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} questions={llmContent?.quiz} /> }
+        { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} questions={finalQuestions} /> }
     )
 
     // Prevent index out of bounds

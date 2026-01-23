@@ -148,10 +148,10 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         from static_curriculum import TIER_1_LESSONS
         import copy
         
-        print("🔰 Beginner User detected: Serving Static Lesson 1 (Ticker)")
+        print("🔰 Beginner User detected: Serving Static Lesson 4 (Bull vs. Bear)")
         
-        # Clone Lesson 1
-        lesson = copy.deepcopy(TIER_1_LESSONS[0])
+        # Clone Lesson 4
+        lesson = copy.deepcopy(TIER_1_LESSONS[3])
         
         # Inject Context (Chameleon Mode)
         if lesson["id"] == "lesson_2_exchange":
