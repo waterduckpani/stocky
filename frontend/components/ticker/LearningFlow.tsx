@@ -12,6 +12,7 @@ import { TickerHuntGame } from "../games/TickerHunt"
 import { CapClashGame } from "../games/CapClash"
 import SupplyDemandSandbox from "../games/SupplyDemandSandbox"
 import { TrendSpotter } from "../games/TrendSpotter"
+import TheScale from "../games/TheScale"
 
 import { cn } from "@/lib/utils"
 
@@ -88,6 +89,9 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                     instruction={gameConfig.instruction}
                 />
                 break
+            case "market_cap_scale":
+                GameComponent = <TheScale onComplete={handleNext} />
+                break
             case "cap_clash":
                 GameComponent = <CapClashGame
                     instruction={gameConfig.instruction}
@@ -109,7 +113,8 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
     const baseQuestions = llmContent?.quiz || []
     let finalQuestions = [...baseQuestions]
 
-    if (stockData && stockData.changePercent !== undefined) {
+    // LESSON 4 SPECIFIC: Sentiment/Tide
+    if (llmContent?.id === 'lesson_4_sentiment' && stockData && stockData.changePercent !== undefined) {
         const isPositive = stockData.change >= 0
         const percent = Math.abs(stockData.changePercent).toFixed(2)
         const direction = isPositive ? "up" : "down"
@@ -123,6 +128,28 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                 "There is no tide today"
             ],
             correctIndex: isPositive ? 0 : 1
+        })
+    }
+
+    // LESSON 5 SPECIFIC: Market Cap
+    if (llmContent?.id === 'lesson_5_market_cap' && stockData) {
+        // Estimate cap or use real if available. 
+        // If not available, we use a generic question about price.
+        // Assuming stockData has a price.
+        const price = stockData.price || 100
+        const fakeShares = 1000000 // 1 Million
+        const calcCap = price * fakeShares
+
+        // We'll create a question about the math
+        finalQuestions.push({
+            question: `If ${symbol} has 1 Million outstanding shares and the price is $${price.toFixed(2)}, what is its Market Cap?`,
+            options: [
+                `$${(price * 1000000).toLocaleString()}`, // Correct
+                `$${(price * 1000).toLocaleString()}`,
+                `$${(price * 2).toLocaleString()}`,
+                "It's impossible to know"
+            ],
+            correctIndex: 0
         })
     }
 

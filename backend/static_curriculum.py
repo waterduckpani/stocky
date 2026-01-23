@@ -279,5 +279,69 @@ TIER_1_LESSONS = [
                 "correctIndex": 1
             }
         ]
+    },
+    {
+        "id": "lesson_5_market_cap",
+        "title": "Market Cap",
+        "concept": {
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Price Tag 🏷️",
+                    "text": "**Market Capitalization (Market Cap)** is just the total 'Price Tag' of a company.\n\nIt's simple math: \n**Stock Price** × **Total Shares** = **Market Cap**.",
+                    "icon": "Tag"
+                },
+                {
+                    "title": "Speedboats vs. Ocean Liners 🚢",
+                    "text": "**Small Cap** stocks are like speedboats: they can turn fast (high growth) but get rocked by waves (high risk).\n\n**Mega Cap** stocks (like Apple) are like Ocean Liners: very stable, but hard to turn quickly.",
+                    "icon": "Ship"
+                },
+                {
+                    "title": "Why Size Matters ⚖️",
+                    "text": "It takes way more money to move a Mega Cap stock by 1% than it does a Small Cap.\n\nBig stocks are **harder to move** (less volatile). Small stocks are **easier to move** (more volatile).",
+                    "icon": "Scale"
+                }
+            ]
+        },
+        "breakdown": "Market Cap tells you the true size of a company usually derived from share price * total shares.",
+        "news": [
+            {
+                "headline": "Small Cap 'RocketCorp' Soars 50% on Minor News",
+                "sentiment": "Positive",
+                "summary": "Low float and small size allow for massive volatility."
+            },
+            {
+                "headline": "Mega Cap 'GiantCo' Moves 0.5% After Billion Dollar Deal",
+                "sentiment": "Neutral",
+                "summary": "It takes a lot of capital to move a giant ship."
+            }
+        ],
+        "game_config": {
+            "type": "market_cap_scale",
+            "instruction": "Add money to the scale. See how much harder it is to move a Giant."
+        },
+        "quiz": [
+            {
+                "id": "q1",
+                "question": "How do you calculate Market Cap?",
+                "options": ["Stock Price + Debt", "Stock Price × Total Shares", "Yearly Revenue × 2", "Total Profit - Costs"],
+                "correctIndex": 1,
+                "explanation": "Market Cap is simply the current Price multiplied by the number of Shares existing."
+            },
+            {
+                "id": "q2",
+                "question": "Which stock is generally MORE volatile?",
+                "options": ["Mega Cap (Ocean Liner)", "Small Cap (Speedboat)", "They are the same", "None of the above"],
+                "correctIndex": 1,
+                "explanation": "Small Caps are like speedboats—easier to push around, meaning higher volatility."
+            },
+            {
+                "id": "q3",
+                "question": "Why is it hard to double the price of Apple?",
+                "options": ["Apple has bad phones", "Apple is too small", "It requires trillions of dollars of buying power", "Apple is a fruit"],
+                "correctIndex": 2,
+                "explanation": "To double a $3 Trillion company, you need to add another $3 Trillion in value. That is a lot of money!"
+            }
+        ]
     }
 ]
