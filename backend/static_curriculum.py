@@ -343,5 +343,111 @@ TIER_1_LESSONS = [
                 "explanation": "To double a $3 Trillion company, you need to add another $3 Trillion in value. That is a lot of money!"
             }
         ]
+    },
+    {
+        "id": "lesson_6_ipo",
+        "title": "The IPO",
+        "concept": {
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Birth of a Stock 🐣",
+                    "text": "**IPO (Initial Public Offering)** is the first day a private company sells shares to the public.\n\nIt transforms from a company owned by a few, to one that **anyone can own**.",
+                    "icon": "Egg"
+                },
+                {
+                    "title": "The Primary Market 🏦",
+                    "text": "Before you can buy it on the app, big banks and institutions buy it first (The Primary Market).\n\nBy the time it reaches you, the price may have already skyrocketed.",
+                    "icon": "Building2"
+                },
+                {
+                    "title": "Launch Day Volatility 🎢",
+                    "text": "IPOs are famous for **Wild Volatility**.\n\nWithout history to guide the price, it is driven purely by hype. 'Pop and Drop' patterns are common.",
+                    "icon": "TrendingUp"
+                }
+            ]
+        },
+        "breakdown": "An IPO is when a company invites the world to be its partner.",
+        "news": [],
+        "game_config": {
+            "type": "ipo_launch_simulator",
+            "instruction": "Navigate the chaos of Launch Day. Buy and Sell to survive."
+        },
+        "quiz": [
+            {
+                "id": "q1",
+                "question": "What does IPO stand for?",
+                "options": ["International Profit Organization", "Initial Public Offering", "Immediate Price Option", "Internet Protocol Owner"],
+                "correctIndex": 1,
+                "explanation": "It stands for Initial Public Offering - the first time shares are offered to the general public."
+            },
+            {
+                "id": "q2",
+                "question": "Who usually buys the stock BEFORE it hits the public market?",
+                "options": ["You and me", "Big Banks and Institutions", "Government officials", "Nobody"],
+                "correctIndex": 1,
+                "explanation": "Institutional investors get 'allocations' at the IPO price. Retail investors (us) usually buy when it hits the exchange."
+            },
+            {
+                "id": "q3",
+                "question": "Why are IPOs considered risky?",
+                "options": ["They are illegal", "They have no trading history and high volatility", "They are too boring", "They always go up"],
+                "correctIndex": 1,
+                "explanation": "With no price history, IPOs are driven by speculation, leading to massive swings (Volatility)."
+            }
+        ]
+    },
+    {
+        "id": "lesson_13_pe_ratio",
+        "title": "P/E Ratio",
+        "concept": {
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Price Tag for Earnings 🏷️",
+                    "text": "**Price-to-Earnings (P/E)** tells you if a stock is 'Cheap' or 'Expensive'.\n\nIt asks: **How much are you paying for $1 of the company's profit?**",
+                    "icon": "Tag"
+                },
+                {
+                    "title": "The Money Machine 🖨️",
+                    "text": "Imagine a machine that prints **$1 every year**.\n\n• If you pay **$10** for it, the P/E is **10** (Cheap/Value).\n• If you pay **$50** for it, the P/E is **50** (Expensive/Growth).",
+                    "icon": "Banknote"
+                },
+                {
+                    "title": "Growth vs. Value ⚖️",
+                    "text": "**High P/E (>30):** Investors pay extra because they expect the machine to print MORE money in the future (e.g., Tech/AI).\n\n**Low P/E (<15):** The machine is steady but boring (e.g., Banks/Energy).",
+                    "icon": "Scale"
+                }
+            ]
+        },
+        "breakdown": "Price gives you the cost. P/E gives you the value.",
+        "news": [],
+        "game_config": {
+            "type": "valuation_station",
+            "instruction": "Which Money Machine is this stock behaving like?"
+        },
+        "quiz": [
+            {
+                "id": "q1",
+                "question": "What does the P/E Ratio tell you?",
+                "options": ["The total debt of the company", "How much you pay for $1 of earnings", "The CEO's salary", "The stock price divided by 10"],
+                "correctIndex": 1,
+                "explanation": "P/E stands for Price-to-Earnings. It measures the price you pay for each dollar of profit."
+            },
+            {
+                "id": "q2",
+                "question": "If a stock has a P/E of 100, what does it usually mean?",
+                "options": ["It is going bankrupt", "It is very cheap", "Investors expect huge future growth", "It is a bank"],
+                "correctIndex": 2,
+                "explanation": "A high P/E means investors are willing to pay a premium now because they expect earnings to explode later."
+            },
+            {
+                "id": "q3",
+                "question": "Which company typically has a LOWER P/E ratio?",
+                "options": ["A brand new AI startup", "A stable Utility company", "A flying car company", "A biotech researcher"],
+                "correctIndex": 1,
+                "explanation": "Stable, slow-growing companies (Value Stocks) usually trade at lower P/E ratios than high-growth tech stocks."
+            }
+        ]
     }
 ]

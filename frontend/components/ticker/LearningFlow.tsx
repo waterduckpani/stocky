@@ -13,6 +13,8 @@ import { CapClashGame } from "../games/CapClash"
 import SupplyDemandSandbox from "../games/SupplyDemandSandbox"
 import { TrendSpotter } from "../games/TrendSpotter"
 import TheScale from "../games/TheScale"
+import ValuationStation from "../games/ValuationStation"
+import IPOLaunchSimulator from "../games/IPOLaunchSimulator"
 
 import { cn } from "@/lib/utils"
 
@@ -90,13 +92,19 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                 />
                 break
             case "market_cap_scale":
-                GameComponent = <TheScale onComplete={handleNext} />
+                GameComponent = <TheScale onComplete={handleNext} gameConfig={gameConfig} />
                 break
             case "cap_clash":
                 GameComponent = <CapClashGame
                     instruction={gameConfig.instruction}
                     onComplete={handleNext}
                 />
+                break
+            case "valuation_station":
+                GameComponent = <ValuationStation onComplete={handleNext} gameConfig={gameConfig} />
+                break
+            case "ipo_launch_simulator":
+                GameComponent = <IPOLaunchSimulator onComplete={handleNext} gameConfig={gameConfig} symbol={symbol} stockData={stockData} />
                 break
         }
 

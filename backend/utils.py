@@ -15,3 +15,19 @@ def validate_and_fix_text(text: Optional[str]) -> Optional[str]:
         return text
         
     return None
+
+def format_large_number(num):
+    """
+    Format large numbers into readable K, M, B, T strings.
+    """
+    if not num:
+        return "0"
+        
+    if num >= 1_000_000_000_000:
+        return f"{num / 1_000_000_000_000:.2f}T"
+    elif num >= 1_000_000_000:
+        return f"{num / 1_000_000_000:.2f}B"
+    elif num >= 1_000_000:
+        return f"{num / 1_000_000:.2f}M"
+    else:
+        return str(num)

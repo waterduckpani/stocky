@@ -6,6 +6,7 @@ import math
 import feedparser
 from urllib.parse import quote
 import httpx
+from utils import validate_and_fix_text, format_large_number
 
 app = FastAPI()
 
@@ -17,16 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-def format_large_number(num):
-    if num >= 1_000_000_000_000:
-        return f"{num / 1_000_000_000_000:.2f}T"
-    elif num >= 1_000_000_000:
-        return f"{num / 1_000_000_000:.2f}B"
-    elif num >= 1_000_000:
-        return f"{num / 1_000_000:.2f}M"
-    else:
-        return str(num)
 
 def fetch_google_news(query: str, limit: int = 3):
     """Fetch news from Google News RSS feed."""
@@ -492,7 +483,14 @@ async def generate_content(symbol: str):
         except:
             pass
         
-        market_cap = info.get('marketCap') or 0
+        # Try to get market cap from info, then fast_info
+        market_cap = info.get('marketCap')
+        if not market_cap:
+            try:
+                market_cap = ticker.fast_info['market_cap']
+            except:
+                market_cap = 0
+        
         market_cap_str = format_large_number(market_cap) if market_cap else 'N/A'
         
         # === TECHNICAL ANALYSIS ===
@@ -589,6 +587,7 @@ async def generate_content(symbol: str):
         is_crypto = 'BTC' in symbol or 'ETH' in symbol or 'CRYPTO' in symbol.upper()
         
         # Robust Fallback with Technicals
+        market_cap = 0
         stock_data = {
             "is_crypto": is_crypto,
             "technicals": {

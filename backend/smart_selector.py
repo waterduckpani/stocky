@@ -149,9 +149,12 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         import copy
         
         # FOR TESTING: Force Lesson 5 (Market Cap)
-        # return TIER_1_LESSONS[0]  # Lesson 1
-        lesson_5 = next((l for l in TIER_1_LESSONS if l["id"] == "lesson_5_market_cap"), TIER_1_LESSONS[0])
-        return lesson_5, {"type": "static", "reason": "Forced Lesson 5"}
+        # FOR TESTING: Force Lesson 6 (IPO)
+        lesson_ref = next((l for l in TIER_1_LESSONS if l["id"] == "lesson_6_ipo"), TIER_1_LESSONS[0])
+        lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
+        print(f"DEBUG: Selected Lesson {lesson['id']}")
+        
+        # return lesson, {"type": "static", "reason": "Forced Lesson 6"} # REMOVED EARLY RETURN
         
         # Inject Context (Chameleon Mode)
         if lesson["id"] == "lesson_2_exchange":
@@ -263,7 +266,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                 lesson["quiz"].append(dynamic_question)
 
         # Inject Context (Chameleon Mode) - Lesson 1 Specific
-        elif lesson["id"] == "lesson_1_ticker":
+        if lesson["id"] == "lesson_1_ticker":
             symbol = context.symbol
             
             # Safe Carousel Access
@@ -318,9 +321,9 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                 except Exception as e:
                     print(f"Error injecting game config: {e}")
 
-                # Construct fallback explanation from slides for AI consistency
-                explanation = " ".join([s.get("text", "") for s in slides])
-                lesson["concept"]["explanation"] = explanation
+            # Construct fallback explanation from slides for AI consistency
+            explanation = " ".join([s.get("text", "") for s in slides])
+            lesson["concept"]["explanation"] = explanation
             
             # Note: Game Config updated safely above (lines 310-319)
             # Generate fake tickers
@@ -341,6 +344,136 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                             fake_3=fake_3
                         ) for opt in question["options"]
                     ]
+
+        # === LESSON 5: MARKET CAP (Dynamic Content) ===
+        elif lesson["id"] == "lesson_5_market_cap":
+            from utils import format_large_number # Helper import
+            
+            market_cap = context.market_cap or 0
+            
+            # 1. Determine Category
+            category = "Small Cap"
+            category_icon = "Zap" # Speedboat
+            if market_cap >= 200_000_000_000: # 200B
+                category = "Mega Cap"
+                category_icon = "Ship" # Ocean Liner
+            elif market_cap >= 10_000_000_000: # 10B
+                category = "Large Cap"
+                category_icon = "Ship"
+            elif market_cap >= 2_000_000_000: # 2B
+                category = "Mid Cap"
+                category_icon = "Zap" # Speedboat (ish)
+            
+            # 2. Dynamic Slide 2 (The Analogy)
+            slides = lesson["concept"]["slides"]
+            if len(slides) > 1:
+                if category in ["Mega Cap", "Large Cap"]:
+                    slides[1]["text"] = f"You searched for **{context.symbol}**, an **Ocean Liner**. It anchors the market with its massive size."
+                    slides[1]["icon"] = "Anchor"
+                else: 
+                    slides[1]["text"] = f"You searched for **{context.symbol}**, a **Speedboat**. It is fast and nimble but easily rocked by waves."
+                    slides[1]["icon"] = "Zap"
+
+            # 3. Dynamic Game Config
+            # Pass real data so Frontend can calculate physics
+            lesson["game_config"]["market_cap"] = market_cap
+            lesson["game_config"]["category"] = category 
+            lesson["game_config"]["symbol"] = context.symbol
+            
+            # 4. Dynamic Quiz Question (Challenge Injection)
+            formatted_cap = format_large_number(market_cap)
+            
+            # Correct answer logic: 
+            # If Mega/Large Cap (Harder to move) -> "Harder" (Index 0)
+            # If Small/Mid Cap (Easier to move) -> "Easier" (Index 1) - actually let's standardise the options
+            
+            is_huge = category in ["Mega Cap", "Large Cap"]
+            correct_idx = 0 if is_huge else 1
+            
+            challenge_question = {
+                "id": "q_dynamic_cap",
+                "question": f"Given {context.symbol} has a Market Cap of {formatted_cap}, is it harder or easier to double its price compared to a Small Cap?",
+                "options": [
+                    "Harder (Needs way more money)", 
+                    "Easier (Needs less money)",
+                    "Exactly the same",
+                    "Impossible to say"
+                ],
+                "correctIndex": correct_idx,
+                "explanation": "The bigger the cap, the more money is required to move the price. It's physics!"
+            }
+            
+            # Replace the generic Q3 or append
+            # Currently static_curriculum has 3 qs. Let's replace the last one (Apple one) if it exists, or just append.
+            # Actually, user asked to INJECT it. Let's make it the 3rd question.
+            if len(lesson["quiz"]) >= 3:
+                lesson["quiz"][2] = challenge_question
+            else:
+                lesson["quiz"].append(challenge_question)
+
+        # === LESSON 13: P/E RATIO (Dynamic Content) ===
+        elif lesson["id"] == "lesson_13_pe_ratio":
+            pe_ratio = context.pe_ratio
+            if pe_ratio is None:
+                pe_ratio = 20.0 # Default fallback
+            
+            # Determine Currency
+            curr_config = get_currency_config(context.symbol)
+            curr = curr_config["symbol"]
+
+            # 1. Determine Category (Value vs Growth)
+            valuation_type = "Average"
+            machine_cost = 20
+            
+            if pe_ratio > 30:
+                valuation_type = "Growth (Expensive)"
+                machine_cost = int(pe_ratio)
+                desc = f"Investors are paying **{curr}{int(pe_ratio)}** for every {curr}1 of earnings because they expect massive growth."
+                icon_override = "Rocket"
+            elif pe_ratio < 15 and pe_ratio > 0:
+                valuation_type = "Value (Cheap)"
+                machine_cost = int(pe_ratio)
+                desc = f"Investors are only paying **{curr}{int(pe_ratio)}** for every {curr}1 of earnings. It's a bargain (or a trap?)"
+                icon_override = "Tag"
+            else:
+                valuation_type = "Fair Value"
+                machine_cost = int(pe_ratio) if pe_ratio > 0 else 20
+                desc = f"Investors are paying a standard **{curr}{int(pe_ratio)}** for every {curr}1 of earnings."
+                icon_override = "Scale"
+            
+            # 2. Inject Context into Slide 1
+            slides = lesson["concept"]["slides"]
+            if len(slides) > 0:
+                 slides[0]["text"] = f"**{context.symbol}** has a P/E Ratio of **{pe_ratio:.1f}**.\n\nThis means you are paying **{curr}{pe_ratio:.2f}** for every {curr}1 of profit the company makes."
+
+            # 3. Inject Context into Slide 2 (The Analogy)
+            if len(slides) > 1:
+                slides[1]["text"] = f"Think of **{context.symbol}** as a Money Machine.\n\nIt prints {curr}1/year. The market price for this machine is **{curr}{pe_ratio:.0f}**.\n\n{desc}"
+                slides[1]["icon"] = icon_override
+            
+            # 4. Update Game Config
+            lesson["game_config"]["pe_ratio"] = pe_ratio
+            lesson["game_config"]["valuation_type"] = valuation_type
+            lesson["game_config"]["symbol"] = context.symbol
+            
+            # 5. Dynamic Quiz
+            dynamic_q = {
+                 "id": "q_dynamic_pe",
+                 "question": f"Based on its P/E of {pe_ratio:.1f}, how would you classify {context.symbol}?",
+                 "options": [
+                     "High Growth / Expensive Premium",
+                     "Deep Value / Check for Traps", 
+                     "Fairly Valued", 
+                     "It has no earnings"
+                 ],
+                 "correctIndex": 0 if pe_ratio > 30 else (1 if pe_ratio < 15 else 2),
+                 "explanation": f"A P/E of {pe_ratio:.1f} is considered {valuation_type.split(' ')[0]}."
+            }
+             # Append or replace
+            if len(lesson["quiz"]) >= 3:
+                lesson["quiz"][2] = dynamic_q
+            else:
+                 lesson["quiz"].append(dynamic_q)
             
         return lesson, {"type": "static", "reason": "Beginner preset"}
     
