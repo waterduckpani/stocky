@@ -15,6 +15,9 @@ import { TrendSpotter } from "../games/TrendSpotter"
 import TheScale from "../games/TheScale"
 import ValuationStation from "../games/ValuationStation"
 import IPOLaunchSimulator from "../games/IPOLaunchSimulator"
+import { SectorSorter } from "../games/SectorSorter"
+import { VolumeVault } from "../games/VolumeVault"
+import { WiggleTamer } from "../games/WiggleTamer"
 
 import { cn } from "@/lib/utils"
 
@@ -105,6 +108,15 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                 break
             case "ipo_launch_simulator":
                 GameComponent = <IPOLaunchSimulator onComplete={handleNext} gameConfig={gameConfig} symbol={symbol} stockData={stockData} />
+                break
+            case "sector_sorter":
+                GameComponent = <SectorSorter onComplete={handleNext} config={gameConfig} />
+                break
+            case "volume_vault":
+                GameComponent = <VolumeVault onComplete={handleNext} config={gameConfig} />
+                break
+            case "wiggle_tamer":
+                GameComponent = <WiggleTamer onComplete={handleNext} config={gameConfig} />
                 break
         }
 
@@ -201,8 +213,8 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                             className={cn(
                                 "flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all",
                                 safeCurrentStep === 0
-                                    ? "text-muted-foreground opacity-50 cursor-not-allowed"
-                                    : "bg-muted hover:bg-muted/80 text-foreground"
+                                    ? "text-muted-foreground opacity-50 cursor-not-allowed shadow-none"
+                                    : "bg-muted hover:bg-muted/80 text-foreground shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:translate-y-0.5 hover:shadow-none"
                             )}
                         >
                             <ArrowLeft className="w-5 h-5" />

@@ -11,13 +11,13 @@
   --card-foreground: #1E293B;
   --popover: #FFFFFF;
   --popover-foreground: #1E293B;
-  --primary: #8B5CF6;
+  --primary: #3BB273;
   --primary-foreground: #FFFFFF;
   --secondary: #F472B6;
   --secondary-foreground: #FFFFFF;
   --muted: #F1F5F9;
   --muted-foreground: #64748B;
-  --accent: #8B5CF6;
+  --accent: #3BB273;
   --accent-foreground: #FFFFFF;
   --tertiary: #FBBF24;
   --tertiary-foreground: #1E293B;
@@ -27,8 +27,8 @@
   --destructive-foreground: #FFFFFF;
   --border: #E2E8F0;
   --input: #FFFFFF;
-  --ring: #8B5CF6;
-  --chart-1: #8B5CF6;
+  --ring: #3BB273;
+  --chart-1: #3BB273;
   --chart-2: #F472B6;
   --chart-3: #FBBF24;
   --chart-4: #34D399;
@@ -36,12 +36,12 @@
   --radius: 1rem;
   --sidebar: #FFFFFF;
   --sidebar-foreground: #1E293B;
-  --sidebar-primary: #8B5CF6;
+  --sidebar-primary: #3BB273;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #F1F5F9;
   --sidebar-accent-foreground: #1E293B;
   --sidebar-border: #E2E8F0;
-  --sidebar-ring: #8B5CF6;
+  --sidebar-ring: #3BB273;
 }
 
 .dark {
@@ -163,7 +163,7 @@
   }
 
   .shadow-pop-violet {
-    box-shadow: 4px 4px 0px 0px #8B5CF6;
+    box-shadow: 4px 4px 0px 0px #3BB273;
   }
 
   .shadow-pop-pink {

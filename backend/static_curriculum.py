@@ -105,17 +105,17 @@ TIER_1_LESSONS = [
                 {
                     "title": "The Two Giants",
                     "icon": "Scale",
-                    "text": "The US Market sets the global standard with two rivals:\n\n🏛️ **NYSE (The Tradition):** A physical floor on Wall Street. Home to historic 'Blue Chip' industries.\n\n💻 **Nasdaq (The Future):** A 100% digital network. Home to modern Tech innovators."
+                    "text": "The US market is home to two main exchanges:\n\n🏛️ **NYSE:** The historic physical floor on Wall Street.\n\n💻 **Nasdaq:** The modern digital network for tech companies."
                 },
                 {
                     "title": "Jargon: Blue Chips",
                     "icon": "Gem",
-                    "text": "The term comes from poker, where blue chips hold the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company with a long history of stability (like Coca-Cola). These are typically the 'Safe Giants' found on the NYSE."
+                    "text": "The term comes from poker, where blue chips hold the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company (like Coca-Cola). These are typically found on the NYSE."
                 },
                 {
                     "title": "How You Buy",
                     "icon": "Zap",
-                    "text": "You don't need to visit the exchange yourself. When you tap 'Buy' on the app, your broker acts as a high-speed courier, sprinting to the right exchange to execute your deal instantly."
+                    "text": "You don't trade with the exchange directly. When you place a 'Buy' order, your broker acts as a messenger, sprinting to the exchange to execute the deal for you."
                 }
             ]
         },
@@ -394,6 +394,259 @@ TIER_1_LESSONS = [
                 "options": ["They are illegal", "They have no trading history and high volatility", "They are too boring", "They always go up"],
                 "correctIndex": 1,
                 "explanation": "With no price history, IPOs are driven by speculation, leading to massive swings (Volatility)."
+            }
+        ]
+    },
+    {
+        "id": "lesson_7_sectors",
+        "title": "Stock Sectors",
+        "concept": {
+            "name": "Understanding 'Families'",
+            "category": "market_mechanics",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Context",
+                    "text": "You searched for **{company_name}**. This company doesn't exist in a vacuum—it belongs to a 'Family' known as the **{sector}** sector.",
+                    "icon": "Users",
+                    "image": "/images/sector_family.png"
+                },
+                {
+                    "title": "The Market Grid",
+                    "text": "The stock market is divided into **11 Sectors**. Think of them as neighborhoods: companies in the same neighborhood often react similarly to economic news and trends.",
+                    "icon": "LayoutGrid"
+                },
+                {
+                    "title": "Cyclical vs. Defensive",
+                    "text": "Some families are **Cyclical** (they thrive when the economy is booming, like Tech or Luxury Goods). Others are **Defensive** (they stay steady even in recessions, like Healthcare or Utilities).",
+                    "icon": "Scale"
+                },
+                {
+                    "title": "The Golden Rule",
+                    "text": "The secret to safety is **Diversification**. By owning stocks in different sectors, you ensure that a single 'neighborhood' crash won't bring down your entire portfolio.",
+                    "icon": "ShieldCheck"
+                }
+            ]
+        },
+        "breakdown": "Every stock belongs to a sector. Learning how these 'Families' move is key to building a balanced portfolio.",
+        "news": [],
+        "game_config": {
+            "type": "sector_sorter",
+            "instruction": "Tap the correct Sector family for the falling brand!",
+            "items": [
+                {"brand": "Apple", "sector": "Technology"},
+                {"brand": "Pfizer", "sector": "Healthcare"},
+                {"brand": "Coca-Cola", "sector": "Consumer Staples"},
+                {"brand": "ExxonMobil", "sector": "Energy"}
+            ]
+        },
+        "quiz": [
+            {
+                "question": "What is a Stock Sector?",
+                "options": [
+                    "A group of companies in the same industry",
+                    "The building where stocks are sold",
+                    "A type of high-speed trading",
+                    "A government tax group"
+                ],
+                "correctIndex": 0,
+                "explanation": "Sectors are categories that group companies with similar business models together."
+            },
+            {
+                "question": "Why would an investor own stocks in different sectors?",
+                "options": [
+                    "To get more mail from companies",
+                    "To diversify and reduce risk",
+                    "Because it is required by law",
+                    "To pay fewer trading fees"
+                ],
+                "correctIndex": 1,
+                "explanation": "Diversification ensures that if one sector (like Tech) falls, your other sectors (like Healthcare) might stay steady."
+            },
+            {
+                "question": "Which of these is considered a 'Defensive' sector?",
+                "options": [
+                    "Luxury Travel",
+                    "Utilities (Electricity/Water)",
+                    "High-Tech AI Startups",
+                    "Cryptocurrency"
+                ],
+                "correctIndex": 1,
+                "explanation": "Defensive sectors provide essentials that people need regardless of how the economy is doing."
+            }
+        ]
+    },
+    {
+        "id": "lesson_8_volume",
+        "title": "Volume (Activity)",
+        "concept": {
+            "name": "The Power of the Crowd",
+            "category": "market_mechanics",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Pulse of the Market",
+                    "text": "You searched for **{company_name}**. While the price tells you **where** the stock is, **Volume** tells you how many people are actually participating in the trade.",
+                    "icon": "Activity",
+                    "image": "/images/volume_pulse.png"
+                },
+                {
+                    "title": "The Stadium Analogy",
+                    "text": "Imagine a stadium. If one person yells 'Goal!', it's barely a whisper. If 50,000 people yell it, it's a **massive event**. High volume means the 'Crowd' is in strong agreement.",
+                    "icon": "Users"
+                },
+                {
+                    "title": "Volume as Confirmation",
+                    "text": "If a stock price moves up on **High Volume**, it's a strong signal of conviction. If it moves up on **Low Volume**, it might be a 'fake-out' because very few people are backing the move.",
+                    "icon": "CheckCircle"
+                },
+                {
+                    "title": "The Volume Climax",
+                    "text": "A sudden, massive spike in volume often signals the end of a trend. It's the moment everyone has finally 'piled in' or 'panicked out', often leading to a price reversal.",
+                    "icon": "Zap"
+                }
+            ]
+        },
+        "breakdown": "Volume is the fuel for price. Without activity from the crowd, a price move lacks the power to sustain itself.",
+        "news": [],
+        "game_config": {
+            "type": "volume_vault",
+            "instruction": "Read the News. Tap the Vault that matches the expected Volume.",
+            "scenarios": [
+                {
+                    "headline": "{company_name} files for Bankruptcy!",
+                    "correct_vault": "High",
+                    "explanation": "Panic selling creates massive volume! 📉"
+                },
+                {
+                    "headline": "{company_name} releases a boring annual report with no surprises.",
+                    "correct_vault": "Low",
+                    "explanation": "No news is... low volume. Zzz. 😴"
+                },
+                {
+                    "headline": "Rumors swirl about a potential merger with a rival.",
+                    "correct_vault": "Medium",
+                    "explanation": "Rumors bring interest, increasing volume steadily. 👀"
+                }
+            ]
+        },
+        "quiz": [
+            {
+                "question": "What does 'Volume' measure in a stock?",
+                "options": [
+                    "The total number of shares traded",
+                    "The company's annual profit",
+                    "The speed of the stock's website",
+                    "The number of employees at the company"
+                ],
+                "correctIndex": 0,
+                "explanation": "Volume is simply a count of how many shares changed hands in a given time period."
+            },
+            {
+                "question": "If a stock price falls on very high volume, what does it suggest?",
+                "options": [
+                    "The market is about to close",
+                    "There is strong conviction in the selling pressure",
+                    "Nobody is interested in the stock",
+                    "It's a good time to ignore the chart"
+                ],
+                "correctIndex": 1,
+                "explanation": "High volume during a drop means a large 'crowd' is actively selling, showing the move has strong momentum."
+            },
+            {
+                "question": "Why is low volume often considered 'dangerous' for a trader?",
+                "options": [
+                    "The stock price is too high",
+                    "It can be harder to buy or sell without moving the price yourself",
+                    "The company might go bankrupt immediately",
+                    "It makes the app run slower"
+                ],
+                "correctIndex": 1,
+                "explanation": "Low volume means low liquidity; a single small trade can cause a massive price swing, making it hard to get a fair price."
+            }
+        ]
+    },
+    {
+        "id": "lesson_9_volatility",
+        "title": "Volatility (Risk)",
+        "concept": {
+            "name": "Understanding the 'Wiggle'",
+            "category": "risk_management",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Wiggle Factor",
+                    "text": "You searched for **{company_name}**. Volatility is simply a measure of how much a stock's price 'wiggles' up and down over a short period of time.",
+                    "icon": "Activity",
+                    "image": "/images/volatility_wiggle.png"
+                },
+                {
+                    "title": "The Emotional Temperature",
+                    "text": "Think of Volatility as the **Market's Pulse**. High volatility means investors are uncertain or excited, causing big swings. Low volatility means the market is calm and confident.",
+                    "icon": "Thermometer"
+                },
+                {
+                    "title": "Risk vs. Reward",
+                    "text": "High volatility (big wiggles) offers the chance for fast profits but carries the risk of fast losses. Low volatility is like a 'Walk in the Park'—slower, but much easier to predict.",
+                    "icon": "Scale"
+                },
+                {
+                    "title": "Beta: The Benchmark",
+                    "text": "Pros use a number called **Beta** to measure wiggle. \n\n• **Beta 1.0:** Moves exactly like the market.\n• **Beta > 1.0:** Extra jumpy (Tech/Startups).\n• **Beta < 1.0:** Steady and calm (Utilities/Banks).",
+                    "icon": "Compass"
+                }
+            ]
+        },
+        "breakdown": "Volatility isn't 'bad'—it's just a measure of intensity. Understanding the wiggle helps you choose stocks that match your comfort level.",
+        "news": [],
+        "game_config": {
+            "type": "wiggle_tamer",
+            "instruction": "Try to 'Capture' the moving square. Notice how the Jumpy stocks are harder to catch!",
+            "scenarios": [
+                {
+                    "stock_type": "Utility Company",
+                    "behavior": "Stable/Slow Pulse",
+                    "difficulty": "Easy",
+                    "explanation": "Low volatility stocks are predictable and steady. 🧘"
+                },
+                {
+                    "stock_type": "AI Startup",
+                    "behavior": "Erratic/Fast Jitter",
+                    "difficulty": "Hard",
+                    "explanation": "High volatility means prices move fast and unpredictably. 🎢"
+                }
+            ]
+        },
+        "quiz": [
+            {
+                "question": "What does Volatility measure?",
+                "options": [
+                    "The total number of employees",
+                    "The size of the price 'wiggles' or swings",
+                    "The age of the company",
+                    "The amount of debt the company has"
+                ],
+                "correctIndex": 1,
+                "explanation": "Volatility is the frequency and size of price movements over time."
+            },
+            {
+                "question": "Which 'Beta' score represents a stock that is CALMER than the average market?",
+                "options": [
+                    "Beta of 2.5",
+                    "Beta of 1.0",
+                    "Beta of 0.5",
+                    "Beta of 5.0"
+                ],
+                "correctIndex": 2,
+                "explanation": "A Beta below 1.0 means the stock is less volatile than the general market."
+            },
+            {
+                "question": "True or False: High volatility always means a stock is 'bad'.",
+                "options": [
+                    "True: It is too dangerous.",
+                    "False: It just means it is high-intensity; it can lead to high rewards or high losses."
+                ],
+                "correctIndex": 1
             }
         ]
     },

@@ -125,15 +125,15 @@ export function TrendSpotter({
                         <AreaChart data={chartData}>
                             <defs>
                                 <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#3BB273" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#3BB273" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <YAxis domain={['auto', 'auto']} hide />
                             <Area
                                 type="monotone"
                                 dataKey="value"
-                                stroke="#8B5CF6"
+                                stroke="#3BB273"
                                 strokeWidth={3}
                                 fill="url(#colorPrice)"
                                 isAnimationActive={true}
@@ -178,14 +178,15 @@ export function TrendSpotter({
                                     {isCorrect ? (
                                         <button
                                             onClick={handleNext}
-                                            className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold border-b-4 border-primary/20 hover:border-b-0 hover:translate-y-1 transition-all"
+                                            className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                                         >
                                             {currentRound < scenarios.length - 1 ? "Next Round" : "Finish Lesson"}
+                                            <ArrowRight className="w-5 h-5" />
                                         </button>
                                     ) : (
                                         <button
                                             onClick={() => setShowFeedback(false)}
-                                            className="w-full py-3 bg-muted text-muted-foreground rounded-xl font-bold border-b-4 border-black/5 hover:border-b-0 hover:translate-y-1 transition-all"
+                                            className="w-full py-3 bg-muted text-muted-foreground rounded-xl font-bold shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:translate-y-0.5 hover:shadow-none transition-all"
                                         >
                                             Try Again
                                         </button>

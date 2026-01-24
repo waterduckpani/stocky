@@ -63,7 +63,7 @@ export default function SupplyDemandSandbox({
     }, [sliderValue, price, initialPrice])
 
     // Theme Colors (from globals.css)
-    const COLOR_NEUTRAL = "#8B5CF6" // Violet
+    const COLOR_NEUTRAL = "#3BB273" // Violet
     const COLOR_UP = "#34D399"      // Mint
     const COLOR_DOWN = "#EF4444"    // Red
 

@@ -81,7 +81,7 @@ def get_exchange_context(symbol: str, name: str) -> dict:
             "exchange": home_exchange,
             "pivot_text": (
                 f"You are looking at **{name}** on its home turf: the **{home_exchange}**.\n\n"
-                "To understand how *all* exchanges work, let's look at the world's two most famous examples."
+                "To understand how markets work, let's look at the world's two most famous examples."
             ),
             "game_mode": "US_Standard" 
         }
@@ -149,8 +149,18 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         import copy
         
         # FOR TESTING: Force Lesson 5 (Market Cap)
+        # FOR TESTING: Force Lesson 8 (Volume)
+        # FOR TESTING: Force Lesson 9 (Volatility)
+        # FOR TESTING: Force Lesson 1 (Ticker)
+        # FOR TESTING: Force Lesson 2 (Exchange)
+        # FOR TESTING: Force Lesson 3 (Supply & Demand)
+        # FOR TESTING: Force Lesson 4 (Sentiment - Bull/Bear)
+        # FOR TESTING: Force Lesson 5 (Market Cap)
         # FOR TESTING: Force Lesson 6 (IPO)
-        lesson_ref = next((l for l in TIER_1_LESSONS if l["id"] == "lesson_6_ipo"), TIER_1_LESSONS[0])
+        # FOR TESTING: Force Lesson 7 (Sectors)
+        # FOR TESTING: Force Lesson 8 (Volume)
+        # FOR TESTING: Force Lesson 9 (Volatility)
+        lesson_ref = next((l for l in TIER_1_LESSONS if l["id"] == "lesson_9_volatility"), TIER_1_LESSONS[0])
         lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
         print(f"DEBUG: Selected Lesson {lesson['id']}")
         
@@ -174,7 +184,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                    lesson["concept"]["slides"][2] = {
                        "title": "The Dual Giants",
                        "icon": "Scale",
-                       "text": "India's market is split between two giants:\n\n• **NSE:** Modern & Digital (Like Nasdaq).\n• **BSE:** Historic & Vast (Like NYSE)."
+                       "text": "India's market has two main exchanges:\n\n• **NSE:** Modern & Digital (Like Nasdaq).\n• **BSE:** Historic & Vast (Like NYSE)."
                    }
 
                    # Remove Blue Chip slide (Slide 3) as it only applies to US
@@ -410,6 +420,53 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                 lesson["quiz"][2] = challenge_question
             else:
                 lesson["quiz"].append(challenge_question)
+
+        # === LESSON 7: SECTORS (Dynamic Content) ===
+        elif lesson["id"] == "lesson_7_sectors":
+            # Inject Context into Slide 0 (Introduction)
+            slides = lesson["concept"]["slides"]
+            if len(slides) > 0:
+                try:
+                    slides[0]["text"] = slides[0]["text"].format(
+                        company_name=context.name,
+                        sector=context.sector
+                    )
+                except Exception as e:
+                    print(f"Error injecting Lesson 7 context: {e}")
+
+        # === LESSON 8: VOLUME (Dynamic Content) ===
+        elif lesson["id"] == "lesson_8_volume":
+            # Inject Context into Slide 0
+            slides = lesson["concept"]["slides"]
+            if len(slides) > 0:
+                try:
+                    slides[0]["text"] = slides[0]["text"].format(
+                        company_name=context.name
+                    )
+                except Exception as e:
+                    print(f"Error injecting Lesson 8 context: {e}")
+            
+            # Inject Context into Game Scenarios
+            if "game_config" in lesson and "scenarios" in lesson["game_config"]:
+                for scenario in lesson["game_config"]["scenarios"]:
+                    try:
+                        scenario["headline"] = scenario["headline"].format(
+                            company_name=context.name
+                        )
+                    except Exception as e:
+                        print(f"Error injecting Lesson 8 game context: {e}")
+
+        # === LESSON 9: VOLATILITY (Dynamic Content) ===
+        elif lesson["id"] == "lesson_9_volatility":
+            # Inject Context into Slide 0
+            slides = lesson["concept"]["slides"]
+            if len(slides) > 0:
+                try:
+                    slides[0]["text"] = slides[0]["text"].format(
+                        company_name=context.name
+                    )
+                except Exception as e:
+                    print(f"Error injecting Lesson 9 context: {e}")
 
         # === LESSON 13: P/E RATIO (Dynamic Content) ===
         elif lesson["id"] == "lesson_13_pe_ratio":

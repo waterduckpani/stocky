@@ -66,8 +66,8 @@ export function InteractiveChart({ data = [] }: InteractiveChartProps) {
                     <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.1} />
-                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#3BB273" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#3BB273" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <XAxis
@@ -85,14 +85,14 @@ export function InteractiveChart({ data = [] }: InteractiveChartProps) {
                             axisLine={false}
                             tickFormatter={(value) => `$${value}`}
                         />
-                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#8B5CF6', strokeWidth: 2, strokeDasharray: '5 5' }} />
+                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#3BB273', strokeWidth: 2, strokeDasharray: '5 5' }} />
                         <Line
                             type="monotone"
                             dataKey="price"
-                            stroke="#8B5CF6"
+                            stroke="#3BB273"
                             strokeWidth={3}
                             dot={<CustomDot />}
-                            activeDot={{ r: 6, fill: "#8B5CF6", stroke: "#FFF", strokeWidth: 2 }}
+                            activeDot={{ r: 6, fill: "#3BB273", stroke: "#FFF", strokeWidth: 2 }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
