@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, timedelta
 import math
 import feedparser
 from urllib.parse import quote
@@ -114,6 +114,30 @@ async def get_ticker_data(symbol: str):
         history = ticker.history(period="6mo")
         chart_data = []
         
+        # --- FETCH IPO DATA (Real) ---
+        ipo_year = 2000
+        ipo_price = 10.0
+        try:
+            # Optimize: Use metadata to find start date
+            meta = ticker.history_metadata
+            first_trade_ts = meta.get('firstTradeDate')
+            
+            if first_trade_ts:
+                # Convert timestamp to date string
+                start_dt = datetime.fromtimestamp(first_trade_ts)
+                start_date = start_dt.strftime('%Y-%m-%d')
+                end_date = (start_dt + timedelta(days=10)).strftime('%Y-%m-%d')
+                
+                # Fetch a small window (10 days) to ensure we get the first candle
+                ipo_hist = ticker.history(start=start_date, end=end_date)
+                
+                if not ipo_hist.empty:
+                    first_row = ipo_hist.iloc[0]
+                    ipo_price = float(first_row['Close'])
+                    ipo_year = int(start_dt.year)
+        except Exception as ipo_e:
+            print(f"IPO Fetch Error: {ipo_e}")
+            
         # === TECHNICAL ANALYSIS CALCULATION ===
         technicals = {
             "rsi": {"value": 50, "label": "Neutral"},
@@ -214,6 +238,8 @@ async def get_ticker_data(symbol: str):
             "sector": info.get('sector') or "Unknown Sector",
             "marketCap": format_large_number(info.get('marketCap', 0)),
             "peRatio": round(info.get('trailingPE', 0), 2) if info.get('trailingPE') else "N/A",
+            "ipoYear": ipo_year,
+            "ipoPrice": ipo_price,
             "chart": chart_data,
             "news": formatted_news,
             "technicals": technicals,

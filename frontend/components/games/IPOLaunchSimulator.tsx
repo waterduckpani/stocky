@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { ArrowRight, Bell, Building2 } from 'lucide-react'
+import { Bell, Building2 } from 'lucide-react'
 
 interface IPOLaunchSimulatorProps {
     onComplete: () => void
@@ -22,32 +22,20 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
             let sym = '$'
             let base = 1000
 
-            // Suffix/Data Logic
             const s = (symbol || '').toUpperCase()
             const c = (stockData?.currency || '').toUpperCase()
 
-            // India (INR)
             if (c === 'INR' || s.endsWith('.BO') || s.endsWith('.NS')) {
                 sym = '₹'; base = 10000;
-            }
-            // Korea (KRW)
-            else if (c === 'KRW' || s.endsWith('.KS') || s.endsWith('.KQ')) {
+            } else if (c === 'KRW' || s.endsWith('.KS') || s.endsWith('.KQ')) {
                 sym = '₩'; base = 1000000;
-            }
-            // Japan (JPY)
-            else if (c === 'JPY' || s.endsWith('.T')) {
+            } else if (c === 'JPY' || s.endsWith('.T')) {
                 sym = '¥'; base = 100000;
-            }
-            // UK (GBP)
-            else if (c === 'GBP' || s.endsWith('.L')) {
+            } else if (c === 'GBP' || s.endsWith('.L')) {
                 sym = '£'; base = 1000;
-            }
-            // Europe (EUR)
-            else if (c === 'EUR' || s.endsWith('.DE') || s.endsWith('.PA') || s.endsWith('.AS')) {
+            } else if (c === 'EUR' || s.endsWith('.DE') || s.endsWith('.PA') || s.endsWith('.AS')) {
                 sym = '€'; base = 1000;
-            }
-            // Canada (CAD)
-            else if (c === 'CAD' || s.endsWith('.TO') || s.endsWith('.V')) {
+            } else if (c === 'CAD' || s.endsWith('.TO') || s.endsWith('.V')) {
                 sym = 'C$'; base = 1000;
             }
 
@@ -60,38 +48,58 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
     const { symbol: currencySymbol, baseInvestment: investment } = currencyState
     const companyName = stockData?.shortName || symbol
 
-    // --- 2. SIMULATE HISTORY (Deterministic) ---
-    const generateIPOData = () => {
-        if (!symbol) return { ipoYear: 2000, ipoPrice: 20 }
+    // --- 2. HISTORICAL DATA (REAL vs FALLBACK) ---
+    const getHistoricalData = () => {
+        // Priority: Real Data from Backend
+        if (stockData?.ipoYear && stockData?.ipoPrice && stockData.ipoPrice > 0) {
+            return {
+                ipoYear: stockData.ipoYear,
+                ipoPrice: stockData.ipoPrice,
+                isReal: true
+            }
+        }
+
+        // Fallback: Deterministic Hash
+        if (!symbol) return { ipoYear: 2000, ipoPrice: 20, isReal: false }
         const hash = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
         const years = Array.from({ length: 40 }, (_, i) => 2020 - i)
         // Deterministic but varied
         const ipoYear = years[hash % years.length]
-        const ipoPrice = 15 + (hash % 35) // Random price 15-50
-        return { ipoYear, ipoPrice }
+        const ipoPrice = 15 + (hash % 35)
+
+        return { ipoYear, ipoPrice, isReal: false }
     }
 
-    const [ipoData] = useState(generateIPOData)
+    // Memoize/State to keep consistent
+    const [ipoData] = useState(getHistoricalData)
 
     // --- 3. CALCULATE GROWTH ---
     const currentPrice = stockData?.price || 100
-    // Calculate shares bought with the *local* investment amount
+
+    // Math:
+    // Since backend data (yfinance) is Split-Adjusted, "ipoPrice" is effectively the 
+    // cost basis adjusted for all splits. We don't need a separate multiplier.
+    // e.g. AAPL 1980 price might be $0.10 (split adjusted), so $1000 buys 10,000 shares.
     const sharesBought = investment / ipoData.ipoPrice
     const currentValue = sharesBought * currentPrice
+
     const percentReturn = ((currentValue - investment) / investment) * 100
     const isUp = percentReturn >= 0
 
-    // Scaling for Bar Chart (Max height 150px)
-    const maxValue = Math.max(investment, currentValue)
-    // Avoid divide by zero
-    const safeMax = maxValue > 0 ? maxValue : 100
-    const scaleFactor = 120 / safeMax
+    // --- LOGARITHMIC SCALE VISUALS ---
+    // Use Log10 to handle massive growth (e.g. 1000 vs 1,000,000) without breaking UI
+    const logBase = Math.log10(investment > 1 ? investment : 10)
+    const logCurrent = Math.log10(currentValue > 1 ? currentValue : 10)
 
-    // Ensure at least a sliver is visible
-    const barHeightInitial = Math.max(4, investment * scaleFactor)
-    const barHeightCurrent = Math.max(4, currentValue * scaleFactor)
+    // Scale to max height (150px)
+    const maxLog = Math.max(logBase, logCurrent)
+    const safeMaxLog = maxLog > 0 ? maxLog : 1
+    const scaleFactor = 150 / safeMaxLog
 
-    // --- 4. OPACITY ANIMATION (The "Ghost" Fix) ---
+    const barHeightInitial = Math.max(4, logBase * scaleFactor)
+    const barHeightCurrent = Math.max(4, logCurrent * scaleFactor)
+
+    // --- 4. OPACITY ANIMATION ---
     const frontAnim = {
         opacity: isFlipped ? 0 : 1,
         transition: { duration: 0, delay: 0.4 }
@@ -113,7 +121,6 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
             </div>
 
             {/* FLIP CARD CONTAINER */}
-            {/* Added relative here so the button can animate in below it flow-wise */}
             <div className="relative w-full h-[500px] group" style={{ perspective: '1000px' }}>
                 <motion.div
                     initial={false}
@@ -148,7 +155,6 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                             <div className="pt-8">
                                 <button
                                     onClick={() => setIsFlipped(true)}
-                                    // Button specifically gets hidden/disabled
                                     className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-accent text-white rounded-2xl font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-foreground hover:translate-y-1 hover:shadow-none hover:border-black transition-all active:translate-y-2"
                                 >
                                     <Bell className="w-6 h-6 animate-pulse group-hover:rotate-12 transition-transform" />
@@ -161,7 +167,8 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                     {/* --- BACK FACE --- */}
                     <motion.div
                         animate={backAnim}
-                        className="absolute inset-0 bg-white rounded-[2rem] border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 flex flex-col overflow-hidden"
+                        // Increased bottom padding to pb-12 for better spacing
+                        className="absolute inset-0 bg-white rounded-[2rem] border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 pb-12 flex flex-col overflow-hidden"
                         style={{
                             transform: 'rotateY(180deg)',
                             backfaceVisibility: 'hidden',
@@ -205,7 +212,6 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                                     <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1 text-center">
                                         Initial Investment
                                     </div>
-                                    {/* Value floating above bar */}
                                     <div className="text-lg font-black text-foreground z-10 mb-1">
                                         {currencySymbol}{investment.toLocaleString()}
                                     </div>
@@ -215,8 +221,7 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                                         transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
                                         className="w-full bg-slate-200 border-2 border-foreground rounded-t-xl"
                                     />
-                                    {/* Date below baseline */}
-                                    <div className="absolute -bottom-6 text-xs font-bold text-muted-foreground uppercase tracking-widest">{ipoData.ipoYear}</div>
+                                    <div className="absolute -bottom-6 text-xs font-bold text-muted-foreground uppercase tracking-widest">{ipoData.ipoYear} IPO</div>
                                 </div>
 
                                 {/* Bar B: Current */}
@@ -245,7 +250,7 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                             </div>
                         </div>
 
-                        {/* Result Banner - Moved Down slightly due to Chart Labels */}
+                        {/* Result Banner */}
                         <div className={cn(
                             "mt-8 p-4 rounded-xl border-2 border-foreground text-center relative z-10 shrink-0",
                             isUp ? "bg-emerald-50" : "bg-rose-50"
@@ -260,8 +265,6 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                     </motion.div>
                 </motion.div>
             </div>
-
-
         </div>
     )
 }

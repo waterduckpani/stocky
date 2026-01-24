@@ -357,12 +357,12 @@ TIER_1_LESSONS = [
                 },
                 {
                     "title": "The Primary Market 🏦",
-                    "text": "Before you can buy it on the app, big banks and institutions buy it first (The Primary Market).\n\nBy the time it reaches you, the price may have already skyrocketed.",
+                    "text": "Before you can buy it on the public market, big banks and institutions buy it first (The Primary Market).\n\nBy the time it reaches you, the price may have already skyrocketed.",
                     "icon": "Building2"
                 },
                 {
                     "title": "Launch Day Volatility 🎢",
-                    "text": "IPOs are famous for **Wild Volatility**.\n\nWithout history to guide the price, it is driven purely by hype. 'Pop and Drop' patterns are common.",
+                    "text": "IPOs are famous for being **volatile**.\n\nWithout history to guide the price, it is driven purely by hype. 'Pop and Drop' patterns are common.",
                     "icon": "TrendingUp"
                 }
             ]
