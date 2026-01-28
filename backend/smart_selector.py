@@ -145,22 +145,11 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
     # Forcing Lesson 1 (The Ticker Symbol) for all users during demo
     # if len(user_history) == 0:
     if True:
-        from static_curriculum import TIER_1_LESSONS
+        from static_curriculum import TIER_1_LESSONS, TIER_2_LESSONS
         import copy
         
-        # FOR TESTING: Force Lesson 5 (Market Cap)
-        # FOR TESTING: Force Lesson 8 (Volume)
-        # FOR TESTING: Force Lesson 9 (Volatility)
-        # FOR TESTING: Force Lesson 1 (Ticker)
-        # FOR TESTING: Force Lesson 2 (Exchange)
-        # FOR TESTING: Force Lesson 3 (Supply & Demand)
-        # FOR TESTING: Force Lesson 4 (Sentiment - Bull/Bear)
-        # FOR TESTING: Force Lesson 5 (Market Cap)
-        # FOR TESTING: Force Lesson 6 (IPO)
-        # FOR TESTING: Force Lesson 7 (Sectors)
-        # FOR TESTING: Force Lesson 8 (Volume)
-        # FOR TESTING: Force Lesson 9 (Volatility)
-        lesson_ref = next((l for l in TIER_1_LESSONS if l["id"] == "lesson_9_volatility"), TIER_1_LESSONS[0])
+        # FOR TESTING: Force Lesson 11 (Revenue vs Profit)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l["id"] == "lesson_11_revenue_profit"), TIER_1_LESSONS[0])
         lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
         print(f"DEBUG: Selected Lesson {lesson['id']}")
         
@@ -532,6 +521,102 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             else:
                  lesson["quiz"].append(dynamic_q)
             
+        # === LESSON 10: DIVIDENDS (Dynamic Content) ===
+        elif lesson["id"] == "lesson_10_dividends":
+            # 1. Get Data
+            try:
+                # Assuming context has dividend_yield (as a percentage, e.g. 5.2 for 5.2%)
+                # If not present, default to 0
+                yield_percent = context.dividend_yield if context.dividend_yield is not None else 0.0
+            except:
+                yield_percent = 0.0
+
+            pays_dividend = yield_percent > 0
+            
+            # Determine Currency
+            curr_config = get_currency_config(context.symbol)
+            curr = curr_config["symbol"]
+
+            # 2. Inject Context into Slide 0
+            slides = lesson["concept"]["slides"]
+            if len(slides) > 0:
+                try:
+                    if pays_dividend:
+                         slides[0]["text"] = f"You searched for **{context.name}**. Good news! It pays a **Dividend**, meaning it sends cash directly to your account just for owning the stock."
+                    else:
+                         slides[0]["text"] = f"You searched for **{context.name}**. Currently, it **does not** pay a dividend. Instead, it reinvests all its profit to grow bigger and faster."
+                except Exception as e:
+                    print(f"Error injecting Lesson 10 context: {e}")
+
+            # 3. Inject Context into Slide 2 (The Yield)
+            if len(slides) > 2:
+                 if pays_dividend:
+                     slides[2]["text"] = f"**{context.symbol}** has a Dividend Yield of **{yield_percent:.2f}%**.\n\nThis means if you invest {curr}100, you get back roughly **{curr}{yield_percent:.2f}** in cash every year."
+                 else:
+                     slides[2]["text"] = f"**{context.symbol}** has a Dividend Yield of **0%**.\n\nThis isn't bad! It just means your 'payday' only comes when you sell the stock for a higher price (Capital Gains)."
+
+            # 4. Update Game Config (Compound Engine)
+            if pays_dividend:
+                 lesson["game_config"]["instruction"] = f"Decide: Pocket {context.symbol}'s dividends, or Reinvest them to grow the engine?"
+            else:
+                 # Even if no dividend, we explain the concept of compounding via reinvestment
+                 lesson["game_config"]["instruction"] = f"{context.symbol} reinvests everything for you. But here, YOU choose! Try Reinvesting."
+
+            # 5. Dynamic Quiz
+            dynamic_q = {}
+            if pays_dividend:
+                dynamic_q = {
+                     "id": "q_dynamic_div",
+                     "question": f"{context.symbol} pays a dividend of {yield_percent:.2f}%. What does this mean for you?",
+                     "options": [
+                         "I have to pay a fee to own it",
+                         f"I earn roughly {yield_percent:.2f}% interest on my investment annually",
+                         "The stock price will drop to zero",
+                         "Nothing, it's just a number"
+                     ],
+                     "correctIndex": 1,
+                     "explanation": f"A {yield_percent:.2f}% yield means the company shares that percentage of its value back to you as cash."
+                }
+            else:
+                 dynamic_q = {
+                     "id": "q_dynamic_div",
+                     "question": f"{context.symbol} pays a 0% dividend. Is this a bad thing?",
+                     "options": [
+                         "Yes, it's a scam",
+                         "No, it likely means they are reinvesting cash to grow (Growth Stock)",
+                         "Yes, only failing companies pay 0%",
+                         "No, it means they forgot to pay"
+                     ],
+                     "correctIndex": 1,
+                     "explanation": "Many top companies (like Google or Amazon in the past) pay 0% dividends so they can use that money to expand."
+                }
+            
+            # Append Dynamic Logic
+            if len(lesson["quiz"]) >= 3:
+                lesson["quiz"][2] = dynamic_q
+            else:
+                 lesson["quiz"].append(dynamic_q)
+
+        # === LESSON 11: REVENUE VS PROFIT (Dynamic Content) ===
+        elif lesson["id"] == "lesson_11_revenue_profit":
+             from utils import format_large_number 
+             
+             # 1. Get Data from context if available (assuming smart_context saves 'info' to context somehow, otherwise we rely on generic placeholders)
+             # NOTE: In our current architecture, 'context' is a StockContext object. 
+             # If we don't have revenue data in StockContext, we can't inject specific numbers.
+             # However, we can inject the COMPANY NAME into the standard placeholder.
+             
+             # Let's see if we have access to financial data. Usually we might not in the lightweight context.
+             # We will stick to name injection which is already handled by standard .format() in most cases, 
+             # but static_curriculum has '{company_name}' which we need to enable.
+             
+             slides = lesson["concept"]["slides"]
+             if len(slides) > 0:
+                 try:
+                     slides[0]["text"] = slides[0]["text"].replace("{company_name}", context.name)
+                 except Exception as e:
+                     print(f"Error injecting Lesson 11 context: {e}")
+
         return lesson, {"type": "static", "reason": "Beginner preset"}
     
     # Step 1: Score all concepts

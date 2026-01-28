@@ -32,8 +32,8 @@ const navigation = [
         icon: BookOpen,
         href: "#",
         active: false,
-        colorClass: "bg-pink-100 text-pink-600",
-        activeClass: "bg-pink-500 text-white"
+        colorClass: "bg-[#729bf4]/20 text-[#729bf4]",
+        activeClass: "bg-[#729bf4] text-white"
     },
     {
         name: "Leaderboard",

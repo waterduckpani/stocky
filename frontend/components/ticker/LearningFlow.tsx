@@ -19,6 +19,9 @@ import { SectorSorter } from "../games/SectorSorter"
 import { VolumeVault } from "../games/VolumeVault"
 import { WiggleTamer } from "../games/WiggleTamer"
 
+import { CompoundEngine } from "../games/CompoundEngine"
+import { ProfitPunch } from "../games/ProfitPunch"
+
 import { cn } from "@/lib/utils"
 
 interface LearningFlowProps {
@@ -117,6 +120,20 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                 break
             case "wiggle_tamer":
                 GameComponent = <WiggleTamer onComplete={handleNext} config={gameConfig} />
+                break
+
+            case "compound_engine":
+                GameComponent = <CompoundEngine onComplete={handleNext} config={gameConfig} />
+                break
+            case "profit_punch":
+                GameComponent = <ProfitPunch
+                    onComplete={handleNext}
+                    totalRevenue={stockData.revenue || stockData.totalRevenue || 10000000000} // Fallback to 10B
+                    netIncome={stockData.netIncome || stockData.income || 2000000000} // Fallback to 2B
+                    symbol={symbol}
+                    currencyCode={stockData.currencyCode || "USD"}
+                    fiscalYear={stockData.fiscalYear || "TTM"}
+                />
                 break
         }
 

@@ -21,7 +21,7 @@ export function Leaderboard() {
             case 2:
                 return { bg: "bg-muted", border: "border-foreground", shadow: "shadow-pop", text: "text-foreground" }
             case 3:
-                return { bg: "bg-secondary", border: "border-foreground", shadow: "shadow-pop-pink", text: "text-secondary-foreground" }
+                return { bg: "bg-secondary", border: "border-foreground", shadow: "shadow-pop-blue", text: "text-secondary-foreground" }
             default:
                 return { bg: "bg-muted", border: "border-foreground/30", shadow: "", text: "text-muted-foreground" }
         }

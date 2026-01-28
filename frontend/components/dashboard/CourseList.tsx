@@ -37,7 +37,7 @@ const courses = [
 
 const colorMap = {
     primary: { bg: "bg-primary", shadow: "shadow-pop-violet", text: "text-primary-foreground" },
-    secondary: { bg: "bg-secondary", shadow: "shadow-pop-pink", text: "text-secondary-foreground" },
+    secondary: { bg: "bg-secondary", shadow: "shadow-pop-blue", text: "text-secondary-foreground" },
     tertiary: { bg: "bg-tertiary", shadow: "shadow-pop-yellow", text: "text-tertiary-foreground" },
 }
 

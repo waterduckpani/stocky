@@ -243,7 +243,9 @@ async def get_ticker_data(symbol: str):
             "chart": chart_data,
             "news": formatted_news,
             "technicals": technicals,
-            "currencyConfig": currency_config
+            "currencyConfig": currency_config,
+            "revenue": info.get('totalRevenue'),
+            "netIncome": info.get('netIncomeToCommon') or info.get('netIncome')
         }
         
         return response
@@ -593,13 +595,55 @@ async def generate_content(symbol: str):
         except Exception as e:
             print(f"Error calculating technicals: {e}")
         
+        # Get Fiscal Year and Financials
+        fiscal_year = "TTM"
+        revenue = info.get('totalRevenue')
+        net_income = info.get('netIncomeToCommon') or info.get('netIncome')
+        
+        try:
+            financials = ticker.financials
+            if not financials.empty:
+                # Use the most recent annual report data to match the year label
+                last_date = financials.columns[0]
+                fiscal_year = str(last_date.year)
+                
+                # Try to get consistent annual data
+                # specific keys might vary slightly, but 'Total Revenue' and 'Net Income' are standard in yfinance
+                try:
+                    rev_annual = financials.loc['Total Revenue'].iloc[0]
+                    # Handle NaN
+                    if not pd.isna(rev_annual):
+                        revenue = rev_annual
+                except:
+                    pass
+                    
+                try:
+                    # Try specific net income keys
+                    ni_keys = ['Net Income', 'Net Income Common Stock', 'Net Income Applicable To Common Shares']
+                    found_ni = False
+                    for key in ni_keys:
+                        if key in financials.index:
+                            val = financials.loc[key].iloc[0]
+                            if not pd.isna(val):
+                                net_income = val
+                                found_ni = True
+                                break
+                except:
+                    pass
+        except Exception as e:
+            print(f"Error extracting financials: {e}")
+        
         # Stock data for concept selection
         stock_data = {
             "change_percent": change_percent,
             "market_cap_raw": market_cap,
             "ytd_return": ytd_return,
             "is_crypto": is_crypto,
-            "technicals": technicals
+            "technicals": technicals,
+            "revenue": revenue,
+            "netIncome": net_income,
+            "currencyCode": info.get('currency', 'USD'),
+            "fiscalYear": fiscal_year
         }
     except Exception as e:
         print(f"Error fetching stock data for {symbol}: {e}")

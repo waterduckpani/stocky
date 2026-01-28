@@ -101,7 +101,7 @@ export function StepConcept({ symbol, stockData, concept }: StepConceptProps) {
                                 transition={{ duration: 0.3 }}
                                 className="min-h-[120px] flex items-center"
                             >
-                                <p className="text-xl font-medium leading-relaxed text-foreground/90"
+                                <p className="text-xl font-medium leading-relaxed text-slate-900"
                                     dangerouslySetInnerHTML={{
                                         __html: slide.text.replace(/\*\*(.*?)\*\*/g, '<span class="text-primary font-bold">$1</span>').replace(/\n/g, '<br/>')
                                     }}

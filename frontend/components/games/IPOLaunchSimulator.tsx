@@ -238,7 +238,7 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                                         transition={{ delay: 0.6, duration: 0.8, type: "spring" }}
                                         className={cn(
                                             "w-full border-2 border-foreground rounded-t-xl relative overflow-hidden",
-                                            isUp ? "bg-[#4ADE80]" : "bg-[#F472B6]"
+                                            isUp ? "bg-[#4ADE80]" : "bg-[#729bf4]"
                                         )}
                                     >
                                         <div className="absolute inset-0 opacity-20"

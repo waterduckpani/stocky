@@ -702,5 +702,154 @@ TIER_1_LESSONS = [
                 "explanation": "Stable, slow-growing companies (Value Stocks) usually trade at lower P/E ratios than high-growth tech stocks."
             }
         ]
+    },
+    {
+        "id": "lesson_10_dividends",
+        "title": "What is a Dividend?",
+        "concept": {
+            "name": "Profit-sharing Basics",
+            "category": "market_mechanics",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Reward 🎁",
+                    "text": "You searched for **{company_name}**. When a company is profitable, it can choose to send a portion of that cash directly to you. This 'Thank You' payment is called a **Dividend**.",
+                    "icon": "Gift",
+                    "image": "/images/dividend_reward.png"
+                },
+                {
+                    "title": "The Rental Analogy 🏠",
+                    "text": "Think of a stock like a **Rental Property**. You own the building (the stock), and the dividend is the **Rent** you collect every month without ever having to sell the house.",
+                    "icon": "Home"
+                },
+                {
+                    "title": "The Yield 📊",
+                    "text": "The **Dividend Yield** is the annual payout shown as a percentage of the stock price. It tells you how much 'Interest' you are earning just for holding the share.",
+                    "icon": "Percent"
+                },
+                {
+                    "title": "Growth vs. Income ⚖️",
+                    "text": "Not every company pays a dividend. **Growth** companies (like Tech) often keep the cash to build new things. **Value** companies (like Banks or Utilities) usually have extra cash to share with you.",
+                    "icon": "Briefcase"
+                }
+            ]
+        },
+        "breakdown": "Dividends are the 'Payday' of the stock market. They allow you to earn money while you wait for the stock price to grow.",
+        "news": [],
+        "game_config": {
+            "type": "compound_engine",
+            "instruction": "Drag Circles to Wallet for Cash ($), or back to the Engine to Compound (Growth)!",
+            "initial_rate": 2000, # ms per spawn
+            "growth_factor": 0.9 # Spawn rate multiplier per reinvest
+        },
+        "quiz": [
+            {
+                "question": "What is a Dividend?",
+                "options": [
+                    "A loan you give to the company",
+                    "A portion of profit shared with shareholders",
+                    "The price of a single share",
+                    "A fine for selling too early"
+                ],
+                "correctIndex": 1,
+                "explanation": "A dividend is a distribution of a company's earnings to its shareholders."
+            },
+            {
+                "question": "If a company has a 5% Dividend Yield, what does that mean?",
+                "options": [
+                    "The stock price will go up 5%",
+                    "You earn $5 for every $100 worth of stock you own annually",
+                    "The company is losing 5% of its value",
+                    "You must pay a 5% fee to own it"
+                ],
+                "correctIndex": 1,
+                "explanation": "Yield represents the annual dividend payment as a percentage of the current stock price."
+            },
+            {
+                "question": "Why do some companies NOT pay a dividend?",
+                "options": [
+                    "They are not allowed to by law",
+                    "They prefer to use the cash to grow the business",
+                    "They forgot to set up the payments",
+                    "Dividends are only for small companies"
+                ],
+                "correctIndex": 1,
+                "explanation": "Growth-focused companies often reinvest all their profits back into the company to expand faster."
+            }
+        ]
+    },
+]
+
+TIER_2_LESSONS = [
+    {
+        "id": "lesson_11_revenue_profit",
+        "title": "Revenue vs. Profit",
+        "concept": {
+            "name": "Top Line vs. Bottom Line",
+            "category": "valuation_health",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Context 📉",
+                    "text": "You searched for **{company_name}**. You might see a massive number for its **Revenue**, but that isn't the whole story. Revenue is just the 'Total Sales'—the money that walked through the front door.",
+                    "icon": "ArrowDownToLine"
+                },
+                {
+                    "title": "The Analogy 🍋",
+                    "text": "Think of a **Lemonade Stand**. If you sell 100 cups at $1 each, your **Revenue** is $100. But if the lemons, sugar, and cups cost you $80, your **Profit** is only $20. Revenue is the size of the stand; Profit is what you actually keep.",
+                    "icon": "Store"
+                },
+                {
+                    "title": "The 'Lines' 📏",
+                    "text": "In a financial report, Revenue is at the very top (**Top Line**). After you subtract costs like salaries, taxes, and materials, you reach the final number at the very bottom (**Bottom Line**): The Net Profit.",
+                    "icon": "AlignJustify"
+                },
+                {
+                    "title": "The Margin ✂️",
+                    "text": "The gap between the top and bottom lines is the **Profit Margin**. A healthy company is efficient at keeping as much of that 'Top Line' as possible.",
+                    "icon": "Activity"
+                }
+            ]
+        },
+        "breakdown": "Revenue shows popularity; Profit shows efficiency. A company can have billions in sales but still lose money if its costs are too high.",
+        "game_config": {
+            "type": "profit_punch",
+            "instruction": "Punch out the Expenses to reveal the true Bottom Line!"
+        },
+        "quiz": [
+            {
+                "question": "What is another name for 'The Top Line'?",
+                "options": [
+                    "Net Income",
+                    "Revenue",
+                    "Taxes",
+                    "CEO Salary"
+                ],
+                "correctIndex": 1,
+                "explanation": "Revenue sits at the top of the income statement because it is the starting point for all financial calculations."
+            },
+            {
+                "question": "If a company has $1 Billion in Revenue and $1.1 Billion in Expenses, what is their Profit?",
+                "options": [
+                    "$100 Million",
+                    "-$100 Million (A Loss)",
+                    "$2.1 Billion",
+                    "Zero"
+                ],
+                "correctIndex": 1,
+                "explanation": "Profit is Revenue minus Expenses. If expenses are higher than revenue, the company is 'unprofitable' or 'operating at a loss'."
+            },
+            {
+                "question": "Why do investors care about the 'Bottom Line'?",
+                "options": [
+                    "It shows how much money the company actually keeps to grow or pay dividends",
+                    "It is the biggest number on the page",
+                    "It tells you the stock price",
+                    "It shows how many employees the company has"
+                ],
+                "correctIndex": 0,
+                "explanation": "The bottom line represents the actual 'wealth' created by the company after all bills are paid."
+            }
+        ]
     }
 ]
