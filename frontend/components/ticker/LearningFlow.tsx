@@ -21,6 +21,7 @@ import { WiggleTamer } from "../games/WiggleTamer"
 
 import { CompoundEngine } from "../games/CompoundEngine"
 import { ProfitPunch } from "../games/ProfitPunch"
+import EPSSlicer from "../games/EPSSlicer"
 
 import { cn } from "@/lib/utils"
 
@@ -134,6 +135,9 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                     currencyCode={stockData.currencyCode || "USD"}
                     fiscalYear={stockData.fiscalYear || "TTM"}
                 />
+                break
+            case "eps_slicer":
+                GameComponent = <EPSSlicer onComplete={handleNext} gameConfig={gameConfig} />
                 break
         }
 

@@ -4,6 +4,7 @@ Preset lessons for beginners.
 """
 
 TIER_1_LESSONS = [
+
     {
         "id": "lesson_1_ticker",
         "title": "The Ticker Symbol",
@@ -781,6 +782,71 @@ TIER_1_LESSONS = [
 ]
 
 TIER_2_LESSONS = [
+    {
+        "id": "lesson_12_eps",
+        "title": "Earnings Per Share (EPS)",
+        "concept": {
+            "name": "The Pulse of Profitability",
+            "category": "valuation_health",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Meaning 🍕",
+                    "text": "You searched for **{company_name}**. If the company's total profit is a giant **Pizza**, **EPS** is the amount of pizza on **Your Single Slice** (Share).",
+                    "icon": "PieChart"
+                },
+                {
+                    "title": "The Formula ➗",
+                    "text": "It's simple division:\n\n**Total Profit** ÷ **Total Shares** = **EPS**.\n\nA higher EPS means your slice of the profit pie is bigger and tastier!",
+                    "icon": "Divide"
+                },
+                {
+                    "title": "The Growth Engine 🚀",
+                    "text": "Investors love seeing EPS grow. It means the company is becoming more efficient at making money for every share you hold.",
+                    "icon": "TrendingUp"
+                }
+            ]
+        },
+        "breakdown": "EPS tells you exactly how much profit belongs to the single share in your pocket.",
+        "news": [],
+        "game_config": {
+            "type": "eps_slicer",
+            "instruction": "Slide to see how adding more shares makes your 'Profit Slice' smaller!"
+        },
+        "quiz": [
+            {
+                "question": "What does EPS stand for?",
+                "options": [
+                    "Earnings Per Stock",
+                    "Earnings Per Share",
+                    "Every Pizza Slice",
+                    "Extra Profit Source"
+                ],
+                "correctIndex": 1
+            },
+            {
+                "question": "If a company has $100 Profit and 10 Shares, what is the EPS?",
+                "options": [
+                    "$1",
+                    "$10",
+                    "$100",
+                    "$1000"
+                ],
+                "correctIndex": 1
+            },
+            {
+                "question": "Why is a Rising EPS good?",
+                "options": [
+                    "It means the company is printing more shares",
+                    "It means each share is becoming more valuable",
+                    "It means the pizza is getting smaller",
+                    "It's not good, it's bad"
+                ],
+                "correctIndex": 1
+            }
+        ]
+    },
+
     {
         "id": "lesson_11_revenue_profit",
         "title": "Revenue vs. Profit",

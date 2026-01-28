@@ -245,7 +245,8 @@ async def get_ticker_data(symbol: str):
             "technicals": technicals,
             "currencyConfig": currency_config,
             "revenue": info.get('totalRevenue'),
-            "netIncome": info.get('netIncomeToCommon') or info.get('netIncome')
+            "netIncome": info.get('netIncomeToCommon') or info.get('netIncome'),
+            "eps": info.get('trailingEps')
         }
         
         return response

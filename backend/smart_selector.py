@@ -148,10 +148,17 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         from static_curriculum import TIER_1_LESSONS, TIER_2_LESSONS
         import copy
         
-        # FOR TESTING: Force Lesson 11 (Revenue vs Profit)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l["id"] == "lesson_11_revenue_profit"), TIER_1_LESSONS[0])
-        lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
-        print(f"DEBUG: Selected Lesson {lesson['id']}")
+        # TESTING OVERRIDE
+        # lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_12_eps'), None)
+        
+        if lesson_ref:
+            lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
+            print(f"DEBUG: Selected Lesson {lesson['id']}")
+        else:
+            # Fallback to a default lesson if the override lesson is not found
+            lesson = copy.deepcopy(TIER_1_LESSONS[0])
+            print(f"DEBUG: Override lesson not found, falling back to {lesson['id']}")
         
         # return lesson, {"type": "static", "reason": "Forced Lesson 6"} # REMOVED EARLY RETURN
         
@@ -616,6 +623,15 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                      slides[0]["text"] = slides[0]["text"].replace("{company_name}", context.name)
                  except Exception as e:
                      print(f"Error injecting Lesson 11 context: {e}")
+        
+        # === LESSON 12: EPS (Dynamic Content) ===
+        elif lesson["id"] == "lesson_12_eps":
+             slides = lesson["concept"]["slides"]
+             if len(slides) > 0:
+                 try:
+                     slides[0]["text"] = slides[0]["text"].replace("{company_name}", context.name)
+                 except Exception as e:
+                     print(f"Error injecting Lesson 12 context: {e}")
 
         return lesson, {"type": "static", "reason": "Beginner preset"}
     
