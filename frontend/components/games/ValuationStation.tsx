@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Printer, DollarSign, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Printer, DollarSign, CheckCircle2, ArrowRight, Gem, ShoppingBag, Handshake } from 'lucide-react'
 
 // Strict "Playful Geometric" Styling
 // - Card: bg-white rounded-[2rem] border-2 border-foreground shadow-pop
@@ -66,35 +66,43 @@ export default function ValuationStation({ onComplete, gameConfig }: ValuationSt
             : `You are paying $${visualPe}, which is standard for a healthy company.`)
 
     return (
-        <div className="flex flex-col items-center w-full max-w-xl mx-auto p-1 h-full max-h-[600px] justify-between animate-pop-in">
+        <div className="w-full max-w-xl mx-auto bg-card rounded-[2.5rem] border-4 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
 
             {/* Header */}
-            <div className="text-center space-y-0.5 mb-4 shrink-0">
-                <h3 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
-                    The Valuation Station
-                </h3>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="text-center relative z-10">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary border-2 border-primary/20 shadow-sm transform -rotate-2">
+                        <Printer className="w-6 h-6 text-primary" strokeWidth={2.5} />
+                    </div>
+                    <h3 className="text-2xl font-black text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
+                        The Valuation Station
+                    </h3>
+                </div>
+                <p className="text-muted-foreground font-bold text-base leading-tight max-w-sm mx-auto">
                     Compare the Price Tags
                 </p>
             </div>
 
             {/* Main Stage */}
-            <div className="w-full grid grid-cols-2 gap-4 grow mb-4">
+            <div className="w-full grid grid-cols-2 gap-4 grow min-h-[200px]">
 
                 {/* Machine A (Benchmark) */}
-                <div className="bg-white rounded-[2rem] border-2 border-foreground/10 shadow-sm p-4 flex flex-col items-center justify-center opacity-70 scale-95">
-                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3 border-2 border-slate-200">
-                        <Printer size={32} className="text-slate-400" />
+                <div className="bg-tertiary/20 rounded-[2rem] border-2 border-tertiary/50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                    {/* Decorative Blob */}
+                    <div className="absolute -top-12 -left-12 w-24 h-24 bg-tertiary/20 rounded-full blur-2xl pointer-events-none" />
+
+                    <div className="w-16 h-16 bg-tertiary/30 rounded-full flex items-center justify-center mb-3 border-2 border-tertiary/50 shadow-sm relative z-10">
+                        <Printer size={28} className="text-tertiary-foreground" />
                     </div>
-                    <div className="text-center">
-                        <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">
+                    <div className="text-center relative z-10">
+                        <div className="text-[10px] font-black text-tertiary-foreground/70 uppercase tracking-wider mb-1">
                             Market Avg
                         </div>
-                        <div className="text-2xl font-black text-slate-700">
+                        <div className="text-3xl font-black text-tertiary-foreground">
                             $20.00
                         </div>
-                        <div className="text-[10px] text-slate-400 font-medium">
-                            Cost for $1 Earnings
+                        <div className="text-[10px] text-tertiary-foreground/60 font-bold mt-1">
+                            Standard Price
                         </div>
                     </div>
                 </div>
@@ -103,75 +111,72 @@ export default function ValuationStation({ onComplete, gameConfig }: ValuationSt
                 <button
                     onClick={() => handleSelect('B')}
                     className={cn(
-                        "bg-white rounded-[2rem] border-2 border-foreground shadow-pop p-4 flex flex-col items-center justify-center transition-all relative overflow-hidden group",
-                        selectedMachine === 'B' ? "ring-4 ring-primary/20" : "hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                        "bg-background rounded-[2rem] border-4 border-foreground flex flex-col items-center justify-center p-4 transition-all relative overflow-hidden group",
+                        selectedMachine === 'B'
+                            ? "ring-4 ring-secondary/20 translate-y-[4px] translate-x-[4px] shadow-none"
+                            : "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none"
                     )}
                 >
                     <div className={cn(
-                        "w-20 h-20 rounded-full flex items-center justify-center mb-3 border-2 border-foreground shadow-sm transition-transform group-hover:scale-110",
-                        isExpensive ? "bg-violet-100 text-violet-600" : (isCheap ? "bg-emerald-100 text-emerald-600" : "bg-blue-100 text-blue-600")
+                        "w-16 h-16 rounded-full flex items-center justify-center mb-3 border-2 border-foreground shadow-sm transition-transform group-hover:scale-110",
+                        "bg-secondary/20 text-secondary border-secondary/30"
                     )}>
-                        <DollarSign size={40} strokeWidth={2.5} />
+                        <DollarSign size={32} strokeWidth={3} />
                     </div>
                     <div className="text-center relative z-10">
-                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
                             {gameConfig?.symbol || "Stock"}
                         </div>
                         <div className="text-3xl font-black text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
                             ${visualPe.toFixed(2)}
                         </div>
-                        <div className="text-[10px] text-muted-foreground font-medium">
-                            Cost for $1 Earnings
+                        <div className="text-[10px] text-secondary font-bold mt-1 group-hover:underline decoration-2 underline-offset-2">
+                            TAP TO REVEAL
                         </div>
                     </div>
-
-                    {/* "Click Me" Badge */}
-                    {!selectedMachine && (
-                        <div className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-1 rounded-full animate-bounce">
-                            BUY?
-                        </div>
-                    )}
                 </button>
 
             </div>
 
-            {/* Instruction / Footer */}
-            <div className="text-center text-sm font-medium text-muted-foreground max-w-xs mx-auto mb-6">
-                Tap the stock machine to see if you're getting a good deal.
+            {/* Footer Instruction */}
+            <div className="bg-muted/30 rounded-xl p-3 border-2 border-foreground/5 text-center text-xs font-bold text-muted-foreground">
+                Which machine offers better value?
             </div>
+
 
             {/* Feedback Overlay */}
             <AnimatePresence>
                 {showFeedback && (
                     <motion.div
-                        initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                        animate={{ opacity: 1, backdropFilter: "blur(4px)" }}
-                        className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/80 p-4 text-center rounded-[2rem]"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-50 bg-card/90 backdrop-blur-[2px] flex items-center justify-center p-4"
                     >
                         <motion.div
                             initial={{ scale: 0.8, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="bg-white border-2 border-foreground shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-2xl p-6 w-full max-w-xs flex flex-col items-center"
+                            className="w-full max-w-xs bg-card border-4 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
                         >
                             <div className={cn(
-                                "w-16 h-16 rounded-full flex items-center justify-center mb-4 border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]",
-                                isExpensive ? "bg-violet-100 text-violet-600" : (isCheap ? "bg-emerald-100 text-emerald-600" : "bg-blue-100 text-blue-600")
+                                "w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto border-4 border-foreground shadow-sm transform -rotate-3",
+                                isExpensive ? "bg-tertiary/20 text-tertiary-foreground" : (isCheap ? "bg-primary/20 text-primary" : "bg-secondary/20 text-secondary")
                             )}>
-                                {isExpensive ? <div className="text-2xl">🚀</div> : (isCheap ? <div className="text-2xl">🏷️</div> : <div className="text-2xl">⚖️</div>)}
+                                {isExpensive ? <Gem size={32} strokeWidth={2.5} /> : (isCheap ? <ShoppingBag size={32} strokeWidth={2.5} /> : <Handshake size={32} strokeWidth={2.5} />)}
                             </div>
 
-                            <h3 className="text-xl font-black text-foreground mb-2">
+                            <h3 className="text-2xl font-black text-foreground mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
                                 {feedbackTitle}
                             </h3>
-                            <p className="text-muted-foreground font-medium text-sm mb-6 leading-tight">
+                            <p className="text-muted-foreground font-medium text-sm mb-6 leading-tight max-w-[90%] mx-auto">
                                 {feedbackText}
                             </p>
 
                             <button
                                 onClick={onComplete}
-                                className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-[0px_4px_0px_0px_rgba(0,0,0,0.2)] hover:translate-y-[1px] hover:shadow-none transition-all flex items-center justify-center gap-2 text-sm"
+                                className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                             >
-                                Finish Lesson <ArrowRight size={16} />
+                                Continue to Quiz <ArrowRight size={20} strokeWidth={3} />
                             </button>
                         </motion.div>
                     </motion.div>

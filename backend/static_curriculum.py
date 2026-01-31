@@ -651,59 +651,7 @@ TIER_1_LESSONS = [
             }
         ]
     },
-    {
-        "id": "lesson_13_pe_ratio",
-        "title": "P/E Ratio",
-        "concept": {
-            "type": "carousel",
-            "slides": [
-                {
-                    "title": "The Price Tag for Earnings 🏷️",
-                    "text": "**Price-to-Earnings (P/E)** tells you if a stock is 'Cheap' or 'Expensive'.\n\nIt asks: **How much are you paying for $1 of the company's profit?**",
-                    "icon": "Tag"
-                },
-                {
-                    "title": "The Money Machine 🖨️",
-                    "text": "Imagine a machine that prints **$1 every year**.\n\n• If you pay **$10** for it, the P/E is **10** (Cheap/Value).\n• If you pay **$50** for it, the P/E is **50** (Expensive/Growth).",
-                    "icon": "Banknote"
-                },
-                {
-                    "title": "Growth vs. Value ⚖️",
-                    "text": "**High P/E (>30):** Investors pay extra because they expect the machine to print MORE money in the future (e.g., Tech/AI).\n\n**Low P/E (<15):** The machine is steady but boring (e.g., Banks/Energy).",
-                    "icon": "Scale"
-                }
-            ]
-        },
-        "breakdown": "Price gives you the cost. P/E gives you the value.",
-        "news": [],
-        "game_config": {
-            "type": "valuation_station",
-            "instruction": "Which Money Machine is this stock behaving like?"
-        },
-        "quiz": [
-            {
-                "id": "q1",
-                "question": "What does the P/E Ratio tell you?",
-                "options": ["The total debt of the company", "How much you pay for $1 of earnings", "The CEO's salary", "The stock price divided by 10"],
-                "correctIndex": 1,
-                "explanation": "P/E stands for Price-to-Earnings. It measures the price you pay for each dollar of profit."
-            },
-            {
-                "id": "q2",
-                "question": "If a stock has a P/E of 100, what does it usually mean?",
-                "options": ["It is going bankrupt", "It is very cheap", "Investors expect huge future growth", "It is a bank"],
-                "correctIndex": 2,
-                "explanation": "A high P/E means investors are willing to pay a premium now because they expect earnings to explode later."
-            },
-            {
-                "id": "q3",
-                "question": "Which company typically has a LOWER P/E ratio?",
-                "options": ["A brand new AI startup", "A stable Utility company", "A flying car company", "A biotech researcher"],
-                "correctIndex": 1,
-                "explanation": "Stable, slow-growing companies (Value Stocks) usually trade at lower P/E ratios than high-growth tech stocks."
-            }
-        ]
-    },
+
     {
         "id": "lesson_10_dividends",
         "title": "What is a Dividend?",
@@ -843,6 +791,59 @@ TIER_2_LESSONS = [
                     "It's not good, it's bad"
                 ],
                 "correctIndex": 1
+            }
+        ]
+    },
+    {
+        "id": "lesson_13_pe_ratio",
+        "title": "P/E Ratio",
+        "concept": {
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Price Tag for Earnings 🏷️",
+                    "text": "**Price-to-Earnings (P/E)** tells you if a stock is 'Cheap' or 'Expensive'.\n\nIt asks: **How much are you paying for $1 of the company's profit?**",
+                    "icon": "Tag"
+                },
+                {
+                    "title": "The Money Machine 🖨️",
+                    "text": "Imagine a machine that prints **$1 every year**.\n\n• If you pay **$10** for it, the P/E is **10** (Cheap/Value).\n• If you pay **$50** for it, the P/E is **50** (Expensive/Growth).",
+                    "icon": "Banknote"
+                },
+                {
+                    "title": "Growth vs. Value ⚖️",
+                    "text": "**High P/E (>30):** Investors pay extra because they expect the machine to print MORE money in the future (e.g., Tech/AI).\n\n**Low P/E (<15):** The machine is steady but boring (e.g., Banks/Energy).",
+                    "icon": "Scale"
+                }
+            ]
+        },
+        "breakdown": "Price gives you the cost. P/E gives you the value.",
+        "news": [],
+        "game_config": {
+            "type": "valuation_station",
+            "instruction": "Which Money Machine is this stock behaving like?"
+        },
+        "quiz": [
+            {
+                "id": "q1",
+                "question": "What does the P/E Ratio tell you?",
+                "options": ["The total debt of the company", "How much you pay for $1 of earnings", "The CEO's salary", "The stock price divided by 10"],
+                "correctIndex": 1,
+                "explanation": "P/E stands for Price-to-Earnings. It measures the price you pay for each dollar of profit."
+            },
+            {
+                "id": "q2",
+                "question": "If a stock has a P/E of 100, what does it usually mean?",
+                "options": ["It is going bankrupt", "It is very cheap", "Investors expect huge future growth", "It is a bank"],
+                "correctIndex": 2,
+                "explanation": "A high P/E means investors are willing to pay a premium now because they expect earnings to explode later."
+            },
+            {
+                "id": "q3",
+                "question": "Which company typically has a LOWER P/E ratio?",
+                "options": ["A brand new AI startup", "A stable Utility company", "A flying car company", "A biotech researcher"],
+                "correctIndex": 1,
+                "explanation": "Stable, slow-growing companies (Value Stocks) usually trade at lower P/E ratios than high-growth tech stocks."
             }
         ]
     },

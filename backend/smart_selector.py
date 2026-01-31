@@ -150,7 +150,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         
         # TESTING OVERRIDE
         # lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_12_eps'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_13_pe_ratio'), None)
         
         if lesson_ref:
             lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
