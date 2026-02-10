@@ -103,7 +103,12 @@ export function StepConcept({ symbol, stockData, concept }: StepConceptProps) {
                             >
                                 <p className="text-xl font-medium leading-relaxed text-slate-900"
                                     dangerouslySetInnerHTML={{
-                                        __html: slide.text.replace(/\*\*(.*?)\*\*/g, '<span class="text-primary font-bold">$1</span>').replace(/\n/g, '<br/>')
+                                        __html: slide.text
+                                            .replace(/{company_name}/g, stockData?.company_name || stockData?.name || symbol)
+                                            .replace(/{symbol}/g, symbol)
+                                            .replace(/{dividendYield}/g, ((stockData?.stock_data?.dividend_yield || stockData?.dividend_yield || 0) * 100).toFixed(2))
+                                            .replace(/\*\*(.*?)\*\*/g, '<span class="text-primary font-bold">$1</span>')
+                                            .replace(/\n/g, '<br/>')
                                     }}
                                 />
                             </motion.div>

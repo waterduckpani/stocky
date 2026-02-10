@@ -22,6 +22,8 @@ import { WiggleTamer } from "../games/WiggleTamer"
 import { CompoundEngine } from "../games/CompoundEngine"
 import { ProfitPunch } from "../games/ProfitPunch"
 import EPSSlicer from "../games/EPSSlicer"
+import YieldMagnet from "../games/YieldMagnet"
+import BetaShadow from "../games/BetaShadow"
 
 import { cn } from "@/lib/utils"
 
@@ -138,6 +140,26 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                 break
             case "eps_slicer":
                 GameComponent = <EPSSlicer onComplete={handleNext} gameConfig={gameConfig} />
+                break
+            case "yield_magnet":
+                GameComponent = <YieldMagnet
+                    onComplete={handleNext}
+                    gameConfig={gameConfig}
+                    stockData={{
+                        price: stockData.price || stockData.stock_data?.current_price || 100,
+                        dividendRate: stockData.stock_data?.dividend_rate || stockData.dividendRate || 2.0
+                    }}
+                />
+                break
+            case "beta_shadow":
+                GameComponent = <BetaShadow
+                    onComplete={handleNext}
+                    gameConfig={gameConfig}
+                    stockData={{
+                        beta: stockData.stock_data?.beta || stockData.beta || 1.0
+                    }}
+                    ticker={symbol}
+                />
                 break
         }
 

@@ -110,6 +110,43 @@ async def get_ticker_data(symbol: str):
         currency_config = get_currency_config(symbol)
         currency_symbol = currency_config["symbol"]
         
+        # === ROBUST DIVIDEND CALCULATION ===
+        # Priority:
+        # 1. Fetch/Calculate Annual Dividend Rate (Dollars)
+        # 2. Derive Yield (Decimal) from Rate / Price
+        
+        div_rate = info.get('dividendRate')
+        
+        # Fallback: Calculate Rate from history if missing
+        if not div_rate:
+            try:
+                hist_divs = ticker.dividends
+                if not hist_divs.empty:
+                    now_ts = datetime.now().timestamp()
+                    year_seconds = 365 * 24 * 3600
+                    recent_payouts = [div for date, div in hist_divs.items() if (now_ts - date.timestamp()) <= year_seconds]
+                    div_rate = sum(recent_payouts)
+                    if div_rate > 0:
+                        print(f"DEBUG: Calculated Annual Rate from history: ${div_rate}")
+                        info['dividendRate'] = float(div_rate)
+            except Exception as e:
+                print(f"DEBUG: Dividend history fetch failed: {e}") 
+
+        # Final Yield Calculation (decimal)
+        # This overrides potential API inconsistencies (e.g. 0.37 vs 0.0037) by deriving fresh
+        current_price = info.get('currentPrice') or info.get('regularMarketPrice') or info.get('previousClose')
+        
+        if div_rate and div_rate > 0 and current_price and current_price > 0:
+            calc_yield = div_rate / current_price
+            info['dividendYield'] = float(calc_yield)
+            print(f"DEBUG: Derived Yield: {calc_yield:.4f} (Rate: {div_rate} / Price: {current_price})")
+        
+        # Ensure yield is never None for downstream logic
+        if info.get('dividendYield') is None:
+             info['dividendYield'] = 0.0
+
+        # Get recent history (6mo for technicals)
+        
         # Get recent history (6mo for technicals)
         history = ticker.history(period="6mo")
         chart_data = []
@@ -246,7 +283,9 @@ async def get_ticker_data(symbol: str):
             "currencyConfig": currency_config,
             "revenue": info.get('totalRevenue'),
             "netIncome": info.get('netIncomeToCommon') or info.get('netIncome'),
-            "eps": info.get('trailingEps')
+            "eps": info.get('trailingEps'),
+            "dividendYield": round(info.get('dividendYield', 0) * 100, 2) if info.get('dividendYield') else None,
+            "dividendRate": info.get('dividendRate')
         }
         
         return response
@@ -395,9 +434,9 @@ async def get_popular_stocks():
     """Get real-time data for popular stocks."""
     import time
     
-    # Check cache (1 minute TTL)
+    # Check cache (2 minute TTL)
     if _popular_cache["data"] and _popular_cache["timestamp"]:
-        if time.time() - _popular_cache["timestamp"] < 60:
+        if time.time() - _popular_cache["timestamp"] < 120:
             return {"stocks": _popular_cache["data"]}
     
     stocks = []
@@ -478,6 +517,7 @@ async def generate_content(symbol: str):
     """
     symbol = symbol.upper()
     
+    div_rate = None # CRITICAL: Init early to prevent UnboundLocalError
     # First, get stock info from yfinance for context
     try:
         ticker = yf.Ticker(symbol)
@@ -521,6 +561,8 @@ async def generate_content(symbol: str):
                 market_cap = 0
         
         market_cap_str = format_large_number(market_cap) if market_cap else 'N/A'
+        
+
         
         # === TECHNICAL ANALYSIS ===
         technicals = {
@@ -600,6 +642,9 @@ async def generate_content(symbol: str):
         fiscal_year = "TTM"
         revenue = info.get('totalRevenue')
         net_income = info.get('netIncomeToCommon') or info.get('netIncome')
+        beta = info.get('beta')
+        if beta is None:
+            beta = 1.0  # Default to market perform
         
         try:
             financials = ticker.financials
@@ -634,6 +679,26 @@ async def generate_content(symbol: str):
         except Exception as e:
             print(f"Error extracting financials: {e}")
         
+        if not div_rate:
+            try:
+                # Force fresh connection just for dividends
+                fresh_ticker = yf.Ticker(symbol)
+                hist_divs = fresh_ticker.dividends
+                if not hist_divs.empty:
+                    now_ts = datetime.now().timestamp()
+                    year_seconds = 365 * 24 * 3600
+                    recent_payouts = [div for date, div in hist_divs.items() if (now_ts - date.timestamp()) <= year_seconds]
+                    fresh_sum = sum(recent_payouts)
+                    if fresh_sum > 0:
+                        div_rate = fresh_sum
+            except Exception:
+                 pass
+
+        # Calculate decimal yield
+        div_yield = 0.0
+        if div_rate and div_rate > 0 and price > 0:
+            div_yield = div_rate / price
+
         # Stock data for concept selection
         stock_data = {
             "change_percent": change_percent,
@@ -644,7 +709,10 @@ async def generate_content(symbol: str):
             "revenue": revenue,
             "netIncome": net_income,
             "currencyCode": info.get('currency', 'USD'),
-            "fiscalYear": fiscal_year
+            "fiscalYear": fiscal_year,
+            "dividend_yield": div_yield, # Decimal (e.g., 0.0037)
+            "dividend_rate": div_rate,    # Dollar Amount
+            "beta": beta
         }
     except Exception as e:
         print(f"Error fetching stock data for {symbol}: {e}")
@@ -678,7 +746,11 @@ async def generate_content(symbol: str):
     
     # === SMART CONCEPT SELECTOR (30-Concept Library with Anti-Repetition) ===
     from concept_library import StockContext
-    from smart_selector import select_best_concept, generate_lesson_prompt
+    import smart_selector
+    import importlib
+    importlib.reload(smart_selector)
+    select_best_concept = smart_selector.select_best_concept
+    generate_lesson_prompt = smart_selector.generate_lesson_prompt
     from supabase_client import get_recent_lessons, record_lesson_view, get_or_create_anonymous_user_id
     
     # Get user ID (demo: anonymous for now)
@@ -697,7 +769,8 @@ async def generate_content(symbol: str):
         avg_volume=info.get('averageVolume', 0) if 'info' in dir() else 0,
         market_cap=market_cap,
         pe_ratio=info.get('trailingPE') if 'info' in dir() else None,
-        dividend_yield=info.get('dividendYield') if 'info' in dir() else None,
+        dividend_yield=stock_data.get('dividend_yield'), # Use robust derivation
+        dividend_rate=stock_data.get('dividend_rate'),   # Use robust derivation
         week_52_high=week_52_high if 'week_52_high' in dir() else None,
         week_52_low=week_52_low if 'week_52_low' in dir() else None,
         beta=info.get('beta') if 'info' in dir() else None,
@@ -716,6 +789,102 @@ async def generate_content(symbol: str):
         lesson_topic = selected_concept["title"]
         concept_id = selected_concept["id"]
         game_config = selected_concept.get("game_config")
+        
+        # --- HOTFIX: Force Lesson 14 Dynamic Content in main.py ---
+        if concept_id == "lesson_14_dividend_yield":
+            try:
+                # 1. Safely extract Yield Data
+                yield_raw = stock_context.dividend_yield if stock_context.dividend_yield is not None else 0.0
+                yield_percent = yield_raw * 100
+                div_rate = stock_context.dividend_rate if stock_context.dividend_rate is not None else 0.0
+                
+                # Manual Calculation Fallback (if API yield is 0 but we have rate & price)
+                if yield_percent == 0 and div_rate > 0 and stock_context.price > 0:
+                   yield_percent = (div_rate / stock_context.price) * 100
+
+                # 2. Aggressive Fallback: If yield still 0, re-fetch fresh data
+                if yield_percent == 0:
+                    try:
+                        fresh_ticker = yf.Ticker(stock_context.symbol)
+                        hist_divs = fresh_ticker.dividends
+                        if not hist_divs.empty:
+                            now_ts = datetime.now().timestamp()
+                            year_seconds = 365 * 24 * 3600
+                            recent_payouts = [div for date, div in hist_divs.items() if (now_ts - date.timestamp()) <= year_seconds]
+                            fresh_rate = sum(recent_payouts)
+                            if fresh_rate > 0:
+                                div_rate = fresh_rate
+                                if stock_context.price > 0:
+                                    yield_percent = (div_rate / stock_context.price) * 100
+                                    stock_context.dividend_rate = div_rate # Update context
+                                    stock_context.dividend_yield = div_rate / stock_context.price
+                                    # Update Game Config too
+                                    if game_config:
+                                        game_config["base_dividend"] = div_rate
+                    except Exception:
+                        pass
+
+                # 3. Reconstruct Slide 0
+                if "concept" in selected_concept and "slides" in selected_concept["concept"]:
+                    slides = selected_concept["concept"]["slides"]
+                    if slides:
+                        new_text = (
+                            f"You searched for **{stock_context.name}**. Its **Dividend Yield** is **{yield_percent:.2f}%**.\n\n"
+                            f"This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{stock_context.symbol}**."
+                        )
+                        slides[0]["text"] = new_text
+                        selected_concept["debug_trace"] = f"MainPy_Injected: {yield_percent:.2f}%"
+
+                # 4. Update Game Config (Yield Magnet)
+                if game_config:
+                    game_config["base_dividend"] = div_rate
+
+                # 5. Update Quiz
+                if "quiz" in selected_concept and selected_concept["quiz"]:
+                    q0_template = "If {company_name} pays a dividend and the stock price drops, what happens to the Yield %?"
+                    selected_concept["quiz"][0]["question"] = q0_template.replace("{company_name}", str(stock_context.name))
+                    
+            except Exception as e:
+                print(f"DEBUG_MAIN: Error injecting {e}")
+                import traceback
+                traceback.print_exc()
+        
+        elif concept_id == "lesson_15_beta":
+            try:
+                beta_val = stock_context.beta if stock_context.beta is not None else 1.0
+                beta_str = f"{beta_val:.2f}"
+                
+                # 1. Update Slides
+                if "concept" in selected_concept and "slides" in selected_concept["concept"]:
+                    slides = selected_concept["concept"]["slides"]
+                    if slides:
+                        # Slide 0: Context
+                        if "{beta}" in slides[0].get("text", ""):
+                            slides[0]["text"] = slides[0]["text"].replace("{beta}", beta_str)
+                
+                # 2. Update Game Config
+                if game_config:
+                    game_config["base_beta"] = beta_val
+                
+                # 3. Update Quiz
+                if "quiz" in selected_concept and selected_concept["quiz"]:
+                    print(f"DEBUG_MAIN: Processing Quiz for {stock_context.name}")
+                    for q in selected_concept["quiz"]:
+                         q_text = q.get("question", "")
+                         print(f"DEBUG_MAIN: Checking Q: {q_text}")
+                         
+                         if "{beta}" in q_text:
+                             q["question"] = q_text.replace("{beta}", beta_str)
+                             print(f"DEBUG_MAIN: Replaced beta -> {q['question']}")
+                             # Update local var for next check
+                             q_text = q["question"]
+                             
+                         if "{company_name}" in q_text:
+                             q["question"] = q_text.replace("{company_name}", str(stock_context.name))
+                             print(f"DEBUG_MAIN: Replaced name -> {q['question']}")
+
+            except Exception as e:
+                print(f"DEBUG_MAIN: Error injecting beta {e}")
     else:
         lesson_topic = selected_concept.name
         concept_id = selected_concept.id
@@ -860,6 +1029,32 @@ async def generate_content(symbol: str):
     # Format news for output
     formatted_news = [{"title": item["title"], "link": item["link"]} for item in news] if news else []
 
+    # --- FINAL SAFETY CHECK ---
+    # Ensure Lesson 14 Carousel Text is Correct before returning
+    if concept_id == "lesson_14_dividend_yield" and is_static:
+        try:
+             # Re-extract yield from updated stock_context/game_config or recalculate
+             final_rate = game_config.get("base_dividend") if game_config else 0
+             final_price = stock_context.price
+             
+             if not final_rate and stock_context.dividend_rate:
+                 final_rate = stock_context.dividend_rate
+             
+             # Final Attempt at Yield Calc
+             final_yield_pct = 0.0
+             if final_rate and final_rate > 0 and final_price > 0:
+                 final_yield_pct = (final_rate / final_price) * 100
+             
+             # Force update concept data slides
+             if "slides" in concept_data and concept_data["slides"]:
+                 new_text = (
+                    f"You searched for **{stock_context.name}**. Its **Dividend Yield** is **{final_yield_pct:.2f}%**.\n\n"
+                    f"This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{stock_context.symbol}**."
+                 )
+                 concept_data["slides"][0]["text"] = new_text
+        except Exception:
+             pass
+
     return {
         "symbol": symbol,
         "company_name": company_name,
@@ -870,7 +1065,8 @@ async def generate_content(symbol: str):
         "quiz": quiz,
         "content_id": content_id,
         "is_ai_generated": is_ai_generated,
-        "game_config": game_config  # New field for interactive lessons
+        "game_config": game_config,
+        "debug_trace": f"ID={concept_id} | Trace={selected_concept.get('debug_trace')}"
     }
 
 @app.post("/api/feedback")
@@ -898,6 +1094,38 @@ async def submit_feedback(content_id: str, vote: str, user_id: str = None):
         raise HTTPException(status_code=500, detail="Failed to update feedback")
     
     return {"success": True, "vote": vote}
+
+# =============================================================================
+# DAILY QUIZ ENDPOINT
+# =============================================================================
+from daily_quizzes import get_quiz_for_lesson
+
+@app.get("/api/daily-quiz/{lesson_number}")
+async def get_daily_quiz(lesson_number: int):
+    """
+    Get the daily quiz for a specific lesson number.
+    
+    Args:
+        lesson_number: Lesson number (1-30)
+    
+    Returns:
+        Quiz question, options, correctAnswer index, and explanation
+    """
+    if lesson_number < 1 or lesson_number > 30:
+        raise HTTPException(status_code=400, detail="Lesson number must be between 1 and 30")
+    
+    quiz = get_quiz_for_lesson(lesson_number)
+    
+    if not quiz:
+        raise HTTPException(status_code=404, detail=f"No quiz found for lesson {lesson_number}")
+    
+    return {
+        "lessonNumber": lesson_number,
+        "question": quiz["question"],
+        "options": quiz["options"],
+        "correctAnswer": quiz["correctAnswer"],
+        "explanation": quiz["explanation"]
+    }
 
 @app.get("/api/health")
 async def health_check():

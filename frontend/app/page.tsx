@@ -1,4 +1,9 @@
-import { Bell, User } from "lucide-react"
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/utils/supabase/client"
+import { Bell, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StockSearch } from "@/components/dashboard/StockSearch"
 import { DailyQuiz } from "@/components/dashboard/DailyQuiz"
@@ -7,10 +12,85 @@ import { Leaderboard } from "@/components/dashboard/Leaderboard"
 import { MarketOverview } from "@/components/dashboard/MarketOverview"
 import { Sidebar } from "@/components/dashboard/Sidebar"
 import { StatsCards } from "@/components/dashboard/StatsCards"
+import { getStreakData } from "@/lib/streaks"
+import { useAuth } from "@/contexts/AuthContext"
 
 export default function Dashboard() {
+  const router = useRouter()
+  const { user, isLoading } = useAuth()
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [streakData, setStreakData] = useState<{ totalStreak: number; weeklyGoal: number; weeklyProgress: number } | undefined>(undefined)
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/login')
+    }
+  }, [isLoading, user, router])
+
+  // Fetch streak data once user is available
+  useEffect(() => {
+    if (user) {
+      getStreakData().then(setStreakData)
+    }
+  }, [user])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
+  // Show nothing while loading auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  // Don't render if no user (will redirect)
+  if (!user) return null
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
+            onClick={() => setShowLogoutModal(false)}
+          />
+          {/* Modal Card - Playful Geometry */}
+          <div className="relative bg-card border-2 border-foreground rounded-xl shadow-pop p-6 max-w-sm w-full mx-4">
+            <div className="text-center">
+              {/* Icon with playful border */}
+              <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-destructive/10 border-2 border-destructive shadow-pop flex items-center justify-center">
+                <LogOut className="h-8 w-8 text-destructive" />
+              </div>
+              <h3 className="font-heading text-2xl font-bold text-foreground mb-2">Log out?</h3>
+              <p className="text-muted-foreground text-sm mb-6">Are you sure you want to log out of your account?</p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 font-bold font-heading bg-muted border-0 shadow-pop hover:translate-y-0.5 hover:shadow-none transition-bounce"
+                  onClick={() => setShowLogoutModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1 h-11 font-bold font-heading bg-destructive text-destructive-foreground border-0 shadow-pop hover:translate-y-0.5 hover:shadow-none transition-bounce"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Background Decorations */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-tertiary/20 blur-3xl" />
@@ -53,10 +133,11 @@ export default function Dashboard() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="border-2 border-foreground/20 hover:border-foreground hover:bg-secondary hover:text-secondary-foreground transition-bounce rounded-full bg-transparent"
+                  onClick={() => setShowLogoutModal(true)}
+                  className="border-2 border-foreground/20 hover:border-foreground hover:bg-destructive hover:text-destructive-foreground transition-bounce rounded-full bg-transparent"
                 >
-                  <User className="h-5 w-5" strokeWidth={2.5} />
-                  <span className="sr-only">Profile</span>
+                  <LogOut className="h-5 w-5" strokeWidth={2.5} />
+                  <span className="sr-only">Logout</span>
                 </Button>
               </div>
             </div>
@@ -82,7 +163,7 @@ export default function Dashboard() {
 
           {/* Stats Cards */}
           <section className="mb-8">
-            <StatsCards />
+            <StatsCards streakData={streakData} />
           </section>
 
           {/* Main Grid */}

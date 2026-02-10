@@ -849,6 +849,118 @@ TIER_2_LESSONS = [
     },
 
     {
+        "id": "lesson_14_dividend_yield",
+        "title": "Dividend Yield %",
+        "concept": {
+            "name": "Your Annual 'Interest'",
+            "category": "valuation_health",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Context 🧲",
+                    "text": "You searched for **{company_name}**. Its **Dividend Yield** is **{dividendYield}%**. This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{symbol}**.",
+                    "icon": "Magnet"
+                },
+                {
+                    "title": "The Analogy 🏦",
+                    "text": "Think of it like the **Interest Rate** on a savings account. If you put $100 in and get $5 back in a year, your yield is 5%. It's the money the stock pays you just for being an owner.",
+                    "icon": "Banknote"
+                },
+                {
+                    "title": "The Inverse Rule ⚖️",
+                    "text": "Yield is a seesaw. If the dividend stays the same but the stock price **falls**, the yield goes **UP**! Buying low means you get a better 'interest rate' on your money.",
+                    "icon": "Scale"
+                }
+            ]
+        },
+        "breakdown": "Dividend Yield turns a stock into an income engine. It helps you compare different companies to see which one pays you the best 'rent'.",
+        "game_config": {
+            "type": "yield_magnet",
+            "instruction": "Slide the price down to see your 'Yield Magnet' grow stronger!",
+            "base_dividend": "{dividendRate}"
+        },
+        "quiz": [
+            {
+                "question": "If {company_name} pays a fixed dividend, and its stock price suddenly drops by half, what happens to the Dividend Yield %?",
+                "options": ["It Doubles (Goes Up)", "It gets cut in half (Goes Down)", "It stays exactly the same"],
+                "correctIndex": 0,
+                "explanation": "Yield and Price move in opposite directions. Only paying half price for the same cash payout means your return doubles!"
+            },
+            {
+                "question": "What is Dividend Yield essentially?",
+                "options": ["The total profit the company made", "The 'Interest Rate' you earn on your investment", "The tax you pay on the stock", "The growth rate of the stock price"],
+                "correctIndex": 1,
+                "explanation": "Dividend Yield is like the interest rate on a savings account—it tells you how much cash flow you get for every dollar invested."
+            },
+            {
+                "question": "You see a stock with a massive 15% yield. Is this always a good sign?",
+                "options": ["Yes! Free money!", "No, it could be a 'Yield Trap' signaling trouble", "Yes, high yield always means high quality"],
+                "correctIndex": 1,
+                "explanation": "Extremely high yields often mean the stock price has crashed due to business problems. The dividend might be cut soon (a 'Yield Trap')."
+            },
+            {
+                "question": "Which type of company is most likely to pay a steady dividend?",
+                "options": ["A brand new tech startup", "A mature, profitable utility company", "A crypto token", "A company losing money every year"],
+                "correctIndex": 1,
+                "explanation": "Mature, profitable companies (like Utilities or Consumer Staples) share profits because they don't need to reinvest everything into growth."
+            }
+        ]
+    },
+    {
+        "id": "lesson_15_beta",
+        "title": "Beta (Volatility)",
+        "concept": {
+            "name": "The Market Shadow",
+            "category": "risk_management",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "The Context 📉",
+                    "text": "You searched for **{company_name}**. Its **Beta** ({beta}) measures its sensitivity to the overall market. It tells you if the stock is a 'Market Follower' or an 'Amplifier'.",
+                    "icon": "Activity"
+                },
+                {
+                    "title": "The Analogy 🏃",
+                    "text": "Imagine the Market is a **Lead Runner**.\n\n• **Beta 1.0 (The Shadow):** You run at the exact same pace.\n• **Beta > 1.5 (The Sprinter):** You amplify every move. If the market jogs, you sprint!\n• **Beta < 0.8 (The Stroller):** You run your own steady pace, ignoring the noise.",
+                    "icon": "Users"
+                },
+                {
+                    "title": "Risk vs. Reward ⚖️",
+                    "text": "**High Beta** (Tech/Growth) amplifies gains but also crashes harder during downturns.\n\n**Low Beta** (Utilities/Consumer Goods) provides safety and stability, often preserving wealth when the market falls.",
+                    "icon": "ShieldCheck"
+                }
+            ]
+        },
+        "breakdown": "Beta is the 'Personality Test' of a stock. It measures how much it wiggles compared to the rest of the market.",
+        "news": [],
+        "game_config": {
+            "type": "beta_shadow",
+            "instruction": "Set the Beta Mode to match the Market's moves!",
+            "base_beta": "{beta}"
+        },
+        "quiz": [
+            {
+                "question": "Analysts calculate a Beta of {beta} for {company_name}. What is Beta essentially measuring?",
+                "options": ["The company's total debt", "The stock's volatility relative to the market", "The CEO's performance", "The dividend payout date"],
+                "correctIndex": 1,
+                "explanation": "Beta measures how closely a stock's price follows the overall market's movements (volatility correlation)."
+            },
+            {
+                "question": "What does a Beta of 1.0 mean?",
+                "options": ["The stock rarely moves", "The stock moves exactly in sync with the market", "The stock is extremely risky", "The stock is bankrupt"],
+                "correctIndex": 1,
+                "explanation": "A Beta of 1.0 means the stock has a 1:1 correlation with the market's movements."
+            },
+            {
+                "question": "Which type of stock typically has a LOW Beta (< 0.5)?",
+                "options": ["A trendy Tech IPO", "A boring Utility company", "A crypto-mining company", "A leveraged ETF"],
+                "correctIndex": 1,
+                "explanation": "Utilities are 'Defensive'—people need electricity even in a recession, so their stock price stays stable (Low Beta)."
+            }
+        ]
+    },
+
+    {
         "id": "lesson_11_revenue_profit",
         "title": "Revenue vs. Profit",
         "concept": {

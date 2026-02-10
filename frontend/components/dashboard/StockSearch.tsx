@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { Search, TrendingUp, TrendingDown, Loader2, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { logActivity } from "@/lib/streaks"
 
 interface Stock {
     symbol: string
@@ -74,6 +75,9 @@ export function StockSearch({ className, onStockSelect }: StockSearchProps) {
     }, [query])
 
     const handleSelect = (symbol: string) => {
+        // Log activity for streak tracking
+        logActivity('search')
+
         if (onStockSelect) {
             onStockSelect(symbol)
         } else {

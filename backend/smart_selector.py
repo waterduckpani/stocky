@@ -150,7 +150,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         
         # TESTING OVERRIDE
         # lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_13_pe_ratio'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
         
         if lesson_ref:
             lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
@@ -162,6 +162,56 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         
         # return lesson, {"type": "static", "reason": "Forced Lesson 6"} # REMOVED EARLY RETURN
         
+        lesson["debug_trace"] = f"CRITICAL_DEBUG: ID={lesson.get('id', 'MISSING')}"
+        print(f"CRITICAL: {lesson.get('id')}")
+        
+        
+        
+        # === FORCE INJECTION (Lesson 14 Hotfix) ===
+        if lesson["id"] == "lesson_14_dividend_yield":
+            print(f"DEBUG: FORCING Lesson 14 Injection for {context.symbol} | Context Name: {context.name}")
+            try:
+                # 1. Safely extract Yield Data
+                # context.dividend_yield handles None (e.g., non-dividend payers)
+                yield_raw = context.dividend_yield if context.dividend_yield is not None else 0.0
+                yield_percent = yield_raw * 100
+                
+                # context.dividend_rate handles None
+                div_rate = context.dividend_rate if context.dividend_rate is not None else 2.0
+                
+                # 2. Reconstruct Slide 0 (Context) explicitly
+                # This guarantees the dynamic values are used, bypassing any placeholder issues
+                if "concept" in lesson and "slides" in lesson["concept"]:
+                    slides = lesson["concept"]["slides"]
+                    if slides:
+                        # Construct f-string directly
+                        new_text = (
+                            f"You searched for **{context.name}**. Its **Dividend Yield** is **{yield_percent:.2f}%**.\n\n"
+                            f"This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{context.symbol}**."
+                        )
+                        print(f"DEBUG: Setting Slide 0 text to: {new_text}")
+                        slides[0]["text"] = new_text
+                        
+                        # Add debug tracer
+                        lesson["debug_trace"] = f"Reconstructed: {yield_percent:.2f}%"
+
+                # 3. Update Game Config (Yield Magnet)
+                if "game_config" in lesson:
+                    print(f"DEBUG: Setting Game Rate to {div_rate}")
+                    lesson["game_config"]["base_dividend"] = div_rate
+
+                # 4. Update Quiz Question explicitly
+                if "quiz" in lesson and lesson["quiz"]:
+                    print(f"DEBUG: Updating Quiz Question")
+                    q0_template = "If {company_name} pays a dividend and the stock price drops, what happens to the Yield %?"
+                    lesson["quiz"][0]["question"] = q0_template.replace("{company_name}", str(context.name))
+
+            except Exception as e:
+                print(f"DEBUG: CRITICAL ERROR IN LESSON 14 INJECTION: {e}")
+                import traceback
+                traceback.print_exc()
+                lesson["debug_trace"] = f"Exception: {e}"
+
         # Inject Context (Chameleon Mode)
         if lesson["id"] == "lesson_2_exchange":
             # === LESSON 2: THE EXCHANGE (CAROUSEL LOGIC) ===
@@ -528,6 +578,9 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             else:
                  lesson["quiz"].append(dynamic_q)
             
+            
+
+
         # === LESSON 10: DIVIDENDS (Dynamic Content) ===
         elif lesson["id"] == "lesson_10_dividends":
             # 1. Get Data
@@ -632,6 +685,34 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                      slides[0]["text"] = slides[0]["text"].replace("{company_name}", context.name)
                  except Exception as e:
                      print(f"Error injecting Lesson 12 context: {e}")
+
+        # === LESSON 15: BETA (Dynamic Content) ===
+        elif lesson["id"] == "lesson_15_beta":
+             try:
+                 # 1. Get Beta
+                 beta_val = context.beta if context.beta is not None else 1.0
+                 beta_str = f"{beta_val:.2f}"
+                 
+                 # 2. Inject Context into Slide 0
+                 slides = lesson["concept"]["slides"]
+                 if len(slides) > 0:
+                     slides[0]["text"] = slides[0]["text"].replace("{beta}", beta_str).replace("{company_name}", context.name)
+                 
+                 # 3. Update Game Config
+                 if "game_config" in lesson:
+                     lesson["game_config"]["base_beta"] = beta_val
+                     
+                 # 4. Inject Quiz
+                 if "quiz" in lesson and lesson["quiz"]:
+                     for q in lesson["quiz"]:
+                         q_text = q.get("question", "")
+                         if "{beta}" in q_text:
+                             q["question"] = q_text.replace("{beta}", beta_str)
+                             q_text = q["question"] # Update for next check
+                         if "{company_name}" in q_text:
+                             q["question"] = q_text.replace("{company_name}", str(context.name))
+             except Exception as e:
+                 print(f"Error injecting Lesson 15 context: {e}")
 
         return lesson, {"type": "static", "reason": "Beginner preset"}
     

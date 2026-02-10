@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, X, Trophy, ArrowRight } from "lucide-react"
+import { Check, X, Trophy, ArrowRight, Home, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Question {
@@ -66,18 +66,57 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
 
     if (completed) {
         return (
-            <div className="bg-quaternary/10 rounded-3xl p-8 border-2 border-quaternary text-center">
-                <div className="w-16 h-16 bg-quaternary text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-pop">
-                    <Trophy className="w-8 h-8" />
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="bg-card w-full max-w-md rounded-[2rem] p-8 border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden animate-in zoom-in-95 duration-300">
+
+                    {/* Confetti / Decor */}
+
+                    <div className="absolute -right-6 -top-6 w-24 h-24 bg-tertiary/20 rounded-full blur-2xl pointer-events-none" />
+                    <div className="absolute -left-6 -bottom-6 w-32 h-32 bg-secondary/10 rounded-full blur-2xl pointer-events-none" />
+
+                    <div className="text-center relative z-10">
+                        <div className="w-20 h-20 bg-quaternary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-pop border-4 border-foreground transform rotate-3">
+                            <Trophy className="w-10 h-10 drop-shadow-md" strokeWidth={2.5} />
+                        </div>
+
+                        <h3 className="text-3xl font-black text-foreground mb-2 tracking-tight">Lesson Completed!</h3>
+
+                        <div className="flex justify-center items-center gap-2 mb-6">
+                            <span className="text-muted-foreground font-bold">Score:</span>
+                            <span className="text-xl font-black text-foreground bg-muted px-3 py-1 rounded-lg">
+                                {score}/{questions.length}
+                            </span>
+                        </div>
+
+                        {/* XP Reward Placeholder */}
+                        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-8 flex items-center justify-center gap-3">
+                            <div className="bg-tertiary text-tertiary-foreground p-2 rounded-xl">
+                                <Sparkles className="w-5 h-5" />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-xs font-bold text-amber-600 uppercase tracking-wider">Reward</p>
+                                <p className="text-xl font-black text-amber-900 leading-none">+50 XP</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                                onClick={() => router.push('/')}
+                                className="flex-1 py-3 bg-white border-2 border-border text-foreground hover:bg-muted/50 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                            >
+                                <Home className="w-4 h-4" />
+                                Return Home
+                            </button>
+                            <button
+                                onClick={() => router.push('/explore')} // Placeholder next action
+                                className="flex-1 py-3 bg-primary text-primary-foreground border-2 border-primary hover:border-primary-foreground/20 rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
+                            >
+                                Next Lesson
+                                <ArrowRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">Challenge Complete!</h3>
-                <p className="text-muted-foreground font-medium mb-6">You scored {score}/{questions.length} on the {symbol} knowledge check.</p>
-                <button
-                    onClick={() => router.push('/')}
-                    className="bg-foreground text-background px-6 py-3 rounded-xl font-bold hover:bg-foreground/90 transition-colors"
-                >
-                    Back to Dashboard
-                </button>
             </div>
         )
     }

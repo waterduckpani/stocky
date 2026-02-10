@@ -2,11 +2,19 @@
 
 import { Zap, Flame, BookOpen, Target } from "lucide-react"
 
-const userData = {
+interface StatsCardsProps {
+    streakData?: {
+        totalStreak: number
+        weeklyGoal: number
+        weeklyProgress: number
+    }
+}
+
+// Static placeholder data for non-streak cards
+const staticData = {
     level: 12,
     currentXp: 2340,
     xpToNextLevel: 3000,
-    streak: 14,
     currentCourse: "Technical Analysis",
     currentUnit: "Candlestick Patterns",
     unitProgress: 65,
@@ -16,8 +24,14 @@ const userData = {
     dailyChallengeStreak: 7,
 }
 
-export function StatsCards() {
-    const xpProgress = (userData.currentXp / userData.xpToNextLevel) * 100
+export function StatsCards({ streakData }: StatsCardsProps) {
+    const xpProgress = (staticData.currentXp / staticData.xpToNextLevel) * 100
+
+    // Use provided streak data or defaults
+    const totalStreak = streakData?.totalStreak ?? 0
+    const weeklyGoal = streakData?.weeklyGoal ?? 5
+    const weeklyProgress = streakData?.weeklyProgress ?? 0
+    const weeklyStreakProgress = weeklyGoal > 0 ? (weeklyProgress / weeklyGoal) * 100 : 0
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -29,13 +43,13 @@ export function StatsCards() {
                     </div>
                     <div>
                         <p className="text-sm text-muted-foreground font-medium">Current Level</p>
-                        <p className="text-xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>Level {userData.level}</p>
+                        <p className="text-xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>Level {staticData.level}</p>
                     </div>
                 </div>
                 <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground font-medium">XP Progress</span>
-                        <span className="text-foreground font-bold">{userData.currentXp} / {userData.xpToNextLevel}</span>
+                        <span className="text-foreground font-bold">{staticData.currentXp} / {staticData.xpToNextLevel}</span>
                     </div>
                     <div className="h-3 bg-muted rounded-full overflow-hidden border-2 border-foreground/20">
                         <div
@@ -46,15 +60,27 @@ export function StatsCards() {
                 </div>
             </div>
 
-            {/* Daily Streak Card */}
+            {/* Weekly Streak Card */}
             <div className="p-5 rounded-2xl border-2 border-foreground bg-card shadow-pop transition-bounce hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-pop-hover">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 mb-4">
                     <div className="h-12 w-12 rounded-xl bg-tertiary border-2 border-foreground flex items-center justify-center shadow-pop-yellow">
                         <Flame className="h-6 w-6 text-tertiary-foreground" strokeWidth={2.5} />
                     </div>
                     <div>
-                        <p className="text-sm text-muted-foreground font-medium">Daily Streak</p>
-                        <p className="text-2xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>{userData.streak} days</p>
+                        <p className="text-sm text-muted-foreground font-medium">Weekly Streak</p>
+                        <p className="text-xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>{totalStreak} day streak</p>
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">This Week</span>
+                        <span className="text-foreground font-bold">{weeklyProgress} / {weeklyGoal} days</span>
+                    </div>
+                    <div className="h-3 bg-muted rounded-full overflow-hidden border-2 border-foreground/20">
+                        <div
+                            className="h-full bg-tertiary rounded-full transition-all duration-500"
+                            style={{ width: `${Math.min(weeklyStreakProgress, 100)}%` }}
+                        />
                     </div>
                 </div>
             </div>
@@ -67,19 +93,19 @@ export function StatsCards() {
                     </div>
                     <div>
                         <p className="text-sm text-muted-foreground font-medium">Current Course</p>
-                        <p className="text-base font-bold text-foreground">{userData.currentCourse}</p>
+                        <p className="text-base font-bold text-foreground">{staticData.currentCourse}</p>
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground font-medium">{userData.currentUnit}</p>
+                    <p className="text-sm text-muted-foreground font-medium">{staticData.currentUnit}</p>
                     <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground font-medium">Unit {userData.completedUnits}/{userData.totalUnits}</span>
-                        <span className="text-foreground font-bold">{userData.unitProgress}%</span>
+                        <span className="text-muted-foreground font-medium">Unit {staticData.completedUnits}/{staticData.totalUnits}</span>
+                        <span className="text-foreground font-bold">{staticData.unitProgress}%</span>
                     </div>
                     <div className="h-3 bg-muted rounded-full overflow-hidden border-2 border-foreground/20">
                         <div
                             className="h-full bg-primary rounded-full transition-all duration-500"
-                            style={{ width: `${userData.unitProgress}%` }}
+                            style={{ width: `${staticData.unitProgress}%` }}
                         />
                     </div>
                 </div>
@@ -94,12 +120,12 @@ export function StatsCards() {
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground font-medium">Avg Quiz Score</p>
-                            <p className="text-2xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>{userData.avgQuizScore}%</p>
+                            <p className="text-2xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>{staticData.avgQuizScore}%</p>
                         </div>
                     </div>
                     <div className="text-right">
                         <p className="text-sm text-muted-foreground font-medium">Challenge</p>
-                        <p className="text-base font-bold text-foreground">{userData.dailyChallengeStreak} day streak</p>
+                        <p className="text-base font-bold text-foreground">{staticData.dailyChallengeStreak} day streak</p>
                     </div>
                 </div>
             </div>

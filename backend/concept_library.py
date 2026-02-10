@@ -30,6 +30,7 @@ class StockContext:
     market_cap: float = 0
     pe_ratio: Optional[float] = None
     dividend_yield: Optional[float] = None
+    dividend_rate: Optional[float] = None
     week_52_high: Optional[float] = None
     week_52_low: Optional[float] = None
     beta: Optional[float] = None
