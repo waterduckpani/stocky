@@ -4,8 +4,8 @@ Preset lessons for beginners.
 """
 
 TIER_1_LESSONS = [
-
     {
+
         "id": "lesson_1_ticker",
         "title": "The Ticker Symbol",
         "concept": {
@@ -795,6 +795,78 @@ TIER_2_LESSONS = [
         ]
     },
     {
+        "id": "lesson_16_earnings_reports",
+        "title": "Earnings Reports",
+        "concept": {
+            "name": "The Quarterly Scorecard",
+            "category": "valuation_health",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "What is an Earnings Report? 📋",
+                    "text": "Every 3 months, public companies like **{company_name}** are required by law to file a **10-Q report**. This isn't just news—it is a verified document showing exactly how much money they made and where it went.",
+                    "icon": "FileText"
+                },
+                {
+                    "title": "The Three Pillars 🏛️",
+                    "text": "Investors focus on three key numbers compared to last year: **Revenue** (Total Sales), **Net Income** (Bottom Line Profit), and **EPS** (Profit per Share). If a company grows all three, it’s usually a 'winner.'",
+                    "icon": "Columns"
+                },
+                {
+                    "title": "Estimates vs. Actuals ⚖️",
+                    "text": "The market doesn't just care about the numbers; it cares about the **Expectations Gap**. Before the report, analysts release 'Consensus Estimates.' If {symbol} reports $1B but everyone expected $1.2B, it’s a **Miss**—and the price will likely fall.",
+                    "icon": "Scale"
+                },
+                {
+                    "title": "Guidance: The Forward Look 🔮",
+                    "text": "The past is history. Investors care most about **Guidance**—the CEO's official prediction for the next quarter. A 'Beat' on current earnings paired with 'Lowered Guidance' is a common reason for a stock crash.",
+                    "icon": "Zap"
+                }
+            ]
+        },
+        "breakdown": "Earnings season is the most volatile time of the year. It's when the truth comes out.",
+        "news": [],
+        "game_config": {
+            "type": "earnings_reaction",
+            "instruction": "Read the News Flash. TAP FAST: Buy (Green) for Good News, Sell (Red) for Bad News!"
+        },
+        "quiz": [
+            {
+                "question": "What is an Earnings Report?",
+                "options": [
+                    "A daily email from the CEO",
+                    "A quarterly public report of profits and losses",
+                    "A secret document for VIPs only",
+                    "A list of employee birthdays"
+                ],
+                "correctIndex": 1,
+                "explanation": "Public companies are required by law to report their financial performance every quarter (3 months)."
+            },
+            {
+                "question": "If {company_name} reports a profit, but the stock price DROPS, what likely happened?",
+                "options": [
+                    "The profit was smaller than 'Expectations' (They Missed)",
+                    "The profit was fake",
+                    "Optimism is illegal",
+                    "Everyone clicked the wrong button"
+                ],
+                "correctIndex": 0,
+                "explanation": "Markets trade on expectations. Even if they made money, if it was LESS than expected, it counts as a failure."
+            },
+            {
+                "question": "What is 'Guidance'?",
+                "options": [
+                    "The CEO's prediction for the COMING quarter",
+                    "A map of the office",
+                    "Advice on how to dress",
+                    "The history of the company"
+                ],
+                "correctIndex": 0,
+                "explanation": "Guidance is the company's own forecast. It is often MORE important than the current numbers because stock prices are about the future."
+            }
+        ]
+    },
+    {
         "id": "lesson_13_pe_ratio",
         "title": "P/E Ratio",
         "concept": {
@@ -1028,6 +1100,75 @@ TIER_2_LESSONS = [
                 ],
                 "correctIndex": 0,
                 "explanation": "The bottom line represents the actual 'wealth' created by the company after all bills are paid."
+            }
+        ]
+    },
+    {
+        "id": "lesson_17_52_week_range",
+        "title": "52-Week Range",
+        "concept": {
+            "name": "Measuring Relative Performance",
+            "category": "valuation_health",
+            "type": "carousel",
+            "slides": [
+                {
+                    "title": "Defining the Yearly Bound 📏",
+                    "text": "The **52-Week Range** establishes the upper and lower price boundaries for **{company_name}** over the last 12 months. It is a technical benchmark used to determine where the current price sits relative to the market's one-year consensus.",
+                    "icon": "Ruler"
+                },
+                {
+                    "title": "Historical Anchoring ⚓",
+                    "text": "The 52-week high ({fiftyTwoWeekHigh}) and low ({fiftyTwoWeekLow}) serve as psychological 'anchors' for investors. These extremes often act as strong **Support** or **Resistance** levels because they represent the maximum and minimum values the market has assigned to **{symbol}** in the recent cycle.",
+                    "icon": "Anchor"
+                },
+                {
+                    "title": "The Momentum Indicator 🚀",
+                    "text": "Trading near the 52-week high indicates sustained **Buying Pressure** and market confidence. Conversely, a price near the 52-week low suggests a period of **Distribution** (selling) where the asset is struggling to find new demand.",
+                    "icon": "Activity"
+                },
+                {
+                    "title": "Analyzing the Breakout 📈",
+                    "text": "A **52-Week Breakout** occurs when the price exceeds the yearly high. This is technically significant because it means no investor who purchased in the last year is currently in a losing position, which can lead to reduced selling pressure and accelerated momentum.",
+                    "icon": "TrendingUp"
+                }
+            ]
+        },
+        "breakdown": "The 52-Week Range is a technical map. It allows you to analyze current price performance not as an isolated number, but as a relative position within a documented one-year cycle.",
+        "news": [],
+        "game_config": {
+            "type": "sentiment_zone",
+            "instruction": "Analyze the technical position of {symbol} relative to its 1-year boundaries."
+        },
+        "quiz": [
+            {
+                "question": "What is the 52-Week Range used for?",
+                "options": [
+                    "Predicting the exact price tomorrow",
+                    "Analyzing relative performance over the last year",
+                    "Calculating the CEO's bonus",
+                    "It has no use"
+                ],
+                "correctIndex": 1
+            },
+            {
+                "question": "If a stock breaks above its 52-Week High, what does this often signal?",
+                "options": [
+                    "The company is going bankrupt",
+                    "Strong momentum and lack of resistance",
+                    "Everyone is selling",
+                    "The market is broken"
+                ],
+                "correctIndex": 1
+            },
+            {
+                "question": "Why do the 52-Week High and Low act as 'Anchors'?",
+                "options": [
+                    "They weigh the stock down",
+                    "They are psychological levels of Support and Resistance",
+                    "They are legal limits set by the government",
+                    "They are random numbers"
+                ],
+                "correctIndex": 1
             }
         ]
     }

@@ -50,23 +50,24 @@ export function DailyQuiz() {
                     const lesson = progressData?.current_lesson || 1
                     setCurrentLesson(lesson)
 
-                    // Fetch quiz from backend if lesson completed
-                    if (activityData && activityData.length > 0) {
-                        try {
-                            const response = await fetch(`http://localhost:8000/api/daily-quiz/${lesson}`)
-                            if (response.ok) {
-                                const quizData = await response.json()
-                                setQuiz({
-                                    question: quizData.question,
-                                    options: quizData.options,
-                                    correctAnswer: quizData.correctAnswer,
-                                    explanation: quizData.explanation
-                                })
-                            }
-                        } catch {
-                            // Backend not available, use fallback quiz
+                    // Fetch quiz from backend regardless of completion (so we can show the question)
+                    try {
+                        const response = await fetch(`http://localhost:8000/api/daily-quiz/${lesson}`)
+                        if (response.ok) {
+                            const quizData = await response.json()
+                            setQuiz({
+                                question: quizData.question,
+                                options: quizData.options,
+                                correctAnswer: quizData.correctAnswer,
+                                explanation: quizData.explanation
+                            })
+                        } else {
+                            // Fallback if fetch fails
                             setQuiz(getFallbackQuiz(lesson))
                         }
+                    } catch {
+                        // Backend not available, use fallback quiz
+                        setQuiz(getFallbackQuiz(lesson))
                     }
                 } else {
                     // Not logged in, use fallback
@@ -111,29 +112,7 @@ export function DailyQuiz() {
         )
     }
 
-    // Must complete a lesson first
-    if (!hasCompletedLesson) {
-        return (
-            <div className="rounded-2xl border-2 border-foreground bg-card shadow-soft overflow-hidden opacity-80">
-                <div className="px-6 py-4 border-b-2 border-foreground/10 flex items-center justify-between bg-muted/30">
-                    <h3 className="text-lg font-bold flex items-center gap-2 text-muted-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-                        <div className="h-8 w-8 rounded-lg bg-muted border-2 border-foreground/50 flex items-center justify-center">
-                            <Lock className="h-4 w-4 text-muted-foreground" strokeWidth={2.5} />
-                        </div>
-                        Daily Quiz
-                    </h3>
-                    <span className="text-sm font-bold bg-muted text-muted-foreground px-3 py-1.5 rounded-full border-2 border-foreground/50 flex items-center gap-1">
-                        <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-                        +50 XP
-                    </span>
-                </div>
-                <div className="p-6 text-center">
-                    <p className="text-muted-foreground font-medium">🔒 Search for a stock first to unlock today&apos;s quiz!</p>
-                    <p className="text-sm text-muted-foreground/70 mt-2">Complete a lesson to test your knowledge.</p>
-                </div>
-            </div>
-        )
-    }
+
 
     // Quiz data not loaded - show fallback
     if (!quiz) {
@@ -163,39 +142,55 @@ export function DailyQuiz() {
             <div className="p-6 space-y-5">
                 <p className="text-foreground font-semibold text-lg">{quiz.question}</p>
 
-                <div className="space-y-3">
-                    {quiz.options.map((option, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleAnswer(index)}
-                            disabled={showResult}
-                            className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 text-left font-medium transition-bounce
-                ${showResult
-                                    ? index === quiz.correctAnswer
-                                        ? "border-quaternary bg-quaternary/10 shadow-pop-mint"
-                                        : selectedAnswer === index
-                                            ? "border-destructive bg-destructive/10"
-                                            : "border-foreground/20 text-muted-foreground"
-                                    : "border-foreground/20 hover:border-foreground hover:shadow-pop hover:-translate-x-0.5 hover:-translate-y-0.5"
-                                }
-                ${!showResult && "active:translate-x-0.5 active:translate-y-0.5 active:shadow-pop-active"}
-              `}
-                        >
-                            <span className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 transition-colors
-                ${showResult
-                                    ? index === quiz.correctAnswer
-                                        ? "border-quaternary bg-quaternary text-quaternary-foreground"
-                                        : selectedAnswer === index
-                                            ? "border-destructive bg-destructive text-destructive-foreground"
-                                            : "border-foreground/30"
-                                    : "border-foreground/30"
-                                }
-              `}>
-                                {String.fromCharCode(65 + index)}
-                            </span>
-                            <span className="text-foreground">{option}</span>
-                        </button>
-                    ))}
+                <div className="relative">
+                    {!hasCompletedLesson && (
+                        <div className="absolute inset-0 z-10 backdrop-blur-[2px] bg-background/50 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/30">
+                            <div className="bg-card p-4 rounded-xl border-2 border-foreground shadow-pop text-center max-w-[80%]">
+                                <div className="flex justify-center mb-2">
+                                    <div className="h-10 w-10 rounded-full bg-muted border-2 border-foreground flex items-center justify-center">
+                                        <Lock className="h-5 w-5 text-muted-foreground" strokeWidth={2.5} />
+                                    </div>
+                                </div>
+                                <p className="font-bold text-foreground text-sm">Search for a stock first!</p>
+                                <p className="text-xs text-muted-foreground mt-1">Unlock the options by completing a search.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className={`space-y-3 ${!hasCompletedLesson ? 'opacity-50 pointer-events-none select-none' : ''}`}>
+                        {quiz.options.map((option, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleAnswer(index)}
+                                disabled={showResult || !hasCompletedLesson}
+                                className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 text-left font-medium transition-bounce
+                    ${showResult
+                                        ? index === quiz.correctAnswer
+                                            ? "border-quaternary bg-quaternary/10 shadow-pop-mint"
+                                            : selectedAnswer === index
+                                                ? "border-destructive bg-destructive/10"
+                                                : "border-foreground/20 text-muted-foreground"
+                                        : "border-foreground/20 hover:border-foreground hover:shadow-pop hover:-translate-x-0.5 hover:-translate-y-0.5"
+                                    }
+                    ${(!showResult && hasCompletedLesson) && "active:translate-x-0.5 active:translate-y-0.5 active:shadow-pop-active"}
+                `}
+                            >
+                                <span className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 transition-colors
+                    ${showResult
+                                        ? index === quiz.correctAnswer
+                                            ? "border-quaternary bg-quaternary text-quaternary-foreground"
+                                            : selectedAnswer === index
+                                                ? "border-destructive bg-destructive text-destructive-foreground"
+                                                : "border-foreground/30"
+                                        : "border-foreground/30"
+                                    }
+                `}>
+                                    {String.fromCharCode(65 + index)}
+                                </span>
+                                <span className="text-foreground">{option}</span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {showResult && (

@@ -28,7 +28,7 @@ export function StepVisual({ symbol, stockData }: StepVisualProps) {
                                 Price & Analysis
                             </h2>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
-                                30 Days • {symbol}
+                                Interactive • {symbol}
                             </p>
                         </div>
                     </div>

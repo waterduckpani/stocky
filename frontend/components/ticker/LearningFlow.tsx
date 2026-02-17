@@ -23,7 +23,10 @@ import { CompoundEngine } from "../games/CompoundEngine"
 import { ProfitPunch } from "../games/ProfitPunch"
 import EPSSlicer from "../games/EPSSlicer"
 import YieldMagnet from "../games/YieldMagnet"
+
 import BetaShadow from "../games/BetaShadow"
+import TheEarningsReaction from "../games/TheEarningsReaction"
+import ThePriceAnchor from "../games/ThePriceAnchor"
 
 import { cn } from "@/lib/utils"
 
@@ -161,6 +164,20 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                     ticker={symbol}
                 />
                 break
+            case "earnings_reaction":
+                GameComponent = <TheEarningsReaction
+                    onComplete={handleNext}
+                    ticker={symbol}
+                />
+                break
+            case "price_anchor":
+            case "sentiment_zone":
+                GameComponent = <ThePriceAnchor
+                    onComplete={handleNext}
+                    ticker={symbol}
+                    stockData={stockData}
+                />
+                break
         }
 
         if (GameComponent) {
@@ -248,7 +265,7 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
 
             {/* Navigation Controls */}
             {safeCurrentStep < steps.length - 1 && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t-2 border-foreground/10 lg:pl-72 z-40">
+                <div className="fixed bottom-0 left-0 right-0 p-6 bg-background/80 backdrop-blur-md border-t-2 border-foreground/10 lg:pl-72 z-40">
                     <div className="max-w-3xl mx-auto flex justify-between gap-4">
                         <button
                             onClick={handlePrev}

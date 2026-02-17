@@ -60,7 +60,7 @@ export function Sidebar() {
     return (
         <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:border-r-2 lg:border-foreground/10 lg:bg-card z-50">
             {/* Logo */}
-            <div className="flex items-center gap-3 px-6 h-16 border-b-2 border-foreground/10 shrink-0">
+            <div className="flex items-center gap-3 px-6 h-16 border-b-2 border-foreground/10 shrink-0 box-content">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-[#3BB273] border-2 border-foreground shadow-pop flex items-center justify-center">
                         <span className="text-white font-bold text-lg">S</span>

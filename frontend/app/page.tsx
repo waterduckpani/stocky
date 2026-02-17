@@ -20,6 +20,8 @@ export default function Dashboard() {
   const { user, isLoading } = useAuth()
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [streakData, setStreakData] = useState<{ totalStreak: number; weeklyGoal: number; weeklyProgress: number } | undefined>(undefined)
+  const [popularStocks, setPopularStocks] = useState<any[]>([])
+  const [isLoadingPopular, setIsLoadingPopular] = useState(true)
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -28,10 +30,18 @@ export default function Dashboard() {
     }
   }, [isLoading, user, router])
 
-  // Fetch streak data once user is available
+  // Fetch streak data and popular stocks once user is available
   useEffect(() => {
     if (user) {
       getStreakData().then(setStreakData)
+
+      // Fetch popular stocks for Ticker and Search
+      setIsLoadingPopular(true)
+      fetch("http://localhost:8000/api/popular")
+        .then(res => res.json())
+        .then(data => setPopularStocks(data.stocks || []))
+        .catch(err => console.error("Error fetching popular stocks:", err))
+        .finally(() => setIsLoadingPopular(false))
     }
   }, [user])
 
@@ -117,7 +127,7 @@ export default function Dashboard() {
 
               {/* Search Bar (Centered) */}
               <div className="hidden sm:block w-full max-w-lg mx-auto">
-                <StockSearch />
+                <StockSearch popularStocks={popularStocks} isLoading={isLoadingPopular} />
               </div>
 
               {/* Right Icons (Absolute Right) */}
@@ -147,7 +157,7 @@ export default function Dashboard() {
         {/* Market Ticker */}
         <div className="border-b-2 border-foreground/10 bg-card/50">
           <div className="px-4 sm:px-6 lg:px-8 py-3">
-            <MarketOverview />
+            <MarketOverview stocks={popularStocks} isLoading={isLoadingPopular} />
           </div>
         </div>
 

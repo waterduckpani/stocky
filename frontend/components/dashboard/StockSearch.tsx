@@ -5,13 +5,7 @@ import { Search, TrendingUp, TrendingDown, Loader2, AlertCircle } from "lucide-r
 import { useRouter } from "next/navigation"
 import { logActivity } from "@/lib/streaks"
 
-interface Stock {
-    symbol: string
-    name: string
-    price?: number
-    change?: number
-    changePercent?: number
-}
+import { Stock } from "@/types/stock"
 
 interface SearchResult {
     symbol: string
@@ -20,36 +14,27 @@ interface SearchResult {
     type?: string
 }
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 interface StockSearchProps {
     className?: string
     onStockSelect?: (symbol: string) => void
+    popularStocks?: Stock[]
+    isLoading?: boolean
 }
 
-export function StockSearch({ className, onStockSelect }: StockSearchProps) {
+export function StockSearch({ className, onStockSelect, popularStocks = [], isLoading = false }: StockSearchProps) {
     const [query, setQuery] = useState("")
     const [isFocused, setIsFocused] = useState(false)
-    const [popularStocks, setPopularStocks] = useState<Stock[]>([])
+    // const [popularStocks, setPopularStocks] = useState<Stock[]>([]) // Handled by parent now
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
-    const [isLoading, setIsLoading] = useState(false)
+    // const [isLoading, setIsLoading] = useState(false) // Loading handled by parent (popularStocks passed down)
     const [isSearching, setIsSearching] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
-    // Fetch popular stocks when dropdown opens
-    useEffect(() => {
-        if (isFocused && popularStocks.length === 0) {
-            setIsLoading(true)
-            fetch("http://localhost:8000/api/popular")
-                .then(res => res.json())
-                .then(data => {
-                    setPopularStocks(data.stocks || [])
-                })
-                .catch(err => {
-                    console.error("Error fetching popular stocks:", err)
-                })
-                .finally(() => setIsLoading(false))
-        }
-    }, [isFocused, popularStocks.length])
+    // Fetching removed - data passed via props
+
 
     // Debounced search
     useEffect(() => {
@@ -171,10 +156,26 @@ export function StockSearch({ className, onStockSelect }: StockSearchProps) {
                         </span>
                     </div>
                     <div className="max-h-64 overflow-y-auto">
-                        {isLoading || isSearching ? (
+                        {!query && isLoading ? (
+                            // Skeleton Loader for Popular Stocks
+                            <div className="divide-y divide-foreground/5">
+                                {[...Array(4)].map((_, i) => (
+                                    <div key={i} className="flex items-center justify-between p-4">
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-4 w-12" />
+                                            <Skeleton className="h-3 w-24" />
+                                        </div>
+                                        <div className="space-y-2 flex flex-col items-end">
+                                            <Skeleton className="h-4 w-16" />
+                                            <Skeleton className="h-3 w-12" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : isSearching ? (
                             <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground">
                                 <Loader2 className="h-5 w-5 animate-spin" />
-                                <span className="font-medium">Loading...</span>
+                                <span className="font-medium">Searching...</span>
                             </div>
                         ) : displayItems.length === 0 ? (
                             <div className="p-4 text-center text-muted-foreground font-medium">

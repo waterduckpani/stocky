@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException # Trigger Reload 1
 from fastapi.middleware.cors import CORSMiddleware
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -147,8 +147,8 @@ async def get_ticker_data(symbol: str):
 
         # Get recent history (6mo for technicals)
         
-        # Get recent history (6mo for technicals)
-        history = ticker.history(period="6mo")
+        # Get recent history (max for chart flexibility)
+        history = ticker.history(period="max")
         chart_data = []
         
         # --- FETCH IPO DATA (Real) ---
@@ -186,14 +186,12 @@ async def get_ticker_data(symbol: str):
 
         try:
             if not history.empty:
-                # Prepare chart data (last 1mo for display)
-                one_month_ago = datetime.now().timestamp() - (30 * 24 * 60 * 60)
-                # Filter for chart: roughly last 22 trading days or simple slicing
-                recent_hist = history.tail(30) 
-                
-                for date, row in recent_hist.iterrows():
+                # Prepare chart data (return full 1y data, let frontend filter)
+                # Ensure date index is converted to string properly
+                for date, row in history.iterrows():
                     chart_data.append({
-                        "date": date.strftime("%b %d"),
+                        "date": date.strftime("%Y-%m-%d"), # ISO format for easier parsing
+                        "displayDate": date.strftime("%b %d"),
                         "price": round(row['Close'], 2)
                     })
                 
@@ -436,7 +434,7 @@ async def get_popular_stocks():
     
     # Check cache (2 minute TTL)
     if _popular_cache["data"] and _popular_cache["timestamp"]:
-        if time.time() - _popular_cache["timestamp"] < 120:
+        if time.time() - _popular_cache["timestamp"] < 600:
             return {"stocks": _popular_cache["data"]}
     
     stocks = []
@@ -748,6 +746,8 @@ async def generate_content(symbol: str):
     from concept_library import StockContext
     import smart_selector
     import importlib
+    import static_curriculum
+    importlib.reload(static_curriculum)
     importlib.reload(smart_selector)
     select_best_concept = smart_selector.select_best_concept
     generate_lesson_prompt = smart_selector.generate_lesson_prompt

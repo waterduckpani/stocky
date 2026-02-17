@@ -34,7 +34,7 @@ export function StatsCards({ streakData }: StatsCardsProps) {
     const weeklyStreakProgress = weeklyGoal > 0 ? (weeklyProgress / weeklyGoal) * 100 : 0
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Level & XP Card */}
             <div className="p-5 rounded-2xl border-2 border-foreground bg-card shadow-pop transition-bounce hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-pop-hover">
                 <div className="flex items-center gap-3 mb-4">
@@ -107,25 +107,6 @@ export function StatsCards({ streakData }: StatsCardsProps) {
                             className="h-full bg-primary rounded-full transition-all duration-500"
                             style={{ width: `${staticData.unitProgress}%` }}
                         />
-                    </div>
-                </div>
-            </div>
-
-            {/* Quiz Performance Card */}
-            <div className="p-5 rounded-2xl border-2 border-foreground bg-card shadow-pop transition-bounce hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-pop-hover">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 rounded-xl bg-secondary border-2 border-foreground flex items-center justify-center shadow-pop-blue">
-                            <Target className="h-6 w-6 text-secondary-foreground" strokeWidth={2.5} />
-                        </div>
-                        <div>
-                            <p className="text-sm text-muted-foreground font-medium">Avg Quiz Score</p>
-                            <p className="text-2xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>{staticData.avgQuizScore}%</p>
-                        </div>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-sm text-muted-foreground font-medium">Challenge</p>
-                        <p className="text-base font-bold text-foreground">{staticData.dailyChallengeStreak} day streak</p>
                     </div>
                 </div>
             </div>

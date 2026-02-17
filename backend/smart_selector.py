@@ -150,8 +150,69 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         
         # TESTING OVERRIDE
         # lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
+        # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
+        # lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
+        # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
+        # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
         
+        if not lesson_ref and True: # FORCE HARDCODED FALLBACK
+             print("DEBUG: Force-injecting Lesson 16 (Lookup Failed)")
+             lesson_ref = {
+                "id": "lesson_16_earnings_reports",
+                "title": "Earnings Reports",
+                "concept": {
+                    "name": "The Quarterly Scorecard",
+                    "category": "valuation_health",
+                    "type": "carousel",
+                    "slides": [
+                        {
+                            "title": "What is an Earnings Report? 📋",
+                            "text": "Every 3 months, public companies like **{company_name}** are required by law to file a **10-Q report**. This isn't just news—it is a verified document showing exactly how much money they made and where it went.",
+                            "icon": "FileText"
+                        },
+                        {
+                            "title": "The Three Pillars 🏛️",
+                            "text": "Investors focus on three key numbers compared to last year: **Revenue** (Total Sales), **Net Income** (Bottom Line Profit), and **EPS** (Profit per Share). If a company grows all three, it’s usually a 'winner.'",
+                            "icon": "Columns"
+                        },
+                        {
+                            "title": "Estimates vs. Actuals ⚖️",
+                            "text": "The market doesn't just care about the numbers; it cares about the **Expectations Gap**. Before the report, analysts release 'Consensus Estimates.' If {symbol} reports $1B but everyone expected $1.2B, it’s a **Miss**—and the price will likely fall.",
+                            "icon": "Scale"
+                        },
+                        {
+                            "title": "Guidance: The Forward Look 🔮",
+                            "text": "The past is history. Investors care most about **Guidance**—the CEO's official prediction for the next quarter. A 'Beat' on current earnings paired with 'Lowered Guidance' is a common reason for a stock crash.",
+                            "icon": "Zap"
+                        }
+                    ]
+                },
+                "breakdown": "Earnings season is volatile.",
+                "news": [],
+                "game_config": {
+                    "type": "earnings_reaction",
+                    "instruction": "Read the News Flash. TAP FAST: Buy (Green) for Good News, Sell (Red) for Bad News!"
+                },
+                "quiz": [
+                     {
+                        "question": "What is an Earnings Report?",
+                        "options": ["Daily Email", "Quarterly Report Card", "Secret Doc", "Birthday List"],
+                        "correctIndex": 1
+                    },
+                    {
+                        "question": "If {company_name} beats profit but drops, why?",
+                        "options": ["Missed Expectations", "Fake Profit", "Illegal", "Glitch"],
+                        "correctIndex": 0
+                    },
+                    {
+                        "question": "What is Guidance?",
+                        "options": ["Prediction for Next Quarter", "Office Map", "Fashion Advice", "History"],
+                        "correctIndex": 0
+                    }
+                ]
+            }
+
         if lesson_ref:
             lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
             print(f"DEBUG: Selected Lesson {lesson['id']}")
@@ -159,6 +220,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             # Fallback to a default lesson if the override lesson is not found
             lesson = copy.deepcopy(TIER_1_LESSONS[0])
             print(f"DEBUG: Override lesson not found, falling back to {lesson['id']}")
+            print(f"DEBUG: Available TIER_2_IDs: {[l['id'] for l in TIER_2_LESSONS]}")
         
         # return lesson, {"type": "static", "reason": "Forced Lesson 6"} # REMOVED EARLY RETURN
         
@@ -713,6 +775,79 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                              q["question"] = q_text.replace("{company_name}", str(context.name))
              except Exception as e:
                  print(f"Error injecting Lesson 15 context: {e}")
+
+        # === LESSON 16: EARNINGS REPORTS (Dynamic Content) ===
+        elif lesson["id"] == "lesson_16_earnings_reports":
+             try:
+                 # Inject Context into Sliides
+                 slides = lesson["concept"]["slides"]
+                 for slide in slides:
+                     if "{company_name}" in slide["text"]:
+                        slide["text"] = slide["text"].replace("{company_name}", context.name)
+                     if "{symbol}" in slide["text"]:
+                        slide["text"] = slide["text"].replace("{symbol}", context.symbol)
+                 
+                 # Inject Context into Quiz
+                 if "quiz" in lesson and lesson["quiz"]:
+                     for q in lesson["quiz"]:
+                         if "{company_name}" in q.get("question", ""):
+                             q["question"] = q["question"].replace("{company_name}", str(context.name))
+             except Exception as e:
+                 print(f"Error injecting Lesson 16 context: {e}")
+
+        # === LESSON 17: 52-WEEK RANGE (Dynamic Content) ===
+        elif lesson["id"] == "lesson_17_52_week_range":
+             try:
+                 high = context.week_52_high if context.week_52_high else context.price * 1.5
+                 low = context.week_52_low if context.week_52_low else context.price * 0.8
+                 
+                 # Inject into Slides
+                 slides = lesson["concept"]["slides"]
+                 for slide in slides:
+                     text = slide.get("text", "")
+                     if "{company_name}" in text:
+                         text = text.replace("{company_name}", context.name)
+                     if "{symbol}" in text:
+                         text = text.replace("{symbol}", context.symbol)
+                     if "{fiftyTwoWeekHigh}" in text:
+                         text = text.replace("{fiftyTwoWeekHigh}", f"{get_currency_config(context.symbol)['symbol']}{high:.2f}")
+                     if "{fiftyTwoWeekLow}" in text:
+                         text = text.replace("{fiftyTwoWeekLow}", f"{get_currency_config(context.symbol)['symbol']}{low:.2f}")
+                     slide["text"] = text
+                 
+                 # Inject into Game Config
+                 if "game_config" in lesson:
+                     lesson["game_config"]["instruction"] = lesson["game_config"]["instruction"].replace("{symbol}", context.symbol)
+                     
+                 # Inject into Quiz
+                 if "quiz" in lesson:
+                     for q in lesson["quiz"]:
+                         # Add any specific quiz injections if needed
+                         pass
+             except Exception as e:
+                 print(f"Error injecting Lesson 17 context: {e}")
+                 high = context.week_52_high if context.week_52_high else context.price * 1.2
+                 low = context.week_52_low if context.week_52_low else context.price * 0.8
+                 price = context.price
+                 
+                 # Inject Context into Slides
+                 slides = lesson["concept"]["slides"]
+                 for slide in slides:
+                     if "{company_name}" in slide["text"]:
+                        slide["text"] = slide["text"].replace("{company_name}", context.name)
+                     if "{price}" in slide["text"]:
+                        slide["text"] = slide["text"].replace("{price}", f"${price:.2f}")
+                     if "{symbol}" in slide["text"]:
+                        slide["text"] = slide["text"].replace("{symbol}", context.symbol)
+                 
+                 # Inject into Quiz
+                 if "quiz" in lesson and lesson["quiz"]:
+                     for q in lesson["quiz"]:
+                         if "{company_name}" in q.get("question", ""):
+                             q["question"] = q["question"].replace("{company_name}", str(context.name))
+
+             except Exception as e:
+                 print(f"Error injecting Lesson 17 context: {e}")
 
         return lesson, {"type": "static", "reason": "Beginner preset"}
     

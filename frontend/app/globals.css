@@ -16,6 +16,7 @@ input:-webkit-autofill:active {
   /* Playful Geometric - Warm Cream Base */
   --background: #FFFDF5;
   --foreground: #1E293B;
+
   --card: #FFFFFF;
   --card-foreground: #1E293B;
   --popover: #FFFFFF;

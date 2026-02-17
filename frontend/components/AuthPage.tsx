@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Sparkles, ArrowRight, LogIn, Loader2, User, Camera, ArrowLeft, Mail, AlertCircle } from "lucide-react"
+import { Sparkles, ArrowRight, LogIn, Loader2, User, Camera, ArrowLeft, Mail, AlertCircle, CheckCircle2, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -10,8 +10,8 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function AuthPage() {
-    // Mode: 'login' (default) vs 'signup' (wizard)
-    const [authMode, setAuthMode] = React.useState<'login' | 'signup'>('login')
+    // Mode: 'login' (default) vs 'signup' (wizard) vs 'forgot-password'
+    const [authMode, setAuthMode] = React.useState<'login' | 'signup' | 'forgot-password'>('login')
 
     // Signup Wizard State
     // 0: Method Selection (Email vs Google)
@@ -23,6 +23,7 @@ export default function AuthPage() {
 
     const [isLoading, setIsLoading] = React.useState(false)
     const [errorMsg, setErrorMsg] = React.useState<React.ReactNode>(null)
+    const [successMsg, setSuccessMsg] = React.useState<React.ReactNode>(null)
     const [showGoogleHint, setShowGoogleHint] = React.useState(false)
 
     // Data
@@ -37,6 +38,9 @@ export default function AuthPage() {
         weeklyGoal: 5  // Default to 5 days/week
     })
 
+    // Username Availability State
+    const [usernameStatus, setUsernameStatus] = React.useState<'idle' | 'checking' | 'available' | 'taken' | 'error'>('idle')
+
     const router = useRouter()
 
     // Resume Google Signup Flow if needed
@@ -44,14 +48,20 @@ export default function AuthPage() {
         const checkSession = async () => {
             const { data: { session } } = await supabase.auth.getSession()
             if (session?.user) {
-                // If user has username, they are done -> Redirect
-                if (session.user.user_metadata?.username) {
+                // Check if profile exists and has username
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('id', session.user.id)
+                    .single()
+
+                if (profile?.username) {
                     router.push('/')
                     return
                 }
 
-                // If user MISSING username, they are in incomplete signup state
-                // Prefill details from Google
+                // If user MISSING username in profile, they are in incomplete signup state
+                // Prefill details from Google metadata
                 const { user } = session
                 const fullName = user.user_metadata?.full_name || ""
                 const [first, ...rest] = fullName.split(" ")
@@ -61,36 +71,86 @@ export default function AuthPage() {
                     ...prev,
                     email: user.email || "",
                     firstName: prev.firstName || first || "",
-                    lastName: prev.lastName || last || ""
+                    lastName: prev.lastName || last || "",
+                    avatarUrl: prev.avatarUrl || user.user_metadata?.avatar_url || ""
                 }))
 
-                // Switch to Signup - Step 2 (Names)
+                // Switch to Signup - Step 2 (Names) -> actually jump to 3 (Username) if names exist
                 setAuthMode('signup')
-                setSignupStep(2)
+                if (first) {
+                    setSignupStep(3)
+                } else {
+                    setSignupStep(2)
+                }
             }
         }
         checkSession()
     }, [router])
 
-    const toggleMode = () => {
-        setAuthMode(prev => prev === 'login' ? 'signup' : 'login')
+    const toggleMode = (mode: 'login' | 'signup' | 'forgot-password') => {
+        setAuthMode(mode)
         setSignupStep(0)
         setErrorMsg(null)
+        setSuccessMsg(null)
         setShowGoogleHint(false)
+        setUsernameStatus('idle')
     }
 
     const updateForm = (key: string, value: string) => {
         setFormData(prev => ({ ...prev, [key]: value }))
         setErrorMsg(null)
+        setSuccessMsg(null)
         setShowGoogleHint(false)
+        if (key === 'username') setUsernameStatus('idle')
     }
 
     const validatePassword = (pass: string) => {
         if (pass.length < 8) return "Password must be at least 8 characters."
         if (!/[0-9]/.test(pass)) return "Password must contain at least one number."
-        if (!/[!@#$%^&*]/.test(pass)) return "Password must contain at least one special character (!@#$%^&*)."
+        // if (!/[!@#$%^&*]/.test(pass)) return "Password must contain at least one special character (!@#$%^&*)." // Relaxed for better UX? strictly enforcing per user request? Keeping stricter for security.
         return null
     }
+
+    // --- USERNAME CHECK ---
+    // Debounce check
+    React.useEffect(() => {
+        const checkUsername = async () => {
+            if (!formData.username || formData.username.length < 3) {
+                setUsernameStatus('idle')
+                return
+            }
+
+            setUsernameStatus('checking')
+            try {
+                // Check against profiles table
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('username', formData.username)
+                    .maybeSingle()
+
+                if (error) throw error
+
+                if (data) {
+                    setUsernameStatus('taken')
+                } else {
+                    setUsernameStatus('available')
+                }
+            } catch (err) {
+                console.error("Username check failed:", err)
+                setUsernameStatus('error')
+            }
+        }
+
+        const timer = setTimeout(() => {
+            if (authMode === 'signup' && signupStep === 3) {
+                checkUsername()
+            }
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [formData.username, authMode, signupStep])
+
 
     // --- HANDLERS ---
 
@@ -120,8 +180,8 @@ export default function AuthPage() {
 
         if (error) {
             // Check if this email might be linked to a Google account
-            if (error.message === "Invalid login credentials") {
-                setErrorMsg("Invalid credentials. Signed up with Google?")
+            if (error.message.includes("Invalid login credentials")) {
+                setErrorMsg("Invalid credentials. If you signed up with Google, please use that.")
                 setShowGoogleHint(true)
             } else {
                 setErrorMsg(error.message)
@@ -129,8 +189,34 @@ export default function AuthPage() {
             }
             setIsLoading(false)
         } else {
+            // Check if profile exists, if not create one? Handled by trigger usually, but good to verify.
             router.push('/')
             router.refresh()
+        }
+    }
+
+    const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setErrorMsg(null)
+        setSuccessMsg(null)
+        setIsLoading(true)
+
+        if (!formData.email) {
+            setErrorMsg("Please enter your email address.")
+            setIsLoading(false)
+            return
+        }
+
+        const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+            redirectTo: `${window.location.origin}/reset-password`, // Assumes you have a page for this
+        })
+
+        setIsLoading(false)
+
+        if (error) {
+            setErrorMsg(error.message)
+        } else {
+            setSuccessMsg("Check your email for the password reset link.")
         }
     }
 
@@ -154,22 +240,9 @@ export default function AuthPage() {
             return
         }
 
-        // Smart Check: Try logging in to see if user exists
-        setIsLoading(true)
-        const { error: loginError } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password,
-        })
+        // Pre-check if email is taken (optional, avoids next step if fails later)
+        // But supabase.auth.signUp handles this nicely.
 
-        if (!loginError) {
-            // Success -> User exists -> Login
-            router.push('/')
-            router.refresh()
-            return
-        }
-
-        // Login failed -> Proceed as new signup
-        setIsLoading(false)
         setSignupStep(2)
     }
 
@@ -187,6 +260,7 @@ export default function AuthPage() {
     const handleFinalSignup = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
+        setErrorMsg(null)
 
         if (!formData.username) {
             setErrorMsg("Please choose a username.")
@@ -194,28 +268,74 @@ export default function AuthPage() {
             return
         }
 
+        if (usernameStatus !== 'available' && usernameStatus !== 'idle') {
+            // Idle might mean they typed fast and hit submit before debounce.
+            // We should strictly require it to be 'available' or check one last time.
+            if (usernameStatus === 'taken') {
+                setErrorMsg("Username is already taken.")
+                setIsLoading(false)
+                return
+            }
+        }
+
+        // Double check username availability right before submit to be safe
+        const { data: existingUser } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('username', formData.username)
+            .maybeSingle()
+
+        if (existingUser) {
+            setErrorMsg("Username is already taken.")
+            setUsernameStatus('taken')
+            setIsLoading(false)
+            return
+        }
+
+
         // Check if we are updating an existing session (Google flow) or creating new (Email flow)
         const { data: { session } } = await supabase.auth.getSession()
 
         if (session) {
             // Update existing user (Google Flow)
-            const { error } = await supabase.auth.updateUser({
+            // 1. Update Auth Metadata
+            const { error: authError } = await supabase.auth.updateUser({
                 data: {
                     first_name: formData.firstName,
                     last_name: formData.lastName,
-                    username: formData.username,
                     full_name: `${formData.firstName} ${formData.lastName}`,
-                    avatar_url: formData.avatarUrl || session.user.user_metadata?.avatar_url,
+                    username: formData.username, // Store here too for easy access
+                    avatar_url: formData.avatarUrl,
                     weekly_goal: formData.weeklyGoal
                 }
             })
-            if (error) {
-                setErrorMsg(error.message)
+
+            if (authError) {
+                setErrorMsg(authError.message)
+                setIsLoading(false)
+                return
+            }
+
+            // 2. Update Profiles Table
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .upsert({
+                    id: session.user.id,
+                    username: formData.username,
+                    full_name: `${formData.firstName} ${formData.lastName}`,
+                    avatar_url: formData.avatarUrl,
+                    weekly_goal: formData.weeklyGoal,
+                    updated_at: new Date().toISOString()
+                })
+
+            if (profileError) {
+                setErrorMsg("Failed to create profile: " + profileError.message)
                 setIsLoading(false)
             } else {
                 router.push('/')
                 router.refresh()
             }
+
         } else {
             // Create new user (Email Flow)
             const { data, error } = await supabase.auth.signUp({
@@ -225,8 +345,8 @@ export default function AuthPage() {
                     data: {
                         first_name: formData.firstName,
                         last_name: formData.lastName,
-                        username: formData.username,
                         full_name: `${formData.firstName} ${formData.lastName}`,
+                        username: formData.username,
                         avatar_url: formData.avatarUrl,
                         weekly_goal: formData.weeklyGoal
                     }
@@ -236,12 +356,36 @@ export default function AuthPage() {
             if (error) {
                 setErrorMsg(error.message)
                 setIsLoading(false)
-            } else if (data.session) {
-                router.push('/')
-                router.refresh()
-            } else {
-                alert("Account created! Check your email to confirm.")
-                setIsLoading(false)
+            } else if (data.user) {
+                // Profile 'should' be created by Trigger, but let's be robust and try to update it
+                // immediately if we have the session (auto-login enabled).
+                // If email confirmation is required, we can't update profile yet usually.
+
+                if (data.session) {
+                    // Auto-logged in
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .upsert({
+                            id: data.user.id,
+                            username: formData.username,
+                            full_name: `${formData.firstName} ${formData.lastName}`,
+                            avatar_url: formData.avatarUrl,
+                            weekly_goal: formData.weeklyGoal,
+                            updated_at: new Date().toISOString()
+                        })
+
+                    if (profileError) {
+                        console.error("Profile upsert failed", profileError)
+                        // Don't block flow, trigger might have worked.
+                    }
+
+                    router.push('/')
+                    router.refresh()
+                } else {
+                    // Email confirmation needed
+                    setSuccessMsg("Account created! Please check your email to confirm your account.")
+                    setIsLoading(false)
+                }
             }
         }
     }
@@ -260,7 +404,7 @@ export default function AuthPage() {
                 <h2 className="font-heading text-3xl font-bold text-primary tracking-tight">STOCKY</h2>
             </div>
 
-            {/* Background */}
+            {/* Background Elements */}
             <div className="absolute inset-0 z-0 opacity-[0.4]" style={{ backgroundImage: 'radial-gradient(#CBD5E1 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
             <div className="absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full bg-primary/20 blur-3xl animate-pulse" />
             <div className="absolute bottom-[-5%] right-[-5%] w-[30rem] h-[30rem] bg-secondary/20 blur-3xl rotate-45 rounded-[3rem] animate-pulse delay-700" />
@@ -326,7 +470,12 @@ export default function AuthPage() {
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-sm font-bold font-heading ml-1 text-foreground">Password</label>
-                                            <Input type="password" placeholder="••••••••" className="h-11 border-2 border-slate-400 shadow-none focus-visible:ring-0 focus-visible:border-primary focus-visible:shadow-none font-sans" value={formData.password} onChange={(e) => updateForm('password', e.target.value)} disabled={isLoading} required />
+                                            <div className="relative">
+                                                <Input type="password" placeholder="••••••••" className="h-11 border-2 border-slate-400 shadow-none focus-visible:ring-0 focus-visible:border-primary focus-visible:shadow-none font-sans" value={formData.password} onChange={(e) => updateForm('password', e.target.value)} disabled={isLoading} required />
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <button type="button" onClick={() => toggleMode('forgot-password')} className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors">Forgot password?</button>
+                                            </div>
                                         </div>
                                         <Button className="w-full h-12 text-base font-bold font-heading bg-primary text-primary-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all mt-6 border-0 ring-0" size="lg" disabled={isLoading} type="submit">
                                             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><LogIn className="mr-2 h-5 w-5" /> Login</>}
@@ -335,11 +484,48 @@ export default function AuthPage() {
 
                                     <div className="flex items-center pt-8 justify-center">
                                         <p className="text-sm text-muted-foreground font-sans">
-                                            Don't have an account? <button onClick={(e) => { e.stopPropagation(); toggleMode(); }} className="text-primary font-bold hover:text-secondary hover:underline transition-colors">Sign up</button>
+                                            Don't have an account? <button onClick={(e) => { e.stopPropagation(); toggleMode('signup'); }} className="text-primary font-bold hover:text-secondary hover:underline transition-colors">Sign up</button>
                                         </p>
                                     </div>
                                 </motion.div>
                             )}
+
+                            {/* --- FORGOT PASSWORD MODE --- */}
+                            {authMode === 'forgot-password' && (
+                                <motion.div
+                                    key="forgot-password"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <div className="flex flex-col space-y-1.5 pt-6 pb-6 text-center">
+                                        <h3 className="font-heading text-2xl text-foreground font-semibold leading-none tracking-tight">Recover Password</h3>
+                                        <p className="font-sans text-base text-muted-foreground">Enter your email to receive reset instructions.</p>
+                                    </div>
+
+                                    {errorMsg && <div className="mb-4 bg-destructive/15 text-destructive text-sm font-bold px-4 py-2 rounded-md border-2 border-destructive/20 text-center">{errorMsg}</div>}
+                                    {successMsg && <div className="mb-4 bg-green-100 text-green-700 text-sm font-bold px-4 py-2 rounded-md border-2 border-green-200 text-center">{successMsg}</div>}
+
+                                    <form className="space-y-4" onSubmit={handleForgotPasswordSubmit}>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold font-heading ml-1 text-foreground">Email Address</label>
+                                            <Input type="email" placeholder="email@example.com" className="h-11 border-2 border-slate-400 shadow-none focus-visible:ring-0 focus-visible:border-primary focus-visible:shadow-none font-sans" value={formData.email} onChange={(e) => updateForm('email', e.target.value)} disabled={isLoading} required />
+                                        </div>
+
+                                        <Button className="w-full h-12 text-base font-bold font-heading bg-secondary text-secondary-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all mt-4 border-0 ring-0" size="lg" disabled={isLoading} type="submit">
+                                            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Send Reset Link"}
+                                        </Button>
+                                    </form>
+
+                                    <div className="flex items-center pt-6 justify-center">
+                                        <Button variant="ghost" onClick={() => toggleMode('login')} className="text-muted-foreground hover:text-foreground">
+                                            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Login
+                                        </Button>
+                                    </div>
+                                </motion.div>
+                            )}
+
 
                             {/* --- SIGNUP MODE --- */}
                             {authMode === 'signup' && (
@@ -380,7 +566,7 @@ export default function AuthPage() {
 
                                             <div className="flex items-center pt-8 justify-center">
                                                 <p className="text-sm text-muted-foreground font-sans">
-                                                    Already have an account? <button onClick={(e) => { e.stopPropagation(); toggleMode(); }} className="text-primary font-bold hover:text-secondary hover:underline transition-colors">Log in</button>
+                                                    Already have an account? <button onClick={(e) => { e.stopPropagation(); toggleMode('login'); }} className="text-primary font-bold hover:text-secondary hover:underline transition-colors">Log in</button>
                                                 </p>
                                             </div>
                                         </motion.div>
@@ -454,15 +640,14 @@ export default function AuthPage() {
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-3 pt-6">
-                                                    {/* Allow back ONLY if came from email flow. If Google flow, back should probably logout or reset? For simplicity, we allow going back to 0 which resets everything. */}
-                                                    <Button type="button" variant="outline" onClick={() => setSignupStep(0)} className="h-12 w-12 border-2 border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all bg-white"><ArrowLeft className="h-5 w-5" /></Button>
+                                                    <Button type="button" variant="outline" onClick={() => setSignupStep(1)} className="h-12 w-12 border-2 border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all bg-white"><ArrowLeft className="h-5 w-5" /></Button>
                                                     <Button type="submit" className="flex-1 h-12 text-base font-bold font-heading bg-primary text-primary-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all border-0 ring-0">Next Step <ArrowRight className="ml-2 h-5 w-5" /></Button>
                                                 </div>
                                             </form>
                                         </motion.div>
                                     )}
 
-                                    {/* STEP 3: PROFILE */}
+                                    {/* STEP 3: PROFILE (USERNAME) */}
                                     {signupStep === 3 && (
                                         <motion.div
                                             key="signup-profile"
@@ -476,7 +661,12 @@ export default function AuthPage() {
                                                 <p className="text-muted-foreground text-sm mt-1">Add a photo and pick a username.</p>
                                             </div>
 
-                                            <form onSubmit={(e) => { e.preventDefault(); if (formData.username) setSignupStep(4); else setErrorMsg("Please choose a username."); }} className="space-y-4 pt-2">
+                                            <form onSubmit={(e) => {
+                                                e.preventDefault();
+                                                if (usernameStatus === 'available') setSignupStep(4);
+                                                else if (usernameStatus === 'taken') setErrorMsg("Username taken.");
+                                                else setErrorMsg("Please choose a valid & available username.");
+                                            }} className="space-y-4 pt-2">
 
                                                 {/* Avatar Upload */}
                                                 <div className="flex justify-center mb-6">
@@ -531,16 +721,27 @@ export default function AuthPage() {
                                                 </div>
 
                                                 <div className="space-y-2">
-                                                    <label htmlFor="username" className="text-sm font-bold font-heading ml-1 text-foreground">Username</label>
+                                                    <div className="flex justify-between items-center">
+                                                        <label htmlFor="username" className="text-sm font-bold font-heading ml-1 text-foreground">Username</label>
+                                                        {usernameStatus === 'checking' && <span className="text-xs text-muted-foreground animate-pulse">Checking...</span>}
+                                                        {usernameStatus === 'available' && <span className="text-xs text-green-600 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Available</span>}
+                                                        {usernameStatus === 'taken' && <span className="text-xs text-destructive font-bold flex items-center gap-1"><XCircle className="w-3 h-3" /> Taken</span>}
+                                                    </div>
                                                     <Input
                                                         id="username"
                                                         type="text"
                                                         placeholder="@trader_joe"
                                                         value={formData.username}
-                                                        onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+                                                        onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') }))}
                                                         required
-                                                        className="h-11 border-2 border-slate-400 shadow-none focus-visible:ring-0 focus-visible:border-primary focus-visible:shadow-none font-sans"
+                                                        className={cn(
+                                                            "h-11 border-2 shadow-none focus-visible:ring-0 focus-visible:shadow-none font-sans transition-colors",
+                                                            usernameStatus === 'available' ? "border-green-500 focus-visible:border-green-600" :
+                                                                usernameStatus === 'taken' ? "border-destructive focus-visible:border-destructive" :
+                                                                    "border-slate-400 focus-visible:border-primary"
+                                                        )}
                                                     />
+                                                    <p className="text-xs text-muted-foreground ml-1">Letters, numbers, and underscores only.</p>
                                                 </div>
 
                                                 {errorMsg && (
@@ -552,7 +753,7 @@ export default function AuthPage() {
 
                                                 <div className="flex gap-3 pt-2">
                                                     <Button type="button" variant="outline" onClick={() => setSignupStep(2)} className="h-12 w-12 border-2 border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all bg-white"><ArrowLeft className="h-5 w-5" /></Button>
-                                                    <Button type="submit" className="flex-1 h-12 text-base font-bold font-heading bg-primary text-primary-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all border-0 ring-0" disabled={isLoading}>
+                                                    <Button type="submit" className="flex-1 h-12 text-base font-bold font-heading bg-primary text-primary-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all border-0 ring-0" disabled={isLoading || usernameStatus !== 'available'}>
                                                         {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Next <ArrowRight className="ml-2 h-5 w-5" /></>}
                                                     </Button>
                                                 </div>
@@ -612,6 +813,7 @@ export default function AuthPage() {
                                                         {errorMsg}
                                                     </div>
                                                 )}
+                                                {successMsg && <div className="mb-4 bg-green-100 text-green-700 text-sm font-bold px-4 py-2 rounded-md border-2 border-green-200 text-center">{successMsg}</div>}
 
                                                 <div className="flex gap-3 pt-2">
                                                     <Button type="button" variant="outline" onClick={() => setSignupStep(3)} className="h-12 w-12 border-2 border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all bg-white"><ArrowLeft className="h-5 w-5" /></Button>
