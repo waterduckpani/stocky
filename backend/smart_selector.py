@@ -154,7 +154,9 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
+        # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
+        # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_18_liquidity'), None)
         
         if not lesson_ref and True: # FORCE HARDCODED FALLBACK
              print("DEBUG: Force-injecting Lesson 16 (Lookup Failed)")
@@ -846,8 +848,24 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                          if "{company_name}" in q.get("question", ""):
                              q["question"] = q["question"].replace("{company_name}", str(context.name))
 
+
              except Exception as e:
                  print(f"Error injecting Lesson 17 context: {e}")
+
+        # === Lesson 18: Liquidity ===
+        elif lesson["id"] == "lesson_18_liquidity":
+            try:
+                # Inject Context into Slides
+                if "concept" in lesson and "slides" in lesson["concept"]:
+                    slides = lesson["concept"]["slides"]
+                    for slide in slides:
+                        text = slide.get("text", "")
+                        if "{company_name}" in text:
+                            slide["text"] = text.replace("{company_name}", context.name)
+                        if "{symbol}" in text:
+                            slide["text"] = slide["text"].replace("{symbol}", context.symbol)
+            except Exception as e:
+                print(f"Error injecting Lesson 18 context: {e}")
 
         return lesson, {"type": "static", "reason": "Beginner preset"}
     

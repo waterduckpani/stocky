@@ -27,6 +27,7 @@ import YieldMagnet from "../games/YieldMagnet"
 import BetaShadow from "../games/BetaShadow"
 import TheEarningsReaction from "../games/TheEarningsReaction"
 import ThePriceAnchor from "../games/ThePriceAnchor"
+import TheLiquidityExit from "../games/TheLiquidityExit"
 
 import { cn } from "@/lib/utils"
 
@@ -177,6 +178,9 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                     ticker={symbol}
                     stockData={stockData}
                 />
+                break
+            case "liquidity_exit":
+                GameComponent = <TheLiquidityExit onComplete={handleNext} />
                 break
         }
 
