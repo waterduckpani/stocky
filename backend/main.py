@@ -560,6 +560,17 @@ async def generate_content(symbol: str):
         
         market_cap_str = format_large_number(market_cap) if market_cap else 'N/A'
         
+        # Shares & Float Data for Supply Lesson
+        shares_outstanding = info.get('sharesOutstanding', 0)
+        float_shares = info.get('floatShares', 0)
+        
+        # Fallback if float is missing
+        if not float_shares and shares_outstanding:
+            float_shares = int(shares_outstanding * 0.85)
+
+        shares_outstanding_str = format_large_number(shares_outstanding) if shares_outstanding else "N/A"
+        float_shares_str = format_large_number(float_shares) if float_shares else "N/A"
+        
 
         
         # === TECHNICAL ANALYSIS ===
@@ -885,6 +896,31 @@ async def generate_content(symbol: str):
 
             except Exception as e:
                 print(f"DEBUG_MAIN: Error injecting beta {e}")
+        
+        elif concept_id == "lesson_19_supply_constraint":
+            try:
+                # 1. Update Slides
+                if "concept" in selected_concept and "concept" in selected_concept and "slides" in selected_concept["concept"]:
+                     slides = selected_concept["concept"]["slides"]
+                     for slide in slides:
+                         txt = slide.get("text", "")
+                         if "{sharesOutstanding}" in txt:
+                             slide["text"] = txt.replace("{sharesOutstanding}", shares_outstanding_str)
+                         if "{floatShares}" in txt:
+                             # Re-fetch txt in case it changed
+                             slide["text"] = slide["text"].replace("{floatShares}", float_shares_str)
+                         if "{company_name}" in txt:
+                             slide["text"] = slide["text"].replace("{company_name}", company_name)
+                
+                # 2. Update Quiz
+                if "quiz" in selected_concept and selected_concept["quiz"]:
+                    for q in selected_concept["quiz"]:
+                        q_text = q.get("question", "")
+                        if "{company_name}" in q_text:
+                            q["question"] = q_text.replace("{company_name}", company_name)
+                            
+            except Exception as e:
+                print(f"Error injecting supply data: {e}")
     else:
         lesson_topic = selected_concept.name
         concept_id = selected_concept.id

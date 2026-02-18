@@ -118,9 +118,9 @@ export function StockSearch({ className, onStockSelect, popularStocks = [], isLo
     const displayItems = query.length > 0 ? searchResults : popularStocks
 
     return (
-        <div className={`relative w-full ${className || "max-w-md"}`}>
-            <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" strokeWidth={2.5} />
+        <div className={`relative w-full ${className || "max-w-md"} transition-all duration-300`}>
+            <div className={`relative group ${isFocused ? 'scale-[1.02]' : 'scale-100'} transition-transform duration-200 ease-out`}>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" strokeWidth={2.5} />
                 <input
                     type="text"
                     placeholder="Search stocks, ETFs, crypto..."
@@ -132,7 +132,7 @@ export function StockSearch({ className, onStockSelect, popularStocks = [], isLo
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setTimeout(() => setIsFocused(false), 200)}
                     onKeyDown={handleKeyDown}
-                    className={`w-full pl-12 pr-4 h-11 text-sm font-bold bg-card border-2 rounded-full shadow-sm hover:border-primary/50 hover:shadow-pop transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/70 ${error ? 'border-destructive' : 'border-foreground/20'}`}
+                    className={`w-full pl-12 pr-4 h-11 text-sm font-bold bg-card border-2 rounded-full shadow-sm hover:border-primary/50 hover:shadow-pop transition-all outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-muted-foreground/70 ${error ? 'border-destructive' : 'border-foreground/20'}`}
                 />
                 {isSearching && (
                     <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />

@@ -1234,5 +1234,74 @@ TIER_2_LESSONS = [
                 "correctIndex": 0
             }
         ]
+    },
+    {
+        "id": "lesson_19_supply_constraint",
+        "title": "The Supply Constraint",
+        "concept": {
+            "name": "The Supply Constraint",
+            "category": "market_mechanics",
+            "type": "carousel",
+             "slides": [
+                {
+                    "title": "The Total Universe 🌌",
+                    "text": "You searched for **{company_name}**. Since its inception, this company has issued a total of **{sharesOutstanding}** shares. This number represents the total ownership of the company.",
+                    "icon": "Globe"
+                },
+                {
+                    "title": "The Restricted Zone 🔒",
+                    "text": "Not every share is allowed to be sold. A significant portion of **{sharesOutstanding}** is often 'Restricted' or 'Closely Held' by insiders and board members. These shares are locked away.",
+                    "icon": "Lock"
+                },
+                {
+                    "title": "The Public Float 🏊",
+                    "text": "For **{company_name}**, only **{floatShares}** shares are actually in the **Public Float**. This is the Liquid Supply—the pool of shares everyday investors can buy and sell.",
+                    "icon": "Users"
+                },
+                {
+                    "title": "The Squeeze Mechanic 📈",
+                    "text": "The ratio between the Float and Total Shares determines price sensitivity. With a **Low Float**, even small demand can cause massive price spikes due to a lack of sellers.",
+                    "icon": "TrendingUp"
+                }
+            ]
+        },
+        "breakdown": "Supply and Demand isn't just a theory—it's a mechanical reality. Let's see how restricted supply creates explosive moves.",
+        "news": [],
+        "game_config": {
+            "type": "supply_squeeze",
+            "instruction": "Visualize how the 'Float' acts as a bottleneck for price."
+        },
+        "quiz": [
+            {
+                "question": "What is the 'Public Float'?",
+                "options": [
+                    "The number of shares owned by the CEO",
+                    "Shares available for trading by the general public",
+                    "Money set aside for a rainy day",
+                    "A parade float sponsored by the company"
+                ],
+                "correctIndex": 1
+            },
+            {
+                "question": "If a stock has a 'Low Float', what does that typically mean for volatility?",
+                "options": [
+                    "It will never move",
+                    "It is very stable and boring",
+                    "It can be extremely volatile and prone to squeezes",
+                    "It means the company is bankrupt"
+                ],
+                "correctIndex": 2
+            },
+            {
+                "question": "What is the relationship between Total Shares and Float?",
+                "options": [
+                    "Float = Total Shares - Restricted Shares",
+                    "Float = Total Shares + Restricted Shares",
+                    "Float is always equal to Total Shares",
+                    "They are unrelated"
+                ],
+                "correctIndex": 0
+            }
+        ]
     }
 ]

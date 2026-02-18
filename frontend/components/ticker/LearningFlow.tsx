@@ -28,6 +28,7 @@ import BetaShadow from "../games/BetaShadow"
 import TheEarningsReaction from "../games/TheEarningsReaction"
 import ThePriceAnchor from "../games/ThePriceAnchor"
 import TheLiquidityExit from "../games/TheLiquidityExit"
+import TheSupplySqueeze from "../games/TheSupplySqueeze"
 
 import { cn } from "@/lib/utils"
 
@@ -181,6 +182,13 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
                 break
             case "liquidity_exit":
                 GameComponent = <TheLiquidityExit onComplete={handleNext} />
+                break
+            case "supply_squeeze":
+                GameComponent = <TheSupplySqueeze
+                    onComplete={handleNext}
+                    ticker={symbol}
+                    stockData={stockData}
+                />
                 break
         }
 

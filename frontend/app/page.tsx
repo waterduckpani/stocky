@@ -126,7 +126,7 @@ export default function Dashboard() {
               </div>
 
               {/* Search Bar (Centered) */}
-              <div className="hidden sm:block w-full max-w-lg mx-auto">
+              <div className="hidden sm:block w-full max-w-lg mx-auto transform transition-all hover:scale-[1.01]">
                 <StockSearch popularStocks={popularStocks} isLoading={isLoadingPopular} />
               </div>
 
