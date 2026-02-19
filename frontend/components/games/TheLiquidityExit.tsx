@@ -110,7 +110,7 @@ export default function TheLiquidityExit({ onComplete, ticker = "STOCK" }: TheLi
 
             {/* ── 2. Game Stage (Matching ThePriceAnchor inner box) ── */}
             <div className={cn(
-                "relative w-full h-80 bg-background rounded-[1.5rem] border-2 border-foreground shadow-inner overflow-hidden flex flex-col p-5 transition-colors duration-500",
+                "relative w-full h-96 bg-background rounded-[1.5rem] border-2 border-foreground shadow-inner overflow-hidden flex flex-col p-5 transition-colors duration-500",
                 activeMode === "HIGH" && "bg-primary/[0.03]",
                 activeMode === "LOW" && "bg-tertiary/[0.03]"
             )}>
