@@ -46,11 +46,17 @@ export default function TheLiquidityExit({ onComplete, ticker = "STOCK" }: TheLi
         const interval = setInterval(() => {
             if (activeMode === "HIGH") {
                 if (Math.random() > 0.25) {
-                    setBuyers(prev => [{ id: nextId.current++, price: 220 }, ...prev].slice(0, 4))
+                    setBuyers(prev => {
+                        if (prev.length >= 4) return prev
+                        return [{ id: nextId.current++, price: 220 }, ...prev]
+                    })
                 }
             } else {
                 if (price <= 212 && Math.random() > 0.4) {
-                    setBuyers(prev => [{ id: nextId.current++, price }, ...prev].slice(0, 4))
+                    setBuyers(prev => {
+                        if (prev.length >= 4) return prev
+                        return [{ id: nextId.current++, price }, ...prev]
+                    })
                 } else if (price > 212) {
                     setBuyers([])
                 }
