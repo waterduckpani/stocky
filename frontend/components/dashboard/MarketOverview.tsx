@@ -3,6 +3,7 @@
 import { TrendingUp, TrendingDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Stock } from "@/types/stock"
+import { logActivity } from "@/lib/streaks"
 
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -40,7 +41,10 @@ export function MarketOverview({ stocks, isLoading }: MarketOverviewProps) {
             {displayStocks.map((item) => (
                 <button
                     key={item.symbol}
-                    onClick={() => router.push(`/ticker/${item.symbol}`)}
+                    onClick={async () => {
+                        await logActivity('search')
+                        router.push(`/ticker/${item.symbol}`)
+                    }}
                     className="flex items-center gap-3 flex-shrink-0 px-4 py-2 rounded-xl border-2 border-foreground/10 bg-card/50 hover:border-foreground/30 hover:bg-card transition-all cursor-pointer text-left"
                 >
                     <div>

@@ -11,6 +11,7 @@ import { CourseList } from "@/components/dashboard/CourseList"
 import { Leaderboard } from "@/components/dashboard/Leaderboard"
 import { MarketOverview } from "@/components/dashboard/MarketOverview"
 import { Sidebar } from "@/components/dashboard/Sidebar"
+import { MobileNav } from "@/components/dashboard/MobileNav"
 import { StatsCards } from "@/components/dashboard/StatsCards"
 import { getStreakData } from "@/lib/streaks"
 import { useAuth } from "@/contexts/AuthContext"
@@ -82,19 +83,18 @@ export default function Dashboard() {
               <h3 className="font-heading text-2xl font-bold text-foreground mb-2">Log out?</h3>
               <p className="text-muted-foreground text-sm mb-6">Are you sure you want to log out of your account?</p>
               <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  className="flex-1 h-11 font-bold font-heading bg-muted border-0 shadow-pop hover:translate-y-0.5 hover:shadow-none transition-bounce"
+                <button
+                  className="flex-1 py-3 bg-white border-2 border-border text-foreground hover:bg-muted/50 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                   onClick={() => setShowLogoutModal(false)}
                 >
                   Cancel
-                </Button>
-                <Button
-                  className="flex-1 h-11 font-bold font-heading bg-destructive text-destructive-foreground border-0 shadow-pop hover:translate-y-0.5 hover:shadow-none transition-bounce"
+                </button>
+                <button
+                  className="flex-1 py-3 bg-destructive text-destructive-foreground border-2 border-destructive hover:border-destructive-foreground/20 rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                   onClick={handleLogout}
                 >
                   Log out
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -114,9 +114,9 @@ export default function Dashboard() {
       {/* Main Content Area */}
       <div className="lg:pl-72 relative">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-card/90 backdrop-blur-sm border-b-2 border-foreground/10">
+        <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b-2 border-foreground/10">
           <div className="px-4 sm:px-6 lg:px-8 relative">
-            <div className="flex items-center justify-center h-16">
+            <div className="flex items-center justify-center h-[92px]">
               {/* Mobile Logo (Absolute Left) */}
               <div className="absolute left-4 sm:left-6 lg:hidden flex items-center gap-2">
                 <div className="h-10 w-10 rounded-xl bg-primary border-2 border-foreground shadow-pop flex items-center justify-center transition-bounce hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-pop-hover">
@@ -126,7 +126,7 @@ export default function Dashboard() {
               </div>
 
               {/* Search Bar (Centered) */}
-              <div className="hidden sm:block w-full max-w-lg mx-auto transform transition-all hover:scale-[1.01]">
+              <div className="hidden sm:block w-full max-w-[620px] mx-auto transform transition-all hover:scale-[1.01]">
                 <StockSearch popularStocks={popularStocks} isLoading={isLoadingPopular} />
               </div>
 
@@ -155,14 +155,14 @@ export default function Dashboard() {
         </header>
 
         {/* Market Ticker */}
-        <div className="border-b-2 border-foreground/10 bg-card/50">
+        <div className="border-b-2 border-foreground/10 bg-background/50">
           <div className="px-4 sm:px-6 lg:px-8 py-3">
             <MarketOverview stocks={popularStocks} isLoading={isLoadingPopular} />
           </div>
         </div>
 
         {/* Main Content */}
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
+        <main className="px-4 sm:px-6 lg:px-8 pt-8 pb-32 lg:pb-8">
           {/* Welcome */}
           <section className="mb-8">
             <h2 className="text-3xl font-extrabold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
@@ -192,13 +192,16 @@ export default function Dashboard() {
         </main>
 
         {/* Footer */}
-        <footer className="border-t-2 border-foreground/10 mt-12 bg-card/30">
-          <div className="px-4 sm:px-6 lg:px-8 py-6">
-            <p className="text-center text-sm text-muted-foreground font-medium">
+        <footer className="hidden lg:block h-[92px] border-t-2 border-foreground/10 bg-background/50 mt-12 mb-24 lg:mb-0">
+          <div className="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+            <p className="text-center text-sm text-center text-muted-foreground font-medium">
               Learn smarter, invest better
             </p>
           </div>
         </footer>
+
+        {/* Mobile Navigation */}
+        <MobileNav popularStocks={popularStocks} />
       </div>
     </div>
   )

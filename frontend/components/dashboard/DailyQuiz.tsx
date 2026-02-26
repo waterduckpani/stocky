@@ -41,13 +41,35 @@ export function DailyQuiz() {
                     setHasCompletedLesson(!!(activityData && activityData.length > 0))
 
                     // Get current lesson from user_lesson_progress (or default to 1)
-                    const { data: progressData } = await supabase
-                        .from('user_lesson_progress')
-                        .select('current_lesson')
-                        .eq('user_id', user.id)
-                        .single()
+                    let lesson = 1
+                    try {
+                        const { data: progressData } = await supabase
+                            .from('user_lesson_progress')
+                            .select('current_lesson')
+                            .eq('user_id', user.id)
+                            .single()
 
-                    const lesson = progressData?.current_lesson || 1
+                        lesson = progressData?.current_lesson || 1
+                    } catch (e) {
+                        console.error("Could not fetch progress", e)
+                    }
+
+                    // Try to get forced/active lesson from backend
+                    try {
+                        const activeRes = await fetch('http://localhost:8000/api/active-lesson')
+                        if (activeRes.ok) {
+                            const activeData = await activeRes.json()
+                            if (activeData.lesson_number) {
+                                lesson = activeData.lesson_number
+                                console.log("Fetched active forced lesson:", lesson)
+                            }
+                        } else {
+                            console.error("Failed to fetch active-lesson, status:", activeRes.status)
+                        }
+                    } catch (e) {
+                        console.error("Could not fetch active lesson (network/CORS error):", e)
+                    }
+
                     setCurrentLesson(lesson)
 
                     // Fetch quiz from backend regardless of completion (so we can show the question)

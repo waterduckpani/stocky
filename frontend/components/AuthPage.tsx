@@ -399,10 +399,7 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary/40 to-secondary/40 relative overflow-hidden flex flex-col items-center justify-center p-4">
-            {/* Branding */}
-            <div className="absolute top-8 left-8 z-20">
-                <h2 className="font-heading text-3xl font-bold text-primary tracking-tight">STOCKY</h2>
-            </div>
+
 
             {/* Background Elements */}
             <div className="absolute inset-0 z-0 opacity-[0.4]" style={{ backgroundImage: 'radial-gradient(#CBD5E1 1px, transparent 1px)', backgroundSize: '24px 24px' }} />

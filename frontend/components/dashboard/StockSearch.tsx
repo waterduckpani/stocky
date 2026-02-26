@@ -21,11 +21,20 @@ interface StockSearchProps {
     onStockSelect?: (symbol: string) => void
     popularStocks?: Stock[]
     isLoading?: boolean
+    autoFocus?: boolean
+    resultsVariant?: "overlay" | "inline"
 }
 
-export function StockSearch({ className, onStockSelect, popularStocks = [], isLoading = false }: StockSearchProps) {
+export function StockSearch({
+    className,
+    onStockSelect,
+    popularStocks = [],
+    isLoading = false,
+    autoFocus = false,
+    resultsVariant = "overlay"
+}: StockSearchProps) {
     const [query, setQuery] = useState("")
-    const [isFocused, setIsFocused] = useState(false)
+    const [isFocused, setIsFocused] = useState(autoFocus) // Auto-focus initial state
     // const [popularStocks, setPopularStocks] = useState<Stock[]>([]) // Handled by parent now
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
     // const [isLoading, setIsLoading] = useState(false) // Loading handled by parent (popularStocks passed down)
@@ -117,14 +126,22 @@ export function StockSearch({ className, onStockSelect, popularStocks = [], isLo
     // Determine what to show in dropdown
     const displayItems = query.length > 0 ? searchResults : popularStocks
 
+    // Conditional styling based on variant
+    const resultsContainerClass = resultsVariant === "overlay"
+        ? "absolute top-full left-0 right-0 mt-2 bg-card border-2 border-foreground rounded-xl shadow-pop overflow-hidden z-50"
+        : "mt-4 bg-card/50 border-2 border-foreground/10 rounded-xl overflow-hidden"
+
     return (
-        <div className={`relative w-full ${className || "max-w-md"} transition-all duration-300`}>
+        <div className={`relative w-full ${className || "max-w-[620px]"} transition-all duration-300`}>
             <div className={`relative group ${isFocused ? 'scale-[1.02]' : 'scale-100'} transition-transform duration-200 ease-out`}>
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" strokeWidth={2.5} />
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors" strokeWidth={2.5} />
+
                 <input
                     type="text"
-                    placeholder="Search stocks, ETFs, crypto..."
+                    className={`w-full pl-14 pr-6 h-[60px] text-lg font-bold bg-card border-2 rounded-full shadow-sm hover:border-primary/50 hover:shadow-pop transition-all outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-muted-foreground/70 ${error ? 'border-destructive' : 'border-foreground/20'}`}
                     value={query}
+                    autoFocus={autoFocus}
+                    placeholder="Search stocks, ETFs, crypto..."
                     onChange={(e) => {
                         setQuery(e.target.value)
                         setError(null)
@@ -132,7 +149,6 @@ export function StockSearch({ className, onStockSelect, popularStocks = [], isLo
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setTimeout(() => setIsFocused(false), 200)}
                     onKeyDown={handleKeyDown}
-                    className={`w-full pl-12 pr-4 h-11 text-sm font-bold bg-card border-2 rounded-full shadow-sm hover:border-primary/50 hover:shadow-pop transition-all outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-muted-foreground/70 ${error ? 'border-destructive' : 'border-foreground/20'}`}
                 />
                 {isSearching && (
                     <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />
@@ -147,9 +163,9 @@ export function StockSearch({ className, onStockSelect, popularStocks = [], isLo
                 </div>
             )}
 
-            {/* Dropdown */}
-            {isFocused && !error && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-card border-2 border-foreground rounded-xl shadow-pop overflow-hidden z-50">
+            {/* Dropdown / Results List */}
+            {(isFocused || resultsVariant === 'inline') && !error && (
+                <div className={resultsContainerClass}>
                     <div className="p-3 border-b-2 border-foreground/10 bg-muted/50">
                         <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
                             {query ? "Search Results" : "Popular Stocks"}

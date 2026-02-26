@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react"
 import { StepIntro } from "./steps/StepIntro"
 import { StepConcept } from "./steps/StepConcept"
@@ -35,10 +35,11 @@ import { cn } from "@/lib/utils"
 interface LearningFlowProps {
     symbol: string
     stockData: any
+    onStepChange?: (step: number, total: number, title: string) => void
     llmContent?: any
 }
 
-export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProps) {
+export function LearningFlow({ symbol, stockData, llmContent, onStepChange }: LearningFlowProps) {
     const [currentStep, setCurrentStep] = useState(0)
 
     // Extract content ID for feedback (if available)
@@ -252,6 +253,16 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
 
     // Prevent index out of bounds
     const safeCurrentStep = Math.min(currentStep, steps.length - 1)
+    const stepsLength = steps.length
+    const currentStepTitle = steps[safeCurrentStep]?.title || ""
+
+    // Notify parent of step changes
+    useEffect(() => {
+        if (onStepChange) {
+            onStepChange(safeCurrentStep + 1, stepsLength, currentStepTitle)
+        }
+    }, [safeCurrentStep, stepsLength, currentStepTitle, onStepChange])
+
     const progress = ((safeCurrentStep + 1) / steps.length) * 100
 
     return (
@@ -277,8 +288,8 @@ export function LearningFlow({ symbol, stockData, llmContent }: LearningFlowProp
 
             {/* Navigation Controls */}
             {safeCurrentStep < steps.length - 1 && (
-                <div className="fixed bottom-0 left-0 right-0 p-6 bg-background/80 backdrop-blur-md border-t-2 border-foreground/10 lg:pl-72 z-40">
-                    <div className="max-w-3xl mx-auto flex justify-between gap-4">
+                <div className="fixed bottom-0 left-0 right-0 h-[92px] flex items-center px-6 bg-background/80 backdrop-blur-md border-t-2 border-foreground/10 lg:pl-72 z-40">
+                    <div className="w-full max-w-3xl mx-auto flex justify-between gap-4">
                         <button
                             onClick={handlePrev}
                             disabled={safeCurrentStep === 0}

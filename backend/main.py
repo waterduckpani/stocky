@@ -979,9 +979,20 @@ async def generate_content(symbol: str):
             # Create fallback explanation from slides
             explanation_text = " ".join([s.get("text", "") for s in slides])
 
+        # Extract Lesson Label from ID (e.g., lesson_1_ticker -> Lesson 1)
+        lesson_label = None
+        if concept_id and concept_id.startswith("lesson_"):
+            try:
+                parts = concept_id.split("_")
+                if len(parts) >= 2 and parts[1].isdigit():
+                    lesson_label = f"Lesson {parts[1]}"
+            except:
+                pass
+
         concept_data = {
             "name": lesson_topic,
             "concept_id": concept_id,
+            "lesson_label": lesson_label,
             "category": "fundamentals",
             "explanation": explanation_text,
             "type": concept_type,
@@ -1002,9 +1013,20 @@ async def generate_content(symbol: str):
             else:
                 concept_explanation = selected_concept.beginner_explanation
             
+            # Extract Lesson Label from ID for dynamic concepts too
+            lesson_label = None
+            if concept_id and concept_id.startswith("lesson_"):
+                try:
+                    parts = concept_id.split("_")
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        lesson_label = f"Lesson {parts[1]}"
+                except:
+                    pass
+
             concept_data = {
                 "name": concept_name,
                 "concept_id": concept_id,
+                "lesson_label": lesson_label,
                 "category": selected_concept.category.value,
                 "explanation": concept_explanation or selected_concept.beginner_explanation
             }
@@ -1135,6 +1157,35 @@ async def submit_feedback(content_id: str, vote: str, user_id: str = None):
 # DAILY QUIZ ENDPOINT
 # =============================================================================
 from daily_quizzes import get_quiz_for_lesson
+
+@app.get("/api/active-lesson")
+async def get_active_lesson():
+    """
+    Returns the currently active or forced lesson for testing purposes.
+    Helps sync the Daily Quiz with the testing environment.
+    """
+    # Look at smart_selector.py's forcing logic
+    import smart_selector
+    from concept_library import StockContext
+    
+    # Mock context to run the selector
+    stock_context = StockContext("AAPL", "Apple", 150.0, 1.0, 1000, 1000, 2000000000000, 30.0, 0.0, 0.0, 160.0, 140.0, 1.0, "Technology", False, "neutral")
+    
+    try:
+        # Re-use the smart selector to see what it forces
+        concept, selection_metadata = smart_selector.select_best_concept(stock_context, [])
+        lesson_id = concept.get('id', '') if isinstance(concept, dict) else concept.id
+        
+        # Parse lesson number from ID (e.g. lesson_18_liquidity -> 18)
+        if lesson_id.startswith("lesson_"):
+            parts = lesson_id.split("_")
+            if len(parts) >= 2 and parts[1].isdigit():
+                return {"lesson_number": int(parts[1])}
+    except Exception as e:
+        print(f"Error determining active lesson: {e}")
+        
+    # Default fallback
+    return {"lesson_number": 1}
 
 @app.get("/api/daily-quiz/{lesson_number}")
 async def get_daily_quiz(lesson_number: int):

@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 
-const navigation = [
+export const navigation = [
     {
         name: "Dashboard",
         icon: Home,
@@ -58,9 +58,9 @@ export function Sidebar() {
     }
 
     return (
-        <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:border-r-2 lg:border-foreground/10 lg:bg-card z-50">
+        <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:border-r-2 lg:border-foreground/10 lg:bg-sidebar z-50">
             {/* Logo */}
-            <div className="flex items-center gap-3 px-6 h-16 border-b-2 border-foreground/10 shrink-0 box-content">
+            <div className="flex items-center gap-3 px-6 h-[92px] border-b-2 border-foreground/10 shrink-0 box-content">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-[#3BB273] border-2 border-foreground shadow-pop flex items-center justify-center">
                         <span className="text-white font-bold text-lg">S</span>
@@ -97,7 +97,7 @@ export function Sidebar() {
             </nav>
 
             {/* User Profile */}
-            <div className="p-4 border-t-2 border-foreground/10">
+            <div className="h-[92px] px-4 border-t-2 border-foreground/10 flex items-center shrink-0">
                 <div className="flex items-center gap-3 p-3 rounded-xl border-2 border-foreground/10 bg-muted/50 transition-bounce hover:border-foreground/30">
                     <Avatar className="h-11 w-11 border-2 border-foreground shadow-pop">
                         <AvatarImage src={user.avatarUrl || "/placeholder.svg"} alt={user.name} />

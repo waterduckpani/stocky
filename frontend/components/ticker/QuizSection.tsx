@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, X, Trophy, ArrowRight, Home, Sparkles } from "lucide-react"
+import { Check, X, Trophy, ArrowRight, Home, Sparkles, Zap } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Question {
@@ -22,6 +22,7 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
     const [isAnswered, setIsAnswered] = useState(false)
     const [score, setScore] = useState(0)
     const [completed, setCompleted] = useState(false)
+    const [showUnlockPopup, setShowUnlockPopup] = useState(false)
 
     const router = useRouter()
 
@@ -101,17 +102,13 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
 
                         <div className="flex flex-col sm:flex-row gap-3">
                             <button
-                                onClick={() => router.push('/')}
+                                onClick={() => {
+                                    setCompleted(false)
+                                    setShowUnlockPopup(true)
+                                }}
                                 className="flex-1 py-3 bg-white border-2 border-border text-foreground hover:bg-muted/50 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                             >
-                                <Home className="w-4 h-4" />
-                                Return Home
-                            </button>
-                            <button
-                                onClick={() => router.push('/explore')} // Placeholder next action
-                                className="flex-1 py-3 bg-primary text-primary-foreground border-2 border-primary hover:border-primary-foreground/20 rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                            >
-                                Next Lesson
+                                Continue
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                         </div>
@@ -121,76 +118,130 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
         )
     }
 
-    const question = questions[currentQuestion]
+    if (showUnlockPopup) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="bg-card w-full max-w-md rounded-[2rem] p-8 border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden animate-in zoom-in-95 duration-300">
+
+                    <div className="absolute -right-6 -top-6 w-24 h-24 bg-quaternary/20 rounded-full blur-2xl pointer-events-none" />
+
+                    <div className="text-center relative z-10">
+                        <div className="w-20 h-20 bg-quaternary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-pop border-4 border-foreground transform -rotate-3">
+                            <Zap className="w-10 h-10 drop-shadow-md" strokeWidth={2.5} />
+                        </div>
+
+                        <h3 className="text-3xl font-black text-foreground mb-2 tracking-tight">Daily Quiz Unlocked!</h3>
+
+                        <p className="text-muted-foreground mb-8">
+                            Head back to the dashboard to test your knowledge and earn more XP.
+                        </p>
+
+                        <button
+                            onClick={() => router.push('/#daily-quiz')}
+                            className="w-full py-4 bg-primary text-primary-foreground border-2 border-primary hover:border-primary-foreground/20 rounded-xl text-lg font-black shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
+                        >
+                            <Home className="w-5 h-5" />
+                            Return Home to Play
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    // Quiz data structure for display
+    const currentQ = questions[currentQuestion]
+    const isCorrect = selectedAnswer === currentQ.correctIndex
 
     return (
-        <div className="bg-card rounded-3xl p-8 border-2 border-foreground shadow-pop">
-            <div className="flex justify-between items-center mb-6">
+        <div className="rounded-2xl border-2 border-foreground bg-card shadow-soft overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-4 border-b-2 border-foreground/10 flex items-center justify-between bg-tertiary/10">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center font-bold">
-                        ?
+                    <div className="h-8 w-8 rounded-lg bg-tertiary border-2 border-foreground flex items-center justify-center">
+                        <Trophy className="h-4 w-4 text-tertiary-foreground" strokeWidth={2.5} />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">Quick Challenge</h3>
+                    <h3 className="text-lg font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
+                        Quick Challenge
+                    </h3>
                 </div>
-                <span className="text-sm font-bold text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                <span className="text-sm font-bold text-muted-foreground bg-white/50 px-3 py-1 rounded-full border border-foreground/10">
                     {currentQuestion + 1} / {questions.length}
                 </span>
             </div>
 
-            <h4 className="text-lg font-bold mb-6">{question.question}</h4>
+            {/* Content */}
+            <div className="p-6 space-y-5">
+                <p className="text-foreground font-semibold text-lg">{currentQ.question}</p>
 
-            <div className="space-y-3">
-                {question.options.map((option, idx) => (
-                    <button
-                        key={idx}
-                        onClick={() => handleAnswer(idx)}
-                        disabled={isAnswered}
-                        className={cn(
-                            "w-full p-4 rounded-xl border-2 text-left font-semibold transition-all flex justify-between items-center",
-                            isAnswered
-                                ? idx === question.correctIndex
-                                    ? "bg-quaternary text-white border-quaternary shadow-none"
-                                    : idx === selectedAnswer
-                                        ? "bg-destructive text-white border-destructive shadow-none"
-                                        : "bg-muted text-muted-foreground border-transparent opacity-50"
-                                : "bg-muted hover:bg-muted/80 border-transparent hover:border-foreground/20 text-foreground"
-                        )}
-                    >
-                        {option}
-                        {isAnswered && idx === question.correctIndex && <Check className="w-5 h-5" />}
-                        {isAnswered && idx === selectedAnswer && idx !== question.correctIndex && <X className="w-5 h-5" />}
-                    </button>
-                ))}
-            </div>
-
-            {isAnswered && (
-                <div className="mt-6 pt-6 border-t-2 border-border animate-in fade-in slide-in-from-bottom-2">
-                    <p className="text-sm font-medium text-muted-foreground mb-4">
-                        <span className="font-bold text-foreground">
-                            {selectedAnswer === question.correctIndex ? "✓ Correct!" : "✗ Not quite."}
-                        </span> The correct answer is: {(() => {
-                            // Safety check for correctIndex
-                            let idx = question.correctIndex;
-                            // Handle 1-based index from backend (1-4 instead of 0-3)
-                            if (idx >= 1 && idx <= 4 && !question.options[idx]) {
-                                idx = idx - 1;
-                            }
-                            // Ensure index is valid (0-3)
-                            if (idx < 0 || idx > 3 || !question.options[idx]) {
-                                return `Option ${(question.correctIndex || 0) + 1}`;
-                            }
-                            return question.options[idx];
-                        })()}
-                    </p>
-                    <button
-                        onClick={nextQuestion}
-                        className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                    >
-                        {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
-                        <ArrowRight className="w-4 h-4" />
-                    </button>
+                <div className="space-y-3">
+                    {currentQ.options.map((option, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handleAnswer(index)}
+                            disabled={isAnswered}
+                            className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 text-left font-medium transition-bounce
+                                ${isAnswered
+                                    ? index === currentQ.correctIndex
+                                        ? "border-quaternary bg-quaternary/10 shadow-pop-mint"
+                                        : index === selectedAnswer
+                                            ? "border-destructive bg-destructive/10"
+                                            : "border-foreground/20 text-muted-foreground"
+                                    : "border-foreground/20 hover:border-foreground hover:shadow-pop hover:-translate-x-0.5 hover:-translate-y-0.5"
+                                }
+                                ${(!isAnswered) && "active:translate-x-0.5 active:translate-y-0.5 active:shadow-pop-active"}
+                            `}
+                        >
+                            <span className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 transition-colors
+                                ${isAnswered
+                                    ? index === currentQ.correctIndex
+                                        ? "border-quaternary bg-quaternary text-quaternary-foreground"
+                                        : index === selectedAnswer
+                                            ? "border-destructive bg-destructive text-destructive-foreground"
+                                            : "border-foreground/30"
+                                    : "border-foreground/30"
+                                }
+                            `}>
+                                {String.fromCharCode(65 + index)}
+                            </span>
+                            <span className="text-foreground">{option}</span>
+                        </button>
+                    ))}
                 </div>
-            )}
+
+                {isAnswered && (
+                    <div className={`p-5 rounded-xl border-2 animate-in fade-in slide-in-from-bottom-2 ${isCorrect ? "bg-quaternary/10 border-quaternary" : "bg-destructive/10 border-destructive"}`}>
+                        <div className="flex items-center gap-2 mb-2">
+                            {isCorrect ? (
+                                <div className="h-8 w-8 rounded-full bg-quaternary border-2 border-foreground flex items-center justify-center">
+                                    <Check className="h-4 w-4 text-quaternary-foreground" strokeWidth={2.5} />
+                                </div>
+                            ) : (
+                                <div className="h-8 w-8 rounded-full bg-destructive border-2 border-foreground flex items-center justify-center">
+                                    <X className="h-4 w-4 text-destructive-foreground" strokeWidth={2.5} />
+                                </div>
+                            )}
+                            <span className={`font-bold text-lg ${isCorrect ? "text-quaternary" : "text-destructive"}`} style={{ fontFamily: 'var(--font-heading)' }}>
+                                {isCorrect ? "Correct!" : "Not quite!"}
+                            </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                            {isCorrect
+                                ? "Great job! You nailed it."
+                                : `The correct answer is: ${currentQ.options[currentQ.correctIndex]}`
+                            }
+                        </p>
+
+                        <button
+                            onClick={nextQuestion}
+                            className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 border-2 border-primary-foreground/20"
+                        >
+                            {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
+                            <ArrowRight className="w-4 h-4" />
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
