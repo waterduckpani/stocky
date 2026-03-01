@@ -658,19 +658,25 @@ TIER_1_LESSONS = [
         "news": [],
         "game_config": {
             "type": "wiggle_tamer",
-            "instruction": "Try to 'Capture' the moving square. Notice how the Jumpy stocks are harder to catch!",
-            "scenarios": [
+            "instruction": "Tap each card to explore how stocks with different Beta scores actually move.",
+            "betas": [
                 {
-                    "stock_type": "Utility Company",
-                    "behavior": "Stable/Slow Pulse",
-                    "difficulty": "Easy",
-                    "explanation": "Low volatility stocks are predictable and steady. 🧘"
+                    "category": "low",
+                    "label": "Beta < 1",
+                    "example": "Electric Utility",
+                    "description": "Calmer than the market. Steady, small moves day to day."
                 },
                 {
-                    "stock_type": "AI Startup",
-                    "behavior": "Erratic/Fast Jitter",
-                    "difficulty": "Hard",
-                    "explanation": "High volatility means prices move fast and unpredictably. 🎢"
+                    "category": "market",
+                    "label": "Beta ≈ 1",
+                    "example": "S&P 500 Index Fund",
+                    "description": "Moves in sync with the average market. Neither calm nor wild."
+                },
+                {
+                    "category": "high",
+                    "label": "Beta > 1",
+                    "example": "AI Startup",
+                    "description": "Wilder than the market. Bigger swings in both directions."
                 }
             ]
         },
@@ -689,23 +695,23 @@ TIER_1_LESSONS = [
             {
                 "question": "A startup misses its earnings target and its stock drops 18% in one day. What best describes this?",
                 "options": [
-                    "A volatility spike",
                     "A volume collapse",
                     "A market cap reset",
+                    "A volatility spike",
                     "A Beta adjustment"
                 ],
-                "correctIndex": 0,
-                "explanation": "A huge price swing triggered by news = a volatility spike. High-volatility stocks react dramatically to events."
+                "correctIndex": 2,
+                "explanation": "A huge price swing triggered by news is a volatility spike. High-volatility stocks react dramatically to events."
             },
             {
                 "question": "{company_name} has a Beta of 0.4. What does that tell you?",
                 "options": [
-                    "It moves less than the average market",
-                    "It moves exactly like the market",
                     "It moves more than the average market",
-                    "It's about to crash"
+                    "It moves less than the average market",
+                    "It's about to crash",
+                    "It moves exactly like the market"
                 ],
-                "correctIndex": 0,
+                "correctIndex": 1,
                 "explanation": "Beta below 1.0 means calmer than the market. Less swing day-to-day, but typically less explosive upside too."
             }
         ]
@@ -720,25 +726,24 @@ TIER_1_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "The Reward 🎁",
-                    "text": "You searched for **{company_name}**. When a company is profitable, it can choose to send a portion of that cash directly to you. This 'Thank You' payment is called a **Dividend**.",
-                    "icon": "Gift",
-                    "image": "/images/dividend_reward.png"
+                    "title": "Your Cut of the Profits",
+                    "text": "You searched for **{company_name}**. If it earns a profit, it might share a slice of that cash with you as a **Dividend**. It's a payment just for owning the stock.",
+                    "icon": "Gem"
                 },
                 {
-                    "title": "The Rental Analogy 🏠",
-                    "text": "Think of a stock like a **Rental Property**. You own the building (the stock), and the dividend is the **Rent** you collect every month without ever having to sell the house.",
-                    "icon": "Home"
+                    "title": "The Rental Property",
+                    "text": "Think of a dividend stock like a **rental property**. You own it, and it sends you rent every three months. You never have to sell. The cash just shows up.",
+                    "icon": "Store"
                 },
                 {
-                    "title": "The Yield 📊",
-                    "text": "The **Dividend Yield** is the annual payout shown as a percentage of the stock price. It tells you how much 'Interest' you are earning just for holding the share.",
-                    "icon": "Percent"
+                    "title": "The Yield Number",
+                    "text": "**Dividend Yield** is the annual payout as a percentage of the stock price. A $100 stock that pays $4 a year has a 4% yield. That cash hits your account on a schedule.",
+                    "icon": "Scale"
                 },
                 {
-                    "title": "Growth vs. Income ⚖️",
-                    "text": "Not every company pays a dividend. **Growth** companies (like Tech) often keep the cash to build new things. **Value** companies (like Banks or Utilities) usually have extra cash to share with you.",
-                    "icon": "Briefcase"
+                    "title": "Growth vs. Income",
+                    "text": "Not every company pays one. **Tech and growth stocks** tend to reinvest every dollar to expand faster. **Banks, utilities, and consumer brands** usually have spare cash and pay steady dividends.",
+                    "icon": "Target"
                 }
             ],
             "sources": [
@@ -756,37 +761,37 @@ TIER_1_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What is a Dividend?",
+                "question": "What is a dividend?",
                 "options": [
                     "A loan you give to the company",
-                    "The price of a single share",
-                    "A portion of profit shared with shareholders",
-                    "A fine for selling too early"
+                    "The fee your broker charges to buy shares",
+                    "A slice of company profits paid to shareholders",
+                    "The difference between a stock's high and low price"
                 ],
                 "correctIndex": 2,
-                "explanation": "A dividend is a distribution of a company's earnings to its shareholders."
+                "explanation": "When a company earns more than it spends, it can share some of that profit with shareholders. That payment is the dividend."
             },
             {
-                "question": "If a company has a 5% Dividend Yield, what does that mean?",
+                "question": "You invest $1,000 in {company_name}. It has a 4% Dividend Yield. About how much would you receive in dividends over the year?",
                 "options": [
-                    "You earn $5 for every $100 worth of stock you own annually",
-                    "The stock price will go up 5%",
-                    "The company is losing 5% of its value",
-                    "You must pay a 5% fee to own it"
+                    "$40",
+                    "$400",
+                    "$4",
+                    "$1,040"
                 ],
                 "correctIndex": 0,
-                "explanation": "Yield represents the annual dividend payment as a percentage of the current stock price."
+                "explanation": "4% of $1,000 = $40 a year. The yield tells you your annual cash return without ever having to sell a single share."
             },
             {
-                "question": "Why do some companies NOT pay a dividend?",
+                "question": "{company_name} pays no dividend and reinvests all its profits. What does that tell you?",
                 "options": [
-                    "They are not allowed to by law",
-                    "They forgot to set up the payments",
-                    "Dividends are only for small companies",
-                    "They prefer to use the cash to grow the business"
+                    "It's breaking the law by withholding payments",
+                    "It's about to go bankrupt",
+                    "It's too small to afford dividends",
+                    "It's focused on growth rather than paying shareholders now"
                 ],
                 "correctIndex": 3,
-                "explanation": "Growth-focused companies often reinvest all their profits back into the company to expand faster."
+                "explanation": "Skipping dividends usually means a company wants to plow cash back into growing faster. Many of the world's biggest tech companies did this for years."
             }
         ]
     },
@@ -1125,23 +1130,23 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Context 📉",
-                    "text": "You searched for **{company_name}**. You might see a massive number for its **Revenue**, but that isn't the whole story. Revenue is just the 'Total Sales'—the money that walked through the front door.",
-                    "icon": "ArrowDownToLine"
+                    "text": "You searched for **{company_name}**. Its **Revenue** is the total sales that walked in the door. But a big revenue number doesn't mean the company is making money. It's just where the story starts.",
+                    "icon": "Zap"
                 },
                 {
                     "title": "The Analogy 🍋",
-                    "text": "Think of a **Lemonade Stand**. Sell 100 cups at $1 each → **Revenue** = $100. But lemons, sugar, and cups cost $80 → **Profit** = only $20. Revenue is the total; Profit is what you keep.",
+                    "text": "Think of a **Lemonade Stand**. You sell 100 cups at $1 each, so your **Revenue** is $100. But lemons, sugar, and cups cost $80, so your **Profit** is just $20. Revenue is what comes in. Profit is what you keep.",
                     "icon": "Store"
                 },
                 {
                     "title": "The 'Lines' 📏",
-                    "text": "In a financial report, Revenue is at the very top (**Top Line**). After you subtract costs like salaries, taxes, and materials, you reach the final number at the very bottom (**Bottom Line**): The Net Profit.",
-                    "icon": "AlignJustify"
+                    "text": "Revenue is the **Top Line** because it's the first number on any earnings report. Subtract salaries, rent, and taxes and you reach the **Bottom Line**: Net Profit. That's the number that actually matters.",
+                    "icon": "Scale"
                 },
                 {
                     "title": "The Margin ✂️",
-                    "text": "The gap between the top and bottom lines is the **Profit Margin**. A healthy company is efficient at keeping as much of that 'Top Line' as possible.",
-                    "icon": "Activity"
+                    "text": "The gap is called the **Profit Margin**. If {company_name} keeps 20 cents of every dollar it earns, that's a 20% margin. A bigger margin means the company runs more efficiently.",
+                    "icon": "Target"
                 }
             ],
             "sources": [
@@ -1164,7 +1169,7 @@ TIER_2_LESSONS = [
                     "Revenue"
                 ],
                 "correctIndex": 3,
-                "explanation": "Revenue sits at the top of the income statement because it is the starting point for all financial calculations."
+                "explanation": "Revenue is always the first number in an earnings report. It's called the Top Line because it literally sits at the top before any costs are taken out."
             },
             {
                 "question": "If a company has $1 Billion in Revenue and $1.1 Billion in Expenses, what is their Profit?",
@@ -1175,18 +1180,18 @@ TIER_2_LESSONS = [
                     "Zero"
                 ],
                 "correctIndex": 1,
-                "explanation": "Profit is Revenue minus Expenses. If expenses are higher than revenue, the company is 'unprofitable' or 'operating at a loss'."
+                "explanation": "Profit is Revenue minus Expenses. When costs beat revenue, the company is running at a loss — it's spending more than it's making."
             },
             {
-                "question": "Why do investors care about the 'Bottom Line'?",
+                "question": "If {company_name} reported $10B in Revenue but spent $9.8B on costs, what does that tell you?",
                 "options": [
-                    "It is the biggest number on the page",
-                    "It tells you the stock price",
-                    "It shows how much money the company actually keeps to grow or pay dividends",
-                    "It shows how many employees the company has"
+                    "It's thriving — huge revenue proves it's a winner",
+                    "It's definitely going bankrupt",
+                    "It's barely profitable — costs nearly erased all the revenue",
+                    "Revenue and costs cancel out, so it's fine"
                 ],
                 "correctIndex": 2,
-                "explanation": "The bottom line represents the actual 'wealth' created by the company after all bills are paid."
+                "explanation": "Revenue only tells you what came in. When costs eat up $9.8B of a $10B revenue, only $200M in profit remains — a razor-thin 2% margin. Always check the Bottom Line."
             }
         ]
     },

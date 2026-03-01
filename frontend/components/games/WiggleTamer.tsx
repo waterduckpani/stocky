@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react"
+import { motion, AnimatePresence, useTime, useTransform } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { Trophy, CheckCircle2, XCircle, ArrowRight, Activity, Thermometer, Zap } from "lucide-react"
+import { CheckCircle2, ArrowRight, Activity } from "lucide-react"
 import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 export interface WiggleTamerConfig {
     instruction: string
-    scenarios: {
-        stock_type: string
-        behavior: string
-        difficulty: "Easy" | "Hard"
-        explanation: string
+    betas: {
+        category: "low" | "market" | "high"
+        label: string
+        example: string
+        description: string
     }[]
 }
 
@@ -21,159 +21,245 @@ interface WiggleTamerProps {
     config: WiggleTamerConfig
 }
 
+const CATEGORY_STYLE = {
+    low: {
+        barColor: "#729bf4",        // --secondary
+        accentClass: "bg-secondary",
+        textClass: "text-secondary-foreground",
+        btnClass: "bg-secondary text-secondary-foreground border-secondary shadow-[0_4px_0_0_#5a7fe0]",
+        btnIdle: "bg-card text-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none",
+    },
+    market: {
+        barColor: "#FBBF24",        // amber / --tertiary
+        accentClass: "bg-tertiary",
+        textClass: "text-tertiary-foreground",
+        btnClass: "bg-tertiary text-tertiary-foreground border-amber-400 shadow-[0_4px_0_0_#d97706]",
+        btnIdle: "bg-card text-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none",
+    },
+    high: {
+        barColor: "#EF4444",        // --destructive
+        accentClass: "bg-destructive",
+        textClass: "text-destructive-foreground",
+        btnClass: "bg-destructive text-destructive-foreground border-destructive shadow-[0_4px_0_0_#b91c1c]",
+        btnIdle: "bg-card text-foreground border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none",
+    },
+}
+
+const VISUALIZER_CONFIG = {
+    low:    { amplitude: 9,  speed: 3.5  },
+    market: { amplitude: 26, speed: 1.8  },
+    high:   { amplitude: 55, speed: 0.55 },
+}
+
+const BAR_COUNT = 16
+
+function VisualizerBar({
+    amplitude,
+    speed,
+    phase,
+    barColor,
+}: {
+    amplitude: number
+    speed: number
+    phase: number
+    barColor: string
+}) {
+    const time = useTime()
+    const height = useTransform(time, (t) => {
+        const base = 32
+        const wave = Math.sin((t / (speed * 1000)) * Math.PI * 2 + phase * Math.PI * 2) * amplitude
+        return Math.max(6, base + wave)
+    })
+    return (
+        <motion.div
+            className="flex-1 rounded-full"
+            style={{ height, backgroundColor: barColor }}
+        />
+    )
+}
+
+function BetaVisualizer({ category }: { category: "low" | "market" | "high" }) {
+    const { amplitude, speed } = VISUALIZER_CONFIG[category]
+    const { barColor } = CATEGORY_STYLE[category]
+    return (
+        <div className="flex items-end justify-center gap-1.5 h-28 w-full px-2">
+            {[...Array(BAR_COUNT)].map((_, i) => (
+                <VisualizerBar
+                    key={i}
+                    amplitude={amplitude}
+                    speed={speed}
+                    phase={i / BAR_COUNT}
+                    barColor={barColor}
+                />
+            ))}
+        </div>
+    )
+}
+
 export function WiggleTamer({ onComplete, config }: WiggleTamerProps) {
-    const [currentIndex, setCurrentIndex] = useState(0)
-    const [score, setScore] = useState(0)
+    const [active, setActive] = useState<"low" | "market" | "high" | null>(null)
+    const [tried, setTried] = useState<Set<string>>(new Set())
     const [completed, setCompleted] = useState(false)
-    const [feedback, setFeedback] = useState<{ type: "success" | "error", message: string } | null>(null)
-    const [gameState, setGameState] = useState<"waiting" | "playing" | "captured">("waiting")
 
-    const currentScenario = config.scenarios[currentIndex]
-    const isLast = currentIndex >= config.scenarios.length - 1
-    const isHard = currentScenario.difficulty === "Hard"
+    const allTried = tried.size >= config.betas.length
 
-    // Hard mode randomization
-    const [position, setPosition] = useState({ x: 0, y: 0 })
-    const requestRef = useRef<number | null>(null)
-
-    // Win condition handling
-    const handleCapture = () => {
-        if (feedback) return
-
-        // Success!
-        setFeedback({ type: "success", message: currentScenario.explanation })
-        setGameState("captured")
-        setScore(prev => prev + 1)
-
-        setTimeout(() => {
-            if (isLast) {
-                setCompleted(true)
-            } else {
-                setFeedback(null)
-                setGameState("waiting")
-                setCurrentIndex(prev => prev + 1)
-            }
-        }, 2500)
+    const handleSelect = (category: "low" | "market" | "high") => {
+        setActive(category)
+        setTried((prev) => new Set([...prev, category]))
     }
 
-    // Jitter Loop for Hard Mode
-    useEffect(() => {
-        if (gameState !== "waiting" && gameState !== "playing") return
-
-        const animate = (time: number) => {
-            if (isHard) {
-                // Chaotic movement
-                const timeScale = time * 0.005
-                const x = Math.sin(timeScale) * 120 + Math.cos(timeScale * 2.3) * 50
-                const y = Math.cos(timeScale * 1.5) * 80 + Math.sin(timeScale * 3.1) * 40
-                setPosition({ x, y })
-            } else {
-                // Steady center
-                setPosition({ x: 0, y: 0 })
-            }
-            requestRef.current = requestAnimationFrame(animate)
-        }
-
-        requestRef.current = requestAnimationFrame(animate)
-        return () => cancelAnimationFrame(requestRef.current!)
-    }, [isHard, gameState])
-
+    const activeBeta = config.betas.find((b) => b.category === active) ?? null
 
     return (
-        <div className="flex flex-col items-center w-full max-w-3xl mx-auto min-h-[500px] relative">
-            {/* Header */}
-            <div className="w-full flex justify-between items-center mb-6 px-4">
-                <div className="text-lg font-bold text-muted-foreground">{config.instruction}</div>
-                <div className="flex items-center gap-2 font-bold text-xl">
-                    <Trophy className="w-5 h-5 text-amber-500" />
-                    <span>{score} / {config.scenarios.length}</span>
-                </div>
+        <div className="flex flex-col items-center w-full max-w-2xl mx-auto space-y-4">
+
+            {/* Instruction */}
+            <div className="bg-muted rounded-xl p-4 border border-foreground/10 text-center w-full">
+                <p className="font-bold text-foreground">{config.instruction}</p>
             </div>
 
-            {/* Target Info */}
-            <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-black uppercase tracking-wide mb-2">
-                    {isHard ? <Zap className="w-4 h-4 text-red-500" /> : <Activity className="w-4 h-4 text-blue-500" />}
-                    {currentScenario.stock_type}
-                </div>
-                <h3 className="text-2xl font-black" style={{ fontFamily: 'var(--font-heading)' }}>
-                    {isHard ? "High Volatility" : "Low Volatility"}
-                </h3>
-            </div>
+            {/* Visualiser Card */}
+            <div className="w-full bg-card rounded-3xl border-2 border-foreground shadow-pop overflow-hidden">
 
-            {/* Game Area */}
-            <div className="flex-1 w-full relative flex items-center justify-center min-h-[300px] bg-muted/30 rounded-3xl border-2 border-dashed border-foreground/20 overflow-hidden cursor-crosshair">
-
-                {/* The Target */}
-                <motion.button
-                    onClick={handleCapture}
-                    disabled={!!feedback}
-                    style={{ x: position.x, y: position.y }}
-                    animate={{
-                        scale: isHard ? [1, 0.8, 1.2, 0.9, 1] : [1, 1.2, 1],
-                        rotate: isHard ? [0, -10, 10, -5, 5, 0] : 0,
-                    }}
-                    transition={{
-                        duration: isHard ? 0.5 : 2,
-                        repeat: Infinity,
-                        ease: isHard ? "easeInOut" : "easeInOut"
-                    }}
+                {/* Coloured accent header — changes with selection */}
+                <div
                     className={cn(
-                        "w-24 h-24 rounded-2xl border-2 border-foreground shadow-pop flex items-center justify-center transition-colors active:scale-90 active:shadow-none active:translate-y-1 relative z-10",
-                        isHard ? "bg-red-500 text-white hover:bg-red-400" : "bg-blue-500 text-white hover:bg-blue-400",
-                        !!feedback && "pointer-events-none"
+                        "px-6 py-3 transition-colors duration-300",
+                        active ? CATEGORY_STYLE[active].accentClass : "bg-muted"
                     )}
                 >
-                    {isHard ? <Thermometer className="w-10 h-10 animate-pulse" /> : <Activity className="w-10 h-10" />}
-                </motion.button>
+                    <span
+                        className={cn(
+                            "text-lg font-black transition-colors duration-300",
+                            active ? CATEGORY_STYLE[active].textClass : "text-muted-foreground"
+                        )}
+                        style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                        {activeBeta ? activeBeta.label : "Pick a Beta type below"}
+                    </span>
+                </div>
 
-                {/* Grid Lines for Effect */}
-                <div className="absolute inset-0 pointer-events-none opacity-10"
-                    style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '20px 20px' }}
-                />
-
-                {/* Feedback Overlay - Pop Style */}
-                <AnimatePresence>
-                    {feedback && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
+                {/* Wave area */}
+                <div className="px-6 py-6 bg-muted/30 min-h-[140px] flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                        {active ? (
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                                className="p-8 w-[90%] max-w-sm bg-white rounded-3xl border-2 border-foreground shadow-pop flex flex-col items-center justify-center text-center gap-4 pointer-events-auto"
+                                key={active}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.25 }}
+                                className="w-full"
                             >
-                                <div className={cn(
-                                    "w-20 h-20 rounded-full flex items-center justify-center mb-1 border-2 border-foreground shadow-sm",
-                                    feedback.type === "success" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
-                                )}>
-                                    {feedback.type === "success" ? (
-                                        <CheckCircle2 className="w-10 h-10" />
-                                    ) : (
-                                        <XCircle className="w-10 h-10" />
-                                    )}
-                                </div>
-
-                                <div>
-                                    <h3 className={cn("text-2xl font-black mb-2", feedback.type === "success" ? "text-green-600" : "text-red-500")} style={{ fontFamily: 'var(--font-heading)' }}>
-                                        {feedback.type === "success" ? "Captured!" : "Missed!"}
-                                    </h3>
-                                    <p className="font-bold text-lg text-muted-foreground leading-snug">{feedback.message}</p>
-                                </div>
+                                <BetaVisualizer category={active} />
                             </motion.div>
-                        </div>
+                        ) : (
+                            <motion.div
+                                key="empty"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex flex-col items-center gap-2 text-muted-foreground"
+                            >
+                                <Activity className="w-8 h-8 opacity-30" />
+                                <p className="text-sm font-bold opacity-50">
+                                    Select a Beta type to see the wiggle
+                                </p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* Active beta info */}
+                <AnimatePresence mode="wait">
+                    {activeBeta && (
+                        <motion.div
+                            key={active}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.2 }}
+                            className="px-6 py-4 border-t border-foreground/10"
+                        >
+                            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-0.5">
+                                e.g. {activeBeta.example}
+                            </p>
+                            <p className="text-sm font-medium text-foreground leading-snug">
+                                {activeBeta.description}
+                            </p>
+                        </motion.div>
                     )}
                 </AnimatePresence>
             </div>
 
-            <p className="mt-4 text-sm font-bold text-muted-foreground animate-pulse">
-                Tap the square to capture the data point!
-            </p>
+            {/* Beta Selector Buttons */}
+            <div className="grid grid-cols-3 gap-3 w-full">
+                {config.betas.map((beta) => {
+                    const isActive = active === beta.category
+                    const isTried = tried.has(beta.category)
+                    const style = CATEGORY_STYLE[beta.category]
+
+                    return (
+                        <button
+                            key={beta.category}
+                            onClick={() => handleSelect(beta.category)}
+                            className={cn(
+                                "relative py-4 px-3 rounded-xl border-2 font-bold transition-all flex flex-col items-center gap-1",
+                                isActive
+                                    ? cn("translate-y-0.5 shadow-none", style.btnClass)
+                                    : style.btnIdle
+                            )}
+                        >
+                            <span className="text-base font-black">{beta.label}</span>
+
+                            {/* Tried checkmark */}
+                            <AnimatePresence>
+                                {isTried && !isActive && (
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary rounded-full flex items-center justify-center"
+                                    >
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-primary-foreground" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </button>
+                    )
+                })}
+            </div>
+
+            {/* Progress hint */}
+            {!allTried && (
+                <p className="text-sm text-muted-foreground font-bold text-center">
+                    Try all three to continue ({tried.size} / {config.betas.length} explored)
+                </p>
+            )}
+
+            {/* Continue — appears once all three tried */}
+            <AnimatePresence>
+                {allTried && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, ease: "backOut" }}
+                        className="w-full"
+                    >
+                        <button
+                            onClick={() => setCompleted(true)}
+                            className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
+                        >
+                            Got it, let's go! <ArrowRight className="w-5 h-5" strokeWidth={3} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <MinigameCompletionPopup
                 completed={completed}
                 onComplete={onComplete}
                 title="Volatility Tamer!"
-                description="You've mastered the market's pulse."
+                description="You've explored all three Beta types."
             />
         </div>
     )

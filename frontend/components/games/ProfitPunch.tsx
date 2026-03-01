@@ -137,7 +137,7 @@ export function ProfitPunch({
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="w-full max-w-xl bg-[#FFFDF5] border-4 border-foreground rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center space-y-8 relative overflow-hidden"
+                        className="w-full max-w-xl bg-card border-4 border-foreground rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center space-y-8 relative overflow-hidden"
                     >
                         {/* Decorative Background Icon */}
                         <div className="absolute top-[-20px] left-[-20px] opacity-5 rotate-12">
@@ -269,7 +269,7 @@ export function ProfitPunch({
                                     disabled={isPunched(exp.id)}
                                     layout
                                     className={cn(
-                                        "relative w-full h-20 rounded-2xl border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-4 transition-all overflow-hidden group hover:translate-y-1 hover:shadow-none hover:border-black active:translate-y-2 disabled:opacity-40 disabled:pointer-events-none disabled:shadow-none disabled:translate-y-1",
+                                        "relative w-full h-20 rounded-2xl border-2 border-foreground shadow-pop flex items-center justify-center gap-4 transition-all overflow-hidden group hover:translate-y-0.5 hover:shadow-none disabled:opacity-40 disabled:pointer-events-none disabled:shadow-none disabled:translate-y-0.5",
                                         exp.color,
                                         "px-6"
                                     )}
@@ -301,7 +301,7 @@ export function ProfitPunch({
                         key="finished"
                         initial={{ opacity: 0, scale: 0.9, rotate: -1 }}
                         animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                        className="w-full max-w-xl bg-[#FFFDF5] border-4 border-foreground rounded-[2.5rem] p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center space-y-8 relative overflow-hidden"
+                        className="w-full max-w-xl bg-card border-4 border-foreground rounded-[2.5rem] p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center space-y-8 relative overflow-hidden"
                     >
                         {/* Confetti / Sparkle Decor */}
                         <div className="absolute top-0 right-0 p-8 opacity-10 text-primary">
@@ -320,7 +320,7 @@ export function ProfitPunch({
                                 After all expenses, here is what&apos;s actually left.
                             </p>
 
-                            <div className="bg-white rounded-2xl p-6 border-2 border-foreground shadow-sm mb-8 transform -rotate-1 hover:rotate-0 transition-transform">
+                            <div className="bg-card rounded-2xl p-6 border-2 border-foreground shadow-sm mb-8 transform -rotate-1 hover:rotate-0 transition-transform">
                                 <div className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">
                                     Net Income ({fiscalYear})
                                 </div>

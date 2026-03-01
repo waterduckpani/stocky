@@ -156,7 +156,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
-        lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_9_volatility'), None)
+        lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
         
         if not lesson_ref and True: # FORCE HARDCODED FALLBACK
              print("DEBUG: Force-injecting Lesson 16 (Lookup Failed)")

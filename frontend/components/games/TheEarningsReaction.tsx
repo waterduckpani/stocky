@@ -270,7 +270,7 @@ export default function TheEarningsReaction({ onComplete, ticker }: TheEarningsR
                 <button
                     onClick={() => handleReaction('sell')}
                     className={cn(
-                        "relative h-24 rounded-2xl border-2 transition-all duration-200 active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden bg-white border-destructive shadow-pop-active text-destructive hover:bg-destructive/5"
+                        "relative h-24 rounded-2xl border-2 transition-all duration-200 hover:translate-y-0.5 hover:shadow-none active:translate-y-0.5 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden bg-card border-destructive shadow-pop text-destructive hover:bg-destructive/5"
                     )}
                 >
                     <div className="absolute top-2 right-2 opacity-20">
@@ -286,7 +286,7 @@ export default function TheEarningsReaction({ onComplete, ticker }: TheEarningsR
                 <button
                     onClick={() => handleReaction('buy')}
                     className={cn(
-                        "relative h-24 rounded-2xl border-2 transition-all duration-200 active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden bg-white border-primary shadow-pop-active text-primary hover:bg-primary/5"
+                        "relative h-24 rounded-2xl border-2 transition-all duration-200 hover:translate-y-0.5 hover:shadow-none active:translate-y-0.5 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden bg-card border-primary shadow-pop text-primary hover:bg-primary/5"
                     )}
                 >
                     <div className="absolute top-2 right-2 opacity-20">

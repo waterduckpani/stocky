@@ -13,10 +13,13 @@ interface Question {
 
 interface QuizSectionProps {
     symbol: string
+    companyName?: string
     questions?: Question[]
 }
 
-export function QuizSection({ symbol, questions: providedQuestions }: QuizSectionProps) {
+export function QuizSection({ symbol, companyName, questions: providedQuestions }: QuizSectionProps) {
+    const fillPlaceholders = (text: string) =>
+        text.replace(/{company_name}/g, companyName || symbol).replace(/{symbol}/g, symbol)
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
     const [isAnswered, setIsAnswered] = useState(false)
@@ -114,7 +117,7 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
                                         router.push('/#daily-quiz')
                                     }
                                 }}
-                                className="flex-1 py-3 bg-white border-2 border-border text-foreground hover:bg-muted/50 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                                className="flex-1 py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                             >
                                 Continue
                                 <ArrowRight className="w-4 h-4" />
@@ -180,7 +183,7 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
 
             {/* Content */}
             <div className="p-6 space-y-5">
-                <p className="text-foreground font-semibold text-lg">{currentQ.question}</p>
+                <p className="text-foreground font-semibold text-lg">{fillPlaceholders(currentQ.question)}</p>
 
                 <div className="space-y-3">
                     {currentQ.options.map((option, index) => (
@@ -212,7 +215,7 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
                             `}>
                                 {String.fromCharCode(65 + index)}
                             </span>
-                            <span className="text-foreground">{option}</span>
+                            <span className="text-foreground">{fillPlaceholders(option)}</span>
                         </button>
                     ))}
                 </div>
@@ -236,7 +239,7 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
                         <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                             {isCorrect
                                 ? "Great job! You nailed it."
-                                : `The correct answer is: ${currentQ.options[currentQ.correctIndex]}`
+                                : `The correct answer is: ${fillPlaceholders(currentQ.options[currentQ.correctIndex])}`
                             }
                         </p>
 

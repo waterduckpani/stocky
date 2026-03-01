@@ -248,7 +248,7 @@ export function LearningFlow({ symbol, stockData, llmContent, onStepChange }: Le
 
     // Add Quiz last
     steps.push(
-        { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} questions={finalQuestions} /> }
+        { id: "quiz", title: "Challenge", component: <QuizSection symbol={symbol} companyName={stockData?.company_name || stockData?.name || symbol} questions={finalQuestions} /> }
     )
 
     // Prevent index out of bounds
@@ -266,7 +266,7 @@ export function LearningFlow({ symbol, stockData, llmContent, onStepChange }: Le
     const progress = ((safeCurrentStep + 1) / steps.length) * 100
 
     return (
-        <div className="max-w-3xl mx-auto pb-24">
+        <div className="max-w-3xl mx-auto pb-24 relative">
             {/* Progress Bar */}
             <div className="mb-8">
                 <div className="flex justify-between text-sm font-bold text-muted-foreground mb-2 px-1">
