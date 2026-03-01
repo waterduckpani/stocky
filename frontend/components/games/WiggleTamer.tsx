@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Trophy, CheckCircle2, XCircle, ArrowRight, Activity, Thermometer, Zap } from "lucide-react"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 export interface WiggleTamerConfig {
     instruction: string
@@ -77,24 +78,6 @@ export function WiggleTamer({ onComplete, config }: WiggleTamerProps) {
         return () => cancelAnimationFrame(requestRef.current!)
     }, [isHard, gameState])
 
-    if (completed) {
-        return (
-            <div className="flex flex-col items-center justify-center p-8 text-center animate-in zoom-in duration-500 min-h-[400px]">
-                <div className="w-24 h-24 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-6 animate-bounce">
-                    <Trophy className="w-12 h-12" />
-                </div>
-                <h2 className="text-3xl font-black mb-2" style={{ fontFamily: 'var(--font-heading)' }}>Volatility Tamer!</h2>
-                <p className="text-muted-foreground mb-8 text-lg">You've mastered the market's pulse.</p>
-                <div className="text-xl font-bold mb-8">Score: {score} / {config.scenarios.length}</div>
-                <button
-                    onClick={onComplete}
-                    className="bg-primary text-primary-foreground text-xl font-bold py-4 px-12 rounded-xl shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2"
-                >
-                    Continue Lesson <ArrowRight className="w-6 h-6" />
-                </button>
-            </div>
-        )
-    }
 
     return (
         <div className="flex flex-col items-center w-full max-w-3xl mx-auto min-h-[500px] relative">
@@ -185,6 +168,13 @@ export function WiggleTamer({ onComplete, config }: WiggleTamerProps) {
             <p className="mt-4 text-sm font-bold text-muted-foreground animate-pulse">
                 Tap the square to capture the data point!
             </p>
+
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete}
+                title="Volatility Tamer!"
+                description="You've mastered the market's pulse."
+            />
         </div>
     )
 }

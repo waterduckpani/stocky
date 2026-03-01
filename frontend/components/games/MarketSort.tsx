@@ -8,6 +8,7 @@ import {
     Smartphone, CupSoda, Search, ShoppingCart, Car, Landmark, Cpu, Clapperboard,
     Factory, Globe
 } from "lucide-react"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 export interface MarketSortConfig {
     bins: [
@@ -92,23 +93,6 @@ export function MarketSort({ onComplete, config = DEFAULT_CONFIG }: MarketSortPr
         }
     }
 
-    if (completed) {
-        return (
-            <div className="flex flex-col items-center justify-center p-8 text-center animate-in zoom-in duration-500">
-                <div className="w-24 h-24 bg-quaternary/20 text-quaternary rounded-full flex items-center justify-center mb-6 animate-bounce">
-                    <Trophy className="w-12 h-12" />
-                </div>
-                <h2 className="text-3xl font-black mb-2">Market Master!</h2>
-                <p className="text-muted-foreground mb-8 text-lg">You know exactly where the big players live.</p>
-                <button
-                    onClick={onComplete}
-                    className="bg-primary text-primary-foreground text-xl font-bold py-4 px-12 rounded-xl shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2"
-                >
-                    Continue to Lesson 3 <ArrowRight className="w-6 h-6" />
-                </button>
-            </div>
-        )
-    }
 
     if (!safeCompany) return null
 
@@ -226,6 +210,12 @@ export function MarketSort({ onComplete, config = DEFAULT_CONFIG }: MarketSortPr
 
             <p className="text-sm font-bold text-muted-foreground animate-pulse">Drag card Left or Right</p>
 
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete}
+                title="Market Master!"
+                description="You know exactly where the big players live."
+            />
         </div>
     )
 }

@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Bell, Building2 } from 'lucide-react'
+import { Bell, Building2, ArrowRight } from 'lucide-react'
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface IPOLaunchSimulatorProps {
     onComplete: () => void
@@ -14,6 +15,7 @@ interface IPOLaunchSimulatorProps {
 
 export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IPOLaunchSimulatorProps) {
     const [isFlipped, setIsFlipped] = useState(false)
+    const [completed, setCompleted] = useState(false)
     const [currencyState, setCurrencyState] = useState({ symbol: '$', baseInvestment: 1000 })
 
     // --- 1. SMART CURRENCY & INVESTMENT ---
@@ -262,9 +264,26 @@ export default function IPOLaunchSimulator({ onComplete, symbol, stockData }: IP
                                 {percentReturn > 0 ? "+" : ""}{percentReturn.toLocaleString(undefined, { maximumFractionDigits: 0 })}%
                             </div>
                         </div>
+
+                        {/* Finish Button */}
+                        <div className="mt-4 shrink-0">
+                            <button
+                                onClick={() => setCompleted(true)}
+                                className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop border-2 border-foreground hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
+                            >
+                                Finish Simulation <ArrowRight className="w-5 h-5" strokeWidth={3} />
+                            </button>
+                        </div>
                     </motion.div>
                 </motion.div>
             </div>
+
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete || (() => { })}
+                title="Time Traveler!"
+                description="You've seen the power (and risk) of getting in early."
+            />
         </div>
     )
 }

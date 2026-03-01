@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Trophy, CheckCircle2, XCircle, ArrowRight, Zap, Volume2 } from "lucide-react"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 export interface VolumeVaultConfig {
     instruction: string
@@ -20,7 +21,7 @@ interface VolumeVaultProps {
 }
 
 const VAULTS = [
-    { id: "Low", label: "Quiet Day", intensity: 3, speed: 2, color: "bg-blue-500" },
+    { id: "Low", label: "Quiet Day", intensity: 8, speed: 2, color: "bg-blue-500" },
     { id: "Medium", label: "Steady Flow", intensity: 15, speed: 1, color: "bg-amber-500" },
     { id: "High", label: "Market Frenzy", intensity: 60, speed: 0.2, color: "bg-red-500" },
 ]
@@ -55,26 +56,6 @@ export function VolumeVault({ onComplete, config }: VolumeVaultProps) {
             }
         }, 2000)
     }
-
-    if (completed) {
-        return (
-            <div className="flex flex-col items-center justify-center p-8 text-center animate-in zoom-in duration-500 min-h-[400px]">
-                <div className="w-24 h-24 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-6 animate-bounce">
-                    <Trophy className="w-12 h-12" />
-                </div>
-                <h2 className="text-3xl font-black mb-2" style={{ fontFamily: 'var(--font-heading)' }}>Volume Virtuoso!</h2>
-                <p className="text-muted-foreground mb-8 text-lg">You can hear the market's heartbeat.</p>
-                <div className="text-xl font-bold mb-8">Score: {score} / {config.scenarios.length}</div>
-                <button
-                    onClick={onComplete}
-                    className="bg-primary text-primary-foreground text-xl font-bold py-4 px-12 rounded-xl shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2"
-                >
-                    Continue Lesson <ArrowRight className="w-6 h-6" />
-                </button>
-            </div>
-        )
-    }
-
     return (
         <div className="flex flex-col items-center w-full max-w-3xl mx-auto min-h-[500px] relative">
             {/* Header */}
@@ -105,7 +86,7 @@ export function VolumeVault({ onComplete, config }: VolumeVaultProps) {
                         key={vault.id}
                         onClick={() => handleChoice(vault.id)}
                         disabled={!!feedback}
-                        className="group relative h-64 border-2 border-foreground rounded-3xl bg-white overflow-hidden hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex flex-col justify-end shadow-sm hover:shadow-pop"
+                        className="group relative h-64 border-2 border-foreground rounded-3xl bg-card overflow-hidden hover:translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex flex-col justify-end shadow-pop hover:shadow-none"
                     >
                         {/* Dot Swarm Container */}
                         <div className="absolute inset-0 pointer-events-none p-4 opacity-70 group-hover:opacity-100 transition-opacity">
@@ -115,7 +96,7 @@ export function VolumeVault({ onComplete, config }: VolumeVaultProps) {
                         </div>
 
                         {/* Label */}
-                        <div className="relative z-10 p-4 border-t-2 border-foreground/5 bg-white/90 backdrop-blur-sm w-full">
+                        <div className="relative z-10 p-4 border-t-2 border-foreground/5 bg-card/90 backdrop-blur-sm w-full">
                             <h4 className="font-black text-lg text-center uppercase tracking-wide" style={{ fontFamily: 'var(--font-heading)' }}>{vault.label}</h4>
                             <div className="flex justify-center mt-2">
                                 <Volume2 className={cn("w-5 h-5",
@@ -160,6 +141,12 @@ export function VolumeVault({ onComplete, config }: VolumeVaultProps) {
                 )}
             </AnimatePresence>
 
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete}
+                title="Volume Virtuoso!"
+                description="You can hear the market's heartbeat."
+            />
         </div>
     )
 }

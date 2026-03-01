@@ -1,3 +1,9 @@
+---
+name: lesson-content-writing
+description: Use when writing or rewriting slide text and quiz questions for any Stocky lesson. Covers voice standard, 4-slide pattern, word limits, placeholder rules, and bad vs good examples.
+---
+
+
 # Skill: Implement a New Stocky Lesson (v3.0)
 
 ## Purpose

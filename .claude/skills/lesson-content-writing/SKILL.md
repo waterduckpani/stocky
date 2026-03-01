@@ -1,3 +1,9 @@
+---
+name: implement-stocky-lesson
+description: Use when adding a new lesson to Stocky Academy. Covers writing the lesson dict in static_curriculum.py, injecting live data in main.py, wiring the game in LearningFlow.tsx, and creating the game component.
+---
+
+
 # Skill: Stocky Lesson Content Writing Standard
 
 ## The Voice
@@ -18,7 +24,7 @@ Target reader: 16-year-old who's never invested. Short attention span. On a phon
 **Word limit:** Max 40 words per slide. Count them. Cut ruthlessly.
 
 **Formatting:**
-- Bold ONLY the one key financial term per slide: `**Term**`
+- Bold financial terms only where relevant — use `**Term**` when a term genuinely needs emphasis. Don't force exactly one bold per slide; zero is fine if nothing needs highlighting, and multiple is fine if there are multiple key terms worth calling out.
 - Use `\n\n` for paragraph breaks within a slide (rendered as `<br/>`)
 - Emoji allowed sparingly — 1 per slide max, only if it aids understanding
 
@@ -69,6 +75,39 @@ These are your BEST slides from the existing lessons. Match this quality:
 
 **Good wrong option:** "Because Apple is a fruit" (funny, memorable)
 **Bad wrong option:** "The market explodes" (too absurd, teaches nothing)
+
+## Dynamic Placeholder Reference
+
+Every lesson MUST feel personal to the stock the user searched for.
+Use these placeholders in slide text and quiz questions:
+
+### Frontend-replaced (StepConcept.tsx — always safe to use)
+| Placeholder | What it shows |
+|---|---|
+| `{company_name}` | e.g. "Apple Inc." — full company name |
+| `{symbol}` | e.g. "AAPL" — the ticker |
+| `{dividendYield}` | e.g. "0.52" — yield as decimal × 100 |
+
+### Backend-injected (main.py — only use if injection handler exists)
+| Placeholder | Lesson it's used in |
+|---|---|
+| `{beta}` | lesson_15_beta |
+| `{sharesOutstanding}` | lesson_19_supply_constraint |
+| `{floatShares}` | lesson_19_supply_constraint |
+
+### Rules
+- Slide 1 (The Hook) MUST contain `{company_name}` — no exceptions
+- At least 1 other slide should reference `{company_name}` or `{symbol}`
+- NEVER invent a new placeholder (e.g. `{stock_price}`, `{pe_ratio}`) without
+  adding the injection handler in main.py first — it will show raw on screen
+- If you need a new live data value in a lesson, add it to the backend injection
+  block first, THEN reference the placeholder in the slide text
+
+## Sources — Non-Negotiable Rule
+Every lesson rewrite MUST include a `sources` field. No exceptions.
+It goes at the bottom of the lesson dict, after `quiz`.
+
+These sources will be displayed at the bottom of the carousel slide in the UI.
 
 ## Sources — Required for Every Lesson
 

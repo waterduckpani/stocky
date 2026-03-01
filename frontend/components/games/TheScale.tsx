@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Ship, Zap, DollarSign, ArrowRight, CheckCircle2, Anchor } from 'lucide-react'
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 // Strict "Playful Geometric" Styling - COMPACT VERSION
 // - Card: bg-white rounded-[2rem] border-2 border-foreground shadow-pop
@@ -39,7 +40,7 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
         label: isHeavySearch ? "Your Search: Ocean Liner" : "Your Search: Speedboat",
         subLabel: isHeavySearch ? `Mega Cap (${searchedSymbol || "Unknown"})` : `Small Cap (${searchedSymbol || "Startup"})`,
         icon: isHeavySearch ? Ship : Zap,
-        color: isHeavySearch ? "violet" : "emerald",
+        color: isHeavySearch ? "blue" : "emerald",
         cap: realMarketCap
     }
 
@@ -48,7 +49,7 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
         label: isHeavySearch ? "Compare: Speedboat" : "Compare: Ocean Liner",
         subLabel: isHeavySearch ? "Small Cap (Startup)" : "Mega Cap (Apple)",
         icon: isHeavySearch ? Zap : Ship,
-        color: isHeavySearch ? "emerald" : "violet",
+        color: isHeavySearch ? "emerald" : "blue",
         cap: isHeavySearch ? 200_000_000 : 3_000_000_000_000 // 200M vs 3T
     }
 
@@ -60,6 +61,7 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
     const [completedModes, setCompletedModes] = useState<string[]>([])
     const [showFeedback, setShowFeedback] = useState(false)
     const [isFinished, setIsFinished] = useState(false)
+    const [globalComplete, setGlobalComplete] = useState(false)
 
     // Reset when switching modes
     useEffect(() => {
@@ -127,7 +129,8 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
 
     const handleNextLevel = () => {
         if (isFinished) {
-            onComplete()
+            setGlobalComplete(true)
+            setShowFeedback(false)
         } else {
             // Switch to the other mode automatically or close feedback
             const nextMode = mode === 'primary' ? 'secondary' : 'primary'
@@ -201,7 +204,7 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
                         <motion.div
                             className={cn(
                                 "h-full absolute left-0 top-0 border-r-4 border-white",
-                                currentConfig.color === 'violet' ? "bg-violet-600" : "bg-emerald-500"
+                                currentConfig.color === 'blue' ? "bg-blue-600" : "bg-emerald-500"
                             )}
                             initial={{ width: 0 }}
                             animate={{ width: `${Math.min(pressure, 100)}%` }}
@@ -220,8 +223,8 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
                         }}
                         className={cn(
                             "rounded-2xl p-6 border-4 transition-all duration-300 transform",
-                            currentConfig.color === 'violet'
-                                ? "bg-violet-100 border-violet-600 text-violet-700 shadow-[4px_4px_0px_0px_#7C3AED]"
+                            currentConfig.color === 'blue'
+                                ? "bg-blue-100 border-blue-600 text-blue-700 shadow-[4px_4px_0px_0px_#2563EB]"
                                 : "bg-emerald-100 border-emerald-500 text-emerald-600 shadow-[4px_4px_0px_0px_#10B981]"
                         )}
                     >
@@ -250,23 +253,23 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
                             <motion.div
                                 initial={{ scale: 0.8, y: 20 }}
                                 animate={{ scale: 1, y: 0 }}
-                                className="bg-white border-2 border-foreground shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-2xl p-6 w-full max-w-xs flex flex-col items-center"
+                                className="bg-card text-foreground border-2 border-foreground shadow-pop rounded-[2rem] p-6 w-[85%] max-w-sm flex flex-col items-center"
                             >
                                 <div className={cn(
-                                    "w-16 h-16 rounded-full flex items-center justify-center mb-4 border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]",
-                                    currentConfig.color === 'violet' ? "bg-violet-100" : "bg-emerald-100"
+                                    "w-16 h-16 rounded-full flex items-center justify-center mb-4 border-2 border-foreground shadow-pop-active",
+                                    currentConfig.color === 'blue' ? "bg-blue-100" : "bg-emerald-100"
                                 )}>
                                     {currentConfig.icon === Zap ? (
                                         <Zap size={32} className="text-emerald-600 fill-emerald-600" />
                                     ) : (
-                                        <Ship size={32} className="text-violet-600 fill-violet-600" />
+                                        <Ship size={32} className="text-blue-600 fill-blue-600" />
                                     )}
                                 </div>
 
-                                <h3 className="text-xl font-black text-foreground mb-1">
+                                <h3 className="text-2xl font-black text-foreground mb-1 uppercase tracking-wide" style={{ fontFamily: 'var(--font-heading)' }}>
                                     {currentConfig.icon === Zap ? "Lift Off!" : "Barely Moved..."}
                                 </h3>
-                                <p className="text-muted-foreground font-medium text-sm mb-4 leading-tight">
+                                <p className="text-muted-foreground font-medium text-sm mb-6 leading-tight">
                                     {currentConfig.icon === Zap
                                         ? "Small Caps are light! A little buying pressure sends them flying."
                                         : "Mega Caps are heavy! It takes BILLIONS to move them."}
@@ -274,9 +277,9 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
 
                                 <button
                                     onClick={handleNextLevel}
-                                    className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-[0px_4px_0px_0px_rgba(0,0,0,0.2)] hover:translate-y-[1px] hover:shadow-none transition-all flex items-center justify-center gap-2 text-sm"
+                                    className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop border-2 border-foreground hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                                 >
-                                    {isFinished ? "Finish Lesson" : "Next Level"} <ArrowRight size={16} />
+                                    {isFinished ? "Finish Lesson" : "Next Level"} <ArrowRight className="w-5 h-5" strokeWidth={3} />
                                 </button>
                             </motion.div>
                         </motion.div>
@@ -292,8 +295,8 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
                     disabled={targetReached}
                     className={cn(
                         "w-full py-4 rounded-xl border-2 border-foreground transition-all group relative overflow-hidden",
-                        currentConfig.color === 'violet'
-                            ? "bg-violet-500 hover:bg-violet-400 shadow-[0px_4px_0px_0px_#5B21B6] active:shadow-none active:translate-y-[4px]"
+                        currentConfig.color === 'blue'
+                            ? "bg-blue-500 hover:bg-blue-400 shadow-[0px_4px_0px_0px_#1E3A8A] active:shadow-none active:translate-y-[4px]"
                             : "bg-emerald-400 hover:bg-emerald-300 shadow-[0px_4px_0px_0px_#065F46] active:shadow-none active:translate-y-[4px]"
                     )}
                 >
@@ -309,6 +312,12 @@ export default function TheScale({ onComplete, gameConfig }: TheScaleProps) {
                 </button>
             </div>
 
+            <MinigameCompletionPopup
+                completed={globalComplete}
+                onComplete={onComplete || (() => { })}
+                title="Weight Class Pro!"
+                description="You now understand the sheer mass of Mega Caps vs Small Caps."
+            />
         </div>
     )
 }

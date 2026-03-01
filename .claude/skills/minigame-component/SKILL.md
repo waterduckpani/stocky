@@ -1,3 +1,9 @@
+---
+name: minigame-component
+description: Use when building a new minigame component in frontend/components/games/. Covers props interface, onComplete contract, success/fail state pattern, Framer Motion rules, and styling.
+---
+
+
 # Skill: Stocky Minigame Component Standard
 
 ## Purpose

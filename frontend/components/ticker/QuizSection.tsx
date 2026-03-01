@@ -104,7 +104,15 @@ export function QuizSection({ symbol, questions: providedQuestions }: QuizSectio
                             <button
                                 onClick={() => {
                                     setCompleted(false)
-                                    setShowUnlockPopup(true)
+                                    const todayStr = new Date().toDateString()
+                                    const hasUnlockedToday = localStorage.getItem('dailyQuizUnlockedDate') === todayStr
+
+                                    if (!hasUnlockedToday) {
+                                        localStorage.setItem('dailyQuizUnlockedDate', todayStr)
+                                        setShowUnlockPopup(true)
+                                    } else {
+                                        router.push('/#daily-quiz')
+                                    }
                                 }}
                                 className="flex-1 py-3 bg-white border-2 border-border text-foreground hover:bg-muted/50 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                             >

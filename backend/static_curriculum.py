@@ -14,26 +14,29 @@ TIER_1_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "The Context",
-                    "text": "You searched for **{company_name}**, but on the market, it is known as **{symbol}**.",
-                    "icon": "Tag",
-                    "image": "/images/ticker_tag.png"  # Placeholder
+                    "title": "What's in a Name?",
+                    "text": "You searched for **{company_name}**, but on the market it doesn't go by that name. It goes by **{symbol}**. That short code is its **ticker symbol** -the only ID that matters when trading.",
+                    "icon": "Tag"
                 },
                 {
-                    "title": "The Analogy",
-                    "text": "Think of a Ticker like an **Airport Code** (e.g., LAX). It is a short, unique ID that ensures you arrive at the exact right destination.",
+                    "title": "The Airport Code",
+                    "text": "Think of a **ticker symbol** like an airport code. 'Los Angeles International Airport' is a mouthful — so travelers just say 'LAX'. Short, unique, and impossible to mix up. Same idea.",
                     "icon": "Plane"
                 },
                 {
-                    "title": "The Mechanics",
-                    "text": "Since **{symbol}** has no 'ending' (like .com), it trades on the standard **US Market**.", # Default (US)
+                    "title": "How It Works",
+                    "text": "Every stock gets a unique code so brokers don't mix up orders. **{symbol}** has no suffix (like '.KS' for Korea) — that means it trades right here on the **US market**.",
                     "icon": "Globe"
                 },
                 {
-                    "title": "The Rule",
-                    "text": "Names can be confusingly similar. Always trade using the **Ticker Code** to guarantee you buy the right asset.",
+                    "title": "The Golden Rule",
+                    "text": "Company names can look identical — there's a 'First Solar' and a 'First Solar Finance'. Always search by **ticker symbol**. It's the only thing that's guaranteed to be unique.",
                     "icon": "Shield"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/t/tickersymbol.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/glossary/ticker-symbol"}
             ]
         },
         "breakdown": "This is your first lesson. We'll start with the basics: The Ticker Symbol.",
@@ -45,44 +48,48 @@ TIER_1_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What is a Ticker Symbol?",
+                "question": "What is a ticker symbol?",
                 "options": [
-                    "A unique series of letters for a stock",
-                    "The current price of a stock",
-                    "The CEO's nickname",
-                    "A type of bank account"
+                    "A short, unique code that identifies a stock on the market",
+                    "The stock's live price, updated every second",
+                    "The CEO's personal login to Wall Street",
+                    "A secret code only brokers are allowed to read"
                 ],
-                "correctIndex": 0
+                "correctIndex": 0,
+                "explanation": "A ticker is just a stock's unique ID — like a username that never changes. Every company on the market has one."
             },
             {
-                "question": "Which ticker belongs to {company_name}?",
+                "question": "Two companies are both named 'Green Energy Solutions Inc.' How do traders avoid buying the wrong one?",
                 "options": [
-                    "{fake_1}",
-                    "{fake_2}",
-                    "{symbol}",
-                    "{fake_3}"
+                    "They call the CEO to double-check before buying",
+                    "They flip a coin and hope for the best",
+                    "They look at each company's unique ticker symbol",
+                    "They refuse to trade any company with 'Solutions' in the name"
                 ],
-                "correctIndex": 2
+                "correctIndex": 2,
+                "explanation": "Every company gets a unique ticker, so even if 1,000 companies share a similar name, the ticker code never overlaps. No confusion possible."
             },
             {
-                "question": "Why do we use tickers?",
+                "question": "You want to buy stock in {company_name}. Why search by {symbol} instead of the full company name?",
                 "options": [
-                    "To save time typing",
-                    "To avoid confusion between similar names",
-                    "Because they look cool",
-                    "Both A and B"
+                    "Because typing the full name crashes the app",
+                    "Because {symbol} is the unique code that guarantees you land on the right stock",
+                    "Because {company_name} is classified information",
+                    "Because brokers only speak in 4-letter codes"
                 ],
-                "correctIndex": 3
+                "correctIndex": 1,
+                "explanation": "{symbol} is the only ID guaranteed to belong to {company_name} and no one else. The full name could match dozens of companies."
             },
             {
-                "question": "In the Ticker Symbol, what does a suffix like '.KS' or '.NS' tell you?",
+                "question": "A stock ticker ends in '.KS'. What does that suffix tell you?",
                 "options": [
-                    "The company's profit margin",
-                    "It acts like a 'Country Code' showing where it trades",
-                    "The CEO's middle name",
-                    "It means the stock is on sale"
+                    "The company exclusively sells Korean Snacks",
+                    "The stock is discounted this week only",
+                    "The suffix shows which country's exchange the stock trades on",
+                    "It's a Collector's Edition share -extremely rare"
                 ],
-                "correctIndex": 1
+                "correctIndex": 2,
+                "explanation": "Suffixes like '.KS' (Korea), '.NS' (India), and '.L' (London) work like country codes -they tell you exactly which market the stock is listed on."
             }
         ]
     },
@@ -94,30 +101,29 @@ TIER_1_LESSONS = [
             "name": "The Stock Exchange",
             "slides": [
                 {
-                    "title": "The Context",
+                    "title": "Your Stock's Home",
                     "icon": "Target",
-                    "text": "{pivot_text}"
+                    "text": "{pivot_text}"  # Dynamically replaced by get_exchange_context()
                 },
                 {
-                    "title": "The Analogy",
+                    "title": "The Farmers' Market",
                     "icon": "Store",
-                    "text": "Think of an Exchange as a specialized marketplace. Just as you don't buy sneakers at a grocery store, companies pick a specific 'home' based on their industry and identity."
+                    "text": "Think of a stock **exchange** like a farmers' market. Not every farmer goes to every market -they pick one that fits what they sell. Companies do the same: they pick the exchange that fits their identity."
                 },
                 {
                     "title": "The Two Giants",
                     "icon": "Scale",
-                    "text": "The US market is home to two main exchanges:\n\n🏛️ **NYSE:** The historic physical floor on Wall Street.\n\n💻 **Nasdaq:** The modern digital network for tech companies."
+                    "text": "The US market has two main exchanges:\n\n🏛️ **NYSE:** Wall Street's oldest floor. Home to traditional giants — Walmart, Coca-Cola.\n\n💻 **Nasdaq:** Built for tech. Amazon, Google, and Apple all live here."
                 },
                 {
-                    "title": "Jargon: Blue Chips",
+                    "title": "What's a Blue Chip?",
                     "icon": "Gem",
-                    "text": "The term comes from poker, where blue chips hold the highest value.\n\nIn stocks, a **Blue Chip** is a massive, reliable company (like Coca-Cola). These are typically found on the NYSE."
-                },
-                {
-                    "title": "How You Buy",
-                    "icon": "Zap",
-                    "text": "You don't trade with the exchange directly. When you place a 'Buy' order, your broker acts as a messenger, sprinting to the exchange to execute the deal for you."
+                    "text": "In poker, blue chips are the highest-value. In stocks, a **Blue Chip** is a huge, time-tested company that's survived crashes without folding — think Coca-Cola, Walmart."
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/s/stock-exchange.asp"},
+                {"label": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds"}
             ]
         },
         "breakdown": "Now that you know the 'Where' (The Exchange), let's master the 'How'.",
@@ -128,34 +134,48 @@ TIER_1_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What is the Nasdaq best known for?",
+                "question": "What is a stock exchange?",
                 "options": [
-                    "Agriculture and Farming",
-                    "Tech companies and digital trading",
-                    "Physical floor trading with shouting",
-                    "Only international stocks"
+                    "A marketplace where buyers and sellers trade company shares",
+                    "A place where you go to swap foreign currency",
+                    "A government office that prints money",
+                    "A website where stocks get reviewed by critics"
                 ],
-                "correctIndex": 1
+                "correctIndex": 0,
+                "explanation": "A stock exchange is just a marketplace -like eBay but for company shares. Buyers and sellers meet there to agree on a price."
             },
             {
-                "question": "Which company would most likely live on the NYSE?",
+                "question": "Which exchange would a new AI startup most likely list on?",
                 "options": [
-                    "A stable, historic 'Blue Chip' (e.g., Walmart)",
-                    "A brand new AI startup",
-                    "A cryptocurrency",
-                    "A small local bakery"
+                    "NYSE -it's older and more prestigious",
+                    "Nasdaq -it's built for tech and innovation",
+                    "The local farmers' market, if they can get a booth",
+                    "Whichever one has the catchiest jingle"
                 ],
-                "correctIndex": 0
+                "correctIndex": 1,
+                "explanation": "Nasdaq is the go-to for tech companies. It's digital, modern, and attracts innovation -exactly the vibe a startup wants."
             },
             {
-                "question": "Why are they called 'Blue Chips'?",
+                "question": "What would determine which exchange {company_name} picks to list on?",
                 "options": [
-                    "Because the logos are usually blue",
-                    "They make computer chips",
-                    "They are named after high-value poker chips",
-                    "It's a random nickname"
+                    "The CEO's favorite color",
+                    "Its size, industry, and identity",
+                    "Whichever exchange has the fanciest lobby",
+                    "A coin flip between NYSE and Nasdaq"
                 ],
-                "correctIndex": 2
+                "correctIndex": 1,
+                "explanation": "Companies pick their exchange based on what fits their brand and industry. Tech companies lean Nasdaq; historic blue chips prefer NYSE."
+            },
+            {
+                "question": "Why is Coca-Cola called a 'Blue Chip' stock?",
+                "options": [
+                    "Because their logo used to be blue",
+                    "It's a massive, time-tested company that's survived decades of market crashes",
+                    "Because it tastes great on a Friday afternoon",
+                    "Because the NYSE floor is painted blue"
+                ],
+                "correctIndex": 1,
+                "explanation": "The term 'Blue Chip' comes from poker, where blue chips are the most valuable. In stocks, it means a huge, reliable company that's lasted through many market cycles."
             }
         ]
     },
@@ -169,7 +189,7 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Constant Battle",
-                    "text": "Stock prices are not random. They represent a continuous **Tug-of-War** between Buyers (Bulls) and Sellers (Bears). Every tick up or down is a record of who won the battle in that specific moment.",
+                    "text": "Every time **{company_name}**'s price moves, it's a record of a battle. It's a **Tug-of-War** between Buyers who want in and Sellers who want out. Whoever wins that moment moves the price.",
                     "icon": "Swords"
                 },
                 {
@@ -182,6 +202,10 @@ TIER_1_LESSONS = [
                     "text": "**Supply** represents the selling pressure. When fear or profit-taking dominates, investors flood the market with shares. To find buyers for all this stock, sellers must lower their asking price, causing the chart to drop.",
                     "icon": "TrendingDown"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/l/law-of-supply-demand.asp"},
+                {"label": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds"}
             ]
         },
         "breakdown": "Prices don't move by magic. They move because of two simple forces: Supply and Demand.",
@@ -219,7 +243,7 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Bull Market 🐂",
-                    "text": "A Bull Market is a period where stock prices are rising or expected to rise. It is driven by **optimism** and high investor confidence. In this environment, the 'path of least resistance' is **upward**.",
+                    "text": "Right now **{company_name}** is swimming in a current. A **Bull Market** is when that current runs upward — prices rising, confidence high, and the overall mood is one of optimism.",
                     "icon": "TrendingUp"
                 },
                 {
@@ -232,6 +256,10 @@ TIER_1_LESSONS = [
                     "text": "Don't get distracted by daily 'wiggles'.\n\n**The Noise:** Single days that don't change the direction.\n**The Trend:** The clear path (Up/Down) over months.\n\nLook for **Higher Highs** or **Lower Lows** to see who is truly in control.",
                     "icon": "Activity"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/b/bullmarket.asp"},
+                {"label": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds"}
             ]
         },
         "breakdown": "Don't swim against the tide. Let's learn to spot the difference.",
@@ -288,20 +316,29 @@ TIER_1_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "The Price Tag 🏷️",
-                    "text": "**Market Capitalization (Market Cap)** is just the total 'Price Tag' of a company.\n\nIt's simple math: \n**Stock Price** × **Total Shares** = **Market Cap**.",
-                    "icon": "Tag"
+                    "title": "The Real Price Tag 🏷️",
+                    "text": "You searched for **{company_name}**. Its share price isn't the full story. The real number — what it'd cost to buy the entire company -is its **Market Cap**. That's what investors actually compare.",
+                    "icon": "Target"
                 },
                 {
-                    "title": "Speedboats vs. Ocean Liners 🚢",
-                    "text": "**Small Cap** stocks are like speedboats: they can turn fast (high growth) but get rocked by waves (high risk).\n\n**Mega Cap** stocks (like Apple) are like Ocean Liners: very stable, but hard to turn quickly.",
-                    "icon": "Ship"
+                    "title": "The Ocean Liner 🚢",
+                    "text": "Think of **{company_name}** as an Ocean Liner -that's what a **Mega Cap** looks like. Massive, stable, hard to sink.\n\nA tiny startup is a speedboat: nimble and fast, but one big wave could flip it.",
+                    "icon": "Zap"
                 },
                 {
-                    "title": "Why Size Matters ⚖️",
-                    "text": "It takes way more money to move a Mega Cap stock by 1% than it does a Small Cap.\n\nBig stocks are **harder to move** (less volatile). Small stocks are **easier to move** (more volatile).",
+                    "title": "The Simple Math ➗",
+                    "text": "**Market Cap** = Stock Price × Total Shares.\n\nIf **{company_name}** has 1 billion shares at $100 each — it's a $100 billion company. One formula, the whole picture.",
                     "icon": "Scale"
+                },
+                {
+                    "title": "Don't Judge by Price Alone 💡",
+                    "text": "A $1 stock can belong to a trillion-dollar company. Don't be fooled — always check **Market Cap**, not just share price. That's how you know what you're actually buying into.",
+                    "icon": "Gem"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/m/marketcapitalization.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"}
             ]
         },
         "breakdown": "Market Cap tells you the true size of a company usually derived from share price * total shares.",
@@ -338,10 +375,10 @@ TIER_1_LESSONS = [
             },
             {
                 "id": "q3",
-                "question": "Why is it hard to double the price of Apple?",
-                "options": ["Apple has bad phones", "Apple is too small", "It requires trillions of dollars of buying power", "Apple is a fruit"],
-                "correctIndex": 2,
-                "explanation": "To double a $3 Trillion company, you need to add another $3 Trillion in value. That is a lot of money!"
+                "question": "Why is it generally easier for a tiny startup to double in price than a Mega Cap like {company_name}?",
+                "options": ["Startups have better logos", "It takes far less buying power to double a smaller company's value", "Mega Caps aren't allowed to rise more than 50%", "Small companies have worse products and need the boost"],
+                "correctIndex": 1,
+                "explanation": "To double a $3 trillion company, you need $3 trillion MORE in buying pressure. A $10 million startup only needs $10 million. The math gets extreme fast."
             }
         ]
     },
@@ -353,19 +390,28 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Birth of a Stock 🐣",
-                    "text": "**IPO (Initial Public Offering)** is the first day a private company sells shares to the public.\n\nIt transforms from a company owned by a few, to one that **anyone can own**.",
-                    "icon": "Egg"
+                    "text": "Before {company_name} appeared on any watchlist, it had to go public. That moment is called an **IPO (Initial Public Offering)** — when a private company sells shares to the public for the very first time.",
+                    "icon": "Target"
                 },
                 {
-                    "title": "The Primary Market 🏦",
-                    "text": "Before you can buy it on the public market, big banks and institutions buy it first (The Primary Market).\n\nBy the time it reaches you, the price may have already skyrocketed.",
-                    "icon": "Building2"
+                    "title": "The Restaurant Opening 🍽️",
+                    "text": "Think of an IPO like a restaurant's opening night. VIP guests (big banks) get first access and lock in the price. That's the **Primary Market**. By the time you walk in, the table may cost twice as much.",
+                    "icon": "Store"
                 },
                 {
-                    "title": "Launch Day Volatility 🎢",
-                    "text": "IPOs are famous for being **volatile**.\n\nWithout history to guide the price, it is driven purely by hype. 'Pop and Drop' patterns are common.",
-                    "icon": "TrendingUp"
+                    "title": "Pop and Drop 🎢",
+                    "text": "**Volatility** is the IPO's defining trait. With no trading history, {company_name}'s price is driven by pure excitement. 'Pop and Drop' — huge opening gains followed by a crash — is one of the most common patterns.",
+                    "icon": "Zap"
+                },
+                {
+                    "title": "The Golden Rule 💡",
+                    "text": "Don't get swept up in Day 1 excitement. Smart investors wait for the **Lock-Up Period** to expire — that's when insiders can finally sell, pressure clears, and the real price settles.",
+                    "icon": "Gem"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/i/ipo.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/stocks"}
             ]
         },
         "breakdown": "An IPO is when a company invites the world to be its partner.",
@@ -380,21 +426,21 @@ TIER_1_LESSONS = [
                 "question": "What does IPO stand for?",
                 "options": ["International Profit Organization", "Immediate Price Option", "Initial Public Offering", "Internet Protocol Owner"],
                 "correctIndex": 2,
-                "explanation": "It stands for Initial Public Offering - the first time shares are offered to the general public."
+                "explanation": "It stands for Initial Public Offering — the first time shares are offered to the general public."
             },
             {
                 "id": "q2",
                 "question": "Who usually buys the stock BEFORE it hits the public market?",
-                "options": ["Big Banks and Institutions", "You and me", "Government officials", "Nobody"],
+                "options": ["Big Banks and Institutions", "You and me", "Government officials", "Nobody — it appears by magic"],
                 "correctIndex": 0,
-                "explanation": "Institutional investors get 'allocations' at the IPO price. Retail investors (us) usually buy when it hits the exchange."
+                "explanation": "Institutional investors get 'allocations' at the IPO price. Retail investors (us) usually buy after it hits the exchange — often at a higher price."
             },
             {
                 "id": "q3",
-                "question": "Why are IPOs considered risky?",
-                "options": ["They are illegal", "They are too boring", "They always go up", "They have no trading history and high volatility"],
-                "correctIndex": 3,
-                "explanation": "With no price history, IPOs are driven by speculation, leading to massive swings (Volatility)."
+                "question": "If {company_name} had its IPO today and the price 'popped' 80% on Day 1, what's the most likely risk?",
+                "options": ["It's guaranteed to stay at that level", "A 'Pop and Drop' — excitement fades and price crashes back down", "The government will halt all trading", "The stock permanently delists after Day 1"],
+                "correctIndex": 1,
+                "explanation": "IPOs fueled by excitement often pop on Day 1 then drop as early investors cash out. No history means no anchor for the price."
             }
         ]
     },
@@ -407,26 +453,29 @@ TIER_1_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "The Context",
-                    "text": "You searched for **{company_name}**. This company doesn't exist in a vacuum—it belongs to a 'Family' known as the **{sector}** sector.",
-                    "icon": "Users",
-                    "image": "/images/sector_family.png"
+                    "title": "Your Stock's Family 🏠",
+                    "text": "Every stock has a family. {company_name} belongs to the **{sector}** sector — one of 11 official groups the entire market's sorted into. Your stock's sector shapes how it moves.",
+                    "icon": "Target"
                 },
                 {
-                    "title": "The Market Grid",
-                    "text": "The stock market is divided into **11 Sectors**. Think of them as neighborhoods: companies in the same neighborhood often react similarly to economic news and trends.",
-                    "icon": "LayoutGrid"
+                    "title": "The Shopping Mall 🛍️",
+                    "text": "Think of the market as a shopping mall. **Sectors** are the stores — Tech, Healthcare, Energy and 8 more. When the economy's hot, some stores pack out. When it slows, others barely notice.",
+                    "icon": "Store"
                 },
                 {
-                    "title": "Cyclical vs. Defensive",
-                    "text": "Some families are **Cyclical** (they thrive when the economy is booming, like Tech or Luxury Goods). Others are **Defensive** (they stay steady even in recessions, like Healthcare or Utilities).",
+                    "title": "Cyclical vs. Defensive ⚖️",
+                    "text": "**Cyclical** sectors (Tech, Energy) boom with the economy and crash with it. **Defensive** sectors (Healthcare, Utilities) stay steady — people need medicine and electricity no matter what the market's doing.",
                     "icon": "Scale"
                 },
                 {
-                    "title": "The Golden Rule",
-                    "text": "The secret to safety is **Diversification**. By owning stocks in different sectors, you ensure that a single 'neighborhood' crash won't bring down your entire portfolio.",
-                    "icon": "ShieldCheck"
+                    "title": "The Golden Rule 💎",
+                    "text": "Don't pour everything into one sector. **Diversification** — owning stocks across multiple families — means a Tech crash won't take down your whole portfolio.",
+                    "icon": "Gem"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/s/sector.asp"},
+                {"label": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds"}
             ]
         },
         "breakdown": "Every stock belongs to a sector. Learning how these 'Families' move is key to building a balanced portfolio.",
@@ -443,37 +492,35 @@ TIER_1_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What is a Stock Sector?",
-                "options": [
-                    "A group of companies in the same industry",
-                    "The building where stocks are sold",
-                    "A type of high-speed trading",
-                    "A government tax group"
-                ],
-                "correctIndex": 0,
-                "explanation": "Sectors are categories that group companies with similar business models together."
+                "id": "q1",
+                "question": "How many official sectors is the stock market divided into?",
+                "options": ["5", "11", "50", "It changes every year"],
+                "correctIndex": 1,
+                "explanation": "The market is split into exactly 11 official sectors by the Global Industry Classification Standard (GICS) — from Technology to Consumer Staples to Utilities."
             },
             {
-                "question": "Why would an investor own stocks in different sectors?",
+                "id": "q2",
+                "question": "The economy enters a recession. Which type of sector's most likely to hold up?",
                 "options": [
-                    "To get more mail from companies",
-                    "Because it is required by law",
-                    "To pay fewer trading fees",
-                    "To diversify and reduce risk"
+                    "Cyclical (Tech, Luxury)",
+                    "Defensive (Healthcare, Utilities)",
+                    "Whichever one's trending on social media",
+                    "All sectors crash equally — no exceptions"
                 ],
-                "correctIndex": 3,
-                "explanation": "Diversification ensures that if one sector (like Tech) falls, your other sectors (like Healthcare) might stay steady."
+                "correctIndex": 1,
+                "explanation": "Defensive sectors sell things people can't live without — medicine, electricity, food. Demand barely flinches even when the economy slows."
             },
             {
-                "question": "Which of these is considered a 'Defensive' sector?",
+                "id": "q3",
+                "question": "If {company_name}'s sector tanks, but you also hold stocks in Healthcare and Utilities, what happens to your overall portfolio?",
                 "options": [
-                    "Luxury Travel",
-                    "High-Tech AI Startups",
-                    "Utilities (Electricity/Water)",
-                    "Cryptocurrency"
+                    "It all crashes together",
+                    "The other sectors may cushion the blow",
+                    "You're legally required to sell everything",
+                    "Nothing — sectors never affect each other"
                 ],
-                "correctIndex": 2,
-                "explanation": "Defensive sectors provide essentials that people need regardless of how the economy is doing."
+                "correctIndex": 1,
+                "explanation": "That's diversification working as intended. One sector's bad day doesn't have to mean a bad day for your whole portfolio."
             }
         ]
     },
@@ -487,25 +534,28 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Pulse of the Market",
-                    "text": "You searched for **{company_name}**. While the price tells you **where** the stock is, **Volume** tells you how many people are actually participating in the trade.",
-                    "icon": "Activity",
-                    "image": "/images/volume_pulse.png"
+                    "text": "You searched for {company_name}. While the price tells you where the stock is, **Volume** tells you how many people are actually participating in the trade.",
+                    "icon": "Target"
                 },
                 {
                     "title": "The Stadium Analogy",
-                    "text": "Imagine a stadium. If one person yells 'Goal!', it's barely a whisper. If 50,000 people yell it, it's a **massive event**. High volume means the 'Crowd' is in strong agreement.",
-                    "icon": "Users"
+                    "text": "Imagine a stadium. If one person yells 'Goal!', it's barely a whisper. If 50,000 people yell it, it's a massive event. High volume means the crowd is in strong agreement.",
+                    "icon": "Store"
                 },
                 {
                     "title": "Volume as Confirmation",
                     "text": "If a stock price moves up on **High Volume**, it's a strong signal of conviction. If it moves up on **Low Volume**, it might be a 'fake-out' because very few people are backing the move.",
-                    "icon": "CheckCircle"
+                    "icon": "Scale"
                 },
                 {
                     "title": "The Volume Climax",
                     "text": "A sudden, massive spike in volume often signals the end of a trend. It's the moment everyone has finally 'piled in' or 'panicked out', often leading to a price reversal.",
                     "icon": "Zap"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/v/volume.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"}
             ]
         },
         "breakdown": "Volume is the fuel for price. Without activity from the crowd, a price move lacks the power to sustain itself.",
@@ -533,6 +583,7 @@ TIER_1_LESSONS = [
         },
         "quiz": [
             {
+                "id": "q1",
                 "question": "What does 'Volume' measure in a stock?",
                 "options": [
                     "The total number of shares traded",
@@ -544,26 +595,28 @@ TIER_1_LESSONS = [
                 "explanation": "Volume is simply a count of how many shares changed hands in a given time period."
             },
             {
+                "id": "q2",
                 "question": "If a stock price falls on very high volume, what does it suggest?",
                 "options": [
                     "The market is about to close",
                     "Nobody is interested in the stock",
-                    "There is strong conviction in the selling pressure",
+                    "There's strong conviction in the selling pressure",
                     "It's a good time to ignore the chart"
                 ],
                 "correctIndex": 2,
-                "explanation": "High volume during a drop means a large 'crowd' is actively selling, showing the move has strong momentum."
+                "explanation": "High volume during a drop means a large crowd is actively selling, showing the move has strong momentum."
             },
             {
-                "question": "Why is low volume often considered 'dangerous' for a trader?",
+                "id": "q3",
+                "question": "You're trying to sell your {company_name} shares but volume today is extremely low. What's the likely problem?",
                 "options": [
-                    "The stock price is too high",
-                    "The company might go bankrupt immediately",
-                    "It makes the app run slower",
-                    "It can be harder to buy or sell without moving the price yourself"
+                    "The price automatically drops to zero",
+                    "It can be hard to sell without moving the price yourself",
+                    "The government freezes your account",
+                    "Low volume means the company is doing great"
                 ],
-                "correctIndex": 3,
-                "explanation": "Low volume means low liquidity; a single small trade can cause a massive price swing, making it hard to get a fair price."
+                "correctIndex": 1,
+                "explanation": "Low volume means there aren't many buyers. One decent-sized sell order can push the price down — making it hard to exit at a fair price."
             }
         ]
     },
@@ -577,25 +630,28 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Wiggle Factor",
-                    "text": "You searched for **{company_name}**. Volatility is simply a measure of how much a stock's price 'wiggles' up and down over a short period of time.",
-                    "icon": "Activity",
-                    "image": "/images/volatility_wiggle.png"
+                    "text": "You searched for **{company_name}**. **Volatility** measures how wildly a stock's price jumps around from day to day. Some stocks barely move. Others are all over the place.",
+                    "icon": "Zap"
                 },
                 {
-                    "title": "The Emotional Temperature",
-                    "text": "Think of Volatility as the **Market's Pulse**. High volatility means investors are uncertain or excited, causing big swings. Low volatility means the market is calm and confident.",
-                    "icon": "Thermometer"
+                    "title": "The Quiet Aisle vs. Black Friday",
+                    "text": "Picture a grocery store at 7am: empty, calm, totally predictable. Now picture that same store on Black Friday: packed, chaotic, prices flying. **Low volatility** stocks feel like the quiet morning. **High volatility** stocks feel like Black Friday.",
+                    "icon": "Store"
                 },
                 {
-                    "title": "Risk vs. Reward",
-                    "text": "High volatility (big wiggles) offers the chance for fast profits but carries the risk of fast losses. Low volatility is like a 'Walk in the Park'—slower, but much easier to predict.",
+                    "title": "What Makes It Swing?",
+                    "text": "Bad earnings, a surprise product launch, or a scandal can shake investor confidence overnight. That burst of fear or excitement is what makes **{company_name}**'s price jump 10% one day and slide 8% the next.",
                     "icon": "Scale"
                 },
                 {
-                    "title": "Beta: The Benchmark",
-                    "text": "Pros use a number called **Beta** to measure wiggle. \n\n• **Beta 1.0:** Moves exactly like the market.\n• **Beta > 1.0:** Extra jumpy (Tech/Startups).\n• **Beta < 1.0:** Steady and calm (Utilities/Banks).",
-                    "icon": "Compass"
+                    "title": "Beta: The Wiggle Score",
+                    "text": "Investors use a number called **Beta** to score a stock's wiggle.\n\nA **Beta above 1.0** means it's jumpier than the average market. A **Beta below 1.0** means it's steadier. Neither is bad — it just depends on how much of a ride you're okay with.",
+                    "icon": "Target"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/v/volatility.asp"},
+                {"label": "FINRA", "url": "https://www.finra.org/investors/learn-to-invest/key-investing-concepts/risk-and-return"}
             ]
         },
         "breakdown": "Volatility isn't 'bad'—it's just a measure of intensity. Understanding the wiggle helps you choose stocks that match your comfort level.",
@@ -620,34 +676,37 @@ TIER_1_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What does Volatility measure?",
+                "question": "What does volatility measure?",
                 "options": [
-                    "The size of the price 'wiggles' or swings",
-                    "The total number of employees",
-                    "The age of the company",
-                    "The amount of debt the company has"
+                    "How wildly a stock's price swings",
+                    "How popular the company is on social media",
+                    "How many shares are traded each day",
+                    "How old the company is"
                 ],
                 "correctIndex": 0,
-                "explanation": "Volatility is the frequency and size of price movements over time."
+                "explanation": "Volatility tracks how much a stock's price moves up and down day to day. Big swings = high volatility."
             },
             {
-                "question": "Which 'Beta' score represents a stock that is CALMER than the average market?",
+                "question": "A startup misses its earnings target and its stock drops 18% in one day. What best describes this?",
                 "options": [
-                    "Beta of 2.5",
-                    "Beta of 1.0",
-                    "Beta of 0.5",
-                    "Beta of 5.0"
+                    "A volatility spike",
+                    "A volume collapse",
+                    "A market cap reset",
+                    "A Beta adjustment"
                 ],
-                "correctIndex": 2,
-                "explanation": "A Beta below 1.0 means the stock is less volatile than the general market."
+                "correctIndex": 0,
+                "explanation": "A huge price swing triggered by news = a volatility spike. High-volatility stocks react dramatically to events."
             },
             {
-                "question": "True or False: High volatility always means a stock is 'bad'.",
+                "question": "{company_name} has a Beta of 0.4. What does that tell you?",
                 "options": [
-                    "True: It is too dangerous.",
-                    "False: It just means it is high-intensity; it can lead to high rewards or high losses."
+                    "It moves less than the average market",
+                    "It moves exactly like the market",
+                    "It moves more than the average market",
+                    "It's about to crash"
                 ],
-                "correctIndex": 1
+                "correctIndex": 0,
+                "explanation": "Beta below 1.0 means calmer than the market. Less swing day-to-day, but typically less explosive upside too."
             }
         ]
     },
@@ -681,6 +740,10 @@ TIER_1_LESSONS = [
                     "text": "Not every company pays a dividend. **Growth** companies (like Tech) often keep the cash to build new things. **Value** companies (like Banks or Utilities) usually have extra cash to share with you.",
                     "icon": "Briefcase"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/d/dividend.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/stocks"}
             ]
         },
         "breakdown": "Dividends are the 'Payday' of the stock market. They allow you to earn money while you wait for the stock price to grow.",
@@ -753,6 +816,10 @@ TIER_2_LESSONS = [
                     "text": "Investors love seeing EPS grow. It means the company is becoming more efficient at making money for every share you hold.",
                     "icon": "TrendingUp"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/e/eps.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/stocks"}
             ]
         },
         "breakdown": "EPS tells you exactly how much profit belongs to the single share in your pocket.",
@@ -814,7 +881,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "Estimates vs. Actuals ⚖️",
-                    "text": "The market doesn't just care about the numbers; it cares about the **Expectations Gap**. Before the report, analysts release 'Consensus Estimates.' If {symbol} reports $1B but everyone expected $1.2B, it’s a **Miss**—and the price will likely fall.",
+                    "text": "The market doesn’t just care about the numbers — it cares about the **Expectations Gap**. Before the report, analysts publish their estimates. If {symbol} earns $1B but everyone expected $1.2B, it’s a **Miss** — and the price will likely fall.",
                     "icon": "Scale"
                 },
                 {
@@ -822,6 +889,10 @@ TIER_2_LESSONS = [
                     "text": "The past is history. Investors care most about **Guidance**—the CEO's official prediction for the next quarter. A 'Beat' on current earnings paired with 'Lowered Guidance' is a common reason for a stock crash.",
                     "icon": "Zap"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/e/earningsreport.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-read-financial-statements"}
             ]
         },
         "breakdown": "Earnings season is the most volatile time of the year. It's when the truth comes out.",
@@ -874,7 +945,7 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Price Tag for Earnings 🏷️",
-                    "text": "**Price-to-Earnings (P/E)** tells you if a stock is 'Cheap' or 'Expensive'.\n\nIt asks: **How much are you paying for $1 of the company's profit?**",
+                    "text": "**{company_name}** has a price -but is it cheap or expensive? That's what the **P/E Ratio** answers: how much are you paying for every **$1 of this company's profit?**",
                     "icon": "Tag"
                 },
                 {
@@ -887,6 +958,10 @@ TIER_2_LESSONS = [
                     "text": "**High P/E (>30):** Investors pay extra because they expect the machine to print MORE money in the future (e.g., Tech/AI).\n\n**Low P/E (<15):** The machine is steady but boring (e.g., Banks/Energy).",
                     "icon": "Scale"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/p/price-earningsratio.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"}
             ]
         },
         "breakdown": "Price gives you the cost. P/E gives you the value.",
@@ -930,7 +1005,7 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Context 🧲",
-                    "text": "You searched for **{company_name}**. Its **Dividend Yield** is **{dividendYield}%**. This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{symbol}**.",
+                    "text": "You searched for **{company_name}**. Its **Dividend Yield** is **{dividendYield}%**. That's how much 'Cashback' you earn every year just for owning **{symbol}** -paid in cash, straight to you.",
                     "icon": "Magnet"
                 },
                 {
@@ -943,6 +1018,10 @@ TIER_2_LESSONS = [
                     "text": "Yield is a seesaw. If the dividend stays the same but the stock price **falls**, the yield goes **UP**! Buying low means you get a better 'interest rate' on your money.",
                     "icon": "Scale"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/d/dividendyield.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/stocks"}
             ]
         },
         "breakdown": "Dividend Yield turns a stock into an income engine. It helps you compare different companies to see which one pays you the best 'rent'.",
@@ -993,7 +1072,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "The Analogy 🏃",
-                    "text": "Imagine the Market is a **Lead Runner**.\n\n• **Beta 1.0 (The Shadow):** You run at the exact same pace.\n• **Beta > 1.5 (The Sprinter):** You amplify every move. If the market jogs, you sprint!\n• **Beta < 0.8 (The Stroller):** You run your own steady pace, ignoring the noise.",
+                    "text": "Think of the Market as a **Lead Runner**.\n\n• **Beta 1.0:** You run at the same pace.\n• **Beta > 1.5 (Sprinter):** Every market jog, you sprint -amplified gains AND crashes.\n• **Beta < 0.8 (Stroller):** You move slower, on your own schedule.",
                     "icon": "Users"
                 },
                 {
@@ -1001,6 +1080,10 @@ TIER_2_LESSONS = [
                     "text": "**High Beta** (Tech/Growth) amplifies gains but also crashes harder during downturns.\n\n**Low Beta** (Utilities/Consumer Goods) provides safety and stability, often preserving wealth when the market falls.",
                     "icon": "ShieldCheck"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/b/beta.asp"},
+                {"label": "FINRA", "url": "https://www.finra.org/investors/learn-to-invest/key-investing-concepts/risk-and-return"}
             ]
         },
         "breakdown": "Beta is the 'Personality Test' of a stock. It measures how much it wiggles compared to the rest of the market.",
@@ -1015,7 +1098,7 @@ TIER_2_LESSONS = [
                 "question": "Analysts calculate a Beta of {beta} for {company_name}. What is Beta essentially measuring?",
                 "options": ["The company's total debt", "The CEO's performance", "The stock's volatility relative to the market", "The dividend payout date"],
                 "correctIndex": 2,
-                "explanation": "Beta measures how closely a stock's price follows the overall market's movements (volatility correlation)."
+                "explanation": "Beta measures how closely a stock's price follows the overall market's movements -how tightly it tracks the market's ups and downs."
             },
             {
                 "question": "What does a Beta of 1.0 mean?",
@@ -1047,7 +1130,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "The Analogy 🍋",
-                    "text": "Think of a **Lemonade Stand**. If you sell 100 cups at $1 each, your **Revenue** is $100. But if the lemons, sugar, and cups cost you $80, your **Profit** is only $20. Revenue is the size of the stand; Profit is what you actually keep.",
+                    "text": "Think of a **Lemonade Stand**. Sell 100 cups at $1 each → **Revenue** = $100. But lemons, sugar, and cups cost $80 → **Profit** = only $20. Revenue is the total; Profit is what you keep.",
                     "icon": "Store"
                 },
                 {
@@ -1060,6 +1143,10 @@ TIER_2_LESSONS = [
                     "text": "The gap between the top and bottom lines is the **Profit Margin**. A healthy company is efficient at keeping as much of that 'Top Line' as possible.",
                     "icon": "Activity"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/r/revenue.asp"},
+                {"label": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds"}
             ]
         },
         "breakdown": "Revenue shows popularity; Profit shows efficiency. A company can have billions in sales but still lose money if its costs are too high.",
@@ -1112,28 +1199,32 @@ TIER_2_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "Defining the Yearly Bound 📏",
-                    "text": "The **52-Week Range** establishes the upper and lower price boundaries for **{company_name}** over the last 12 months. It is a technical benchmark used to determine where the current price sits relative to the market's one-year consensus.",
+                    "title": "The Yearly Scoreboard 📏",
+                    "text": "You searched for **{company_name}**. Think of its **52-Week Range** as a yearly scoreboard — the high is the best it's done, the low is its worst. Right now, you can see exactly where **{symbol}** sits on that scoreboard.",
                     "icon": "Ruler"
                 },
                 {
-                    "title": "Historical Anchoring ⚓",
-                    "text": "The 52-week high ({fiftyTwoWeekHigh}) and low ({fiftyTwoWeekLow}) serve as psychological 'anchors' for investors. These extremes often act as strong **Support** or **Resistance** levels because they represent the maximum and minimum values the market has assigned to **{symbol}** in the recent cycle.",
+                    "title": "The Anchors ⚓",
+                    "text": "The 52-week high ({fiftyTwoWeekHigh}) and low ({fiftyTwoWeekLow}) are powerful anchors. When **{symbol}** drops to its low, buyers often rush in expecting a bounce. When it nears the high, some sell to lock in gains.",
                     "icon": "Anchor"
                 },
                 {
-                    "title": "The Momentum Indicator 🚀",
-                    "text": "Trading near the 52-week high indicates sustained **Buying Pressure** and market confidence. Conversely, a price near the 52-week low suggests a period of **Distribution** (selling) where the asset is struggling to find new demand.",
+                    "title": "Reading the Position 🚀",
+                    "text": "Near the 52-week high? That's strong **Buying Pressure** — the crowd is confident. Near the low? That's **Selling Pressure** — people are exiting. The position on the range tells you which side is winning.",
                     "icon": "Activity"
                 },
                 {
-                    "title": "Analyzing the Breakout 📈",
-                    "text": "A **52-Week Breakout** occurs when the price exceeds the yearly high. This is technically significant because it means no investor who purchased in the last year is currently in a losing position, which can lead to reduced selling pressure and accelerated momentum.",
+                    "title": "The Breakout 📈",
+                    "text": "When **{symbol}** smashes through its yearly high, that's a **52-Week Breakout**. Every investor who bought in the last year is now in profit -so there's less pressure to sell and momentum tends to accelerate.",
                     "icon": "TrendingUp"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/1/52wkhi.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"}
             ]
         },
-        "breakdown": "The 52-Week Range is a technical map. It allows you to analyze current price performance not as an isolated number, but as a relative position within a documented one-year cycle.",
+        "breakdown": "The 52-Week Range is your stock's yearly scoreboard -it shows where the price has been so you can see where it stands today.",
         "news": [],
         "game_config": {
             "type": "sentiment_zone",
@@ -1181,7 +1272,7 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "Defining Liquidity 🚪",
-                    "text": "You searched for **{company_name}**. Liquidity is a measure of how quickly you can convert your shares into cash without significantly impacting the market price. In a highly liquid stock like **{symbol}**, there are thousands of buyers and sellers active at any given second.",
+                    "text": "You searched for **{company_name}**. **Liquidity** is how fast you can sell your shares for cash without moving the price. In a liquid stock like **{symbol}**, thousands of buyers and sellers are active every second.",
                     "icon": "LogOut"
                 },
                 {
@@ -1191,9 +1282,13 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "Slippage & Market Impact ⚠️",
-                    "text": "If you try to sell a large amount of a \"Low Liquidity\" stock, you might experience **Slippage**. This happens when your own sell order is so large compared to the available buyers that you actually push the price down as you exit, losing money in the process.",
+                    "text": "Try to dump a big block of a **Low Liquidity** stock and you'll experience **Slippage** -your own sell order is so large that it pushes the price down as you exit, costing you money in the process.",
                     "icon": "AlertTriangle"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/l/liquidity.asp"},
+                {"label": "FINRA", "url": "https://www.finra.org/investors/learn-to-invest/key-investing-concepts/risk-and-return"}
             ]
         },
         "breakdown": "Liquidity is the hidden cost of trading. It determines if you can leave the room when the building catches fire.",
@@ -1263,6 +1358,10 @@ TIER_2_LESSONS = [
                     "text": "The ratio between the Float and Total Shares determines price sensitivity. With a **Low Float**, even small demand can cause massive price spikes due to a lack of sellers.",
                     "icon": "TrendingUp"
                 }
+            ],
+            "sources": [
+                {"label": "Investopedia", "url": "https://www.investopedia.com/terms/o/outstandingshares.asp"},
+                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/stocks"}
             ]
         },
         "breakdown": "Supply and Demand isn't just a theory—it's a mechanical reality. Let's see how restricted supply creates explosive moves.",

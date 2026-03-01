@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import confetti from "canvas-confetti"
 import { Search, CheckCircle2, AlertCircle, ArrowRight, HelpCircle } from "lucide-react"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface TickerHuntProps {
     target: string // e.g. "NFLX"
@@ -18,6 +19,7 @@ export function TickerHuntGame({ target, instruction, companyName, onComplete }:
     const [result, setResult] = useState<{ symbol: string, name: string } | null>(null)
     const [status, setStatus] = useState<"idle" | "success" | "hint" | "unknown">("idle")
     const [attempts, setAttempts] = useState(0)
+    const [completed, setCompleted] = useState(false)
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -157,13 +159,13 @@ export function TickerHuntGame({ target, instruction, companyName, onComplete }:
                     </div>
 
                     {/* Progression Control */}
-                    {canProceed && (
+                    {canProceed && !completed && (
                         <div className="animate-pop-in pt-2">
                             <Button
-                                onClick={onComplete}
+                                onClick={() => setCompleted(true)}
                                 className="w-full py-6 bg-quaternary hover:bg-quaternary/90 text-white rounded-full font-bold text-xl shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all group border-0 ring-0 outline-none"
                             >
-                                Continue to Quiz
+                                Finish Practice
                                 <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={3} />
                             </Button>
                         </div>
@@ -177,6 +179,13 @@ export function TickerHuntGame({ target, instruction, companyName, onComplete }:
                     <span>Searches: {attempts}</span>
                 </div>
             </div>
+
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete}
+                title="Ticker Tracker!"
+                description="You know how to look up companies now."
+            />
         </div>
     )
 }

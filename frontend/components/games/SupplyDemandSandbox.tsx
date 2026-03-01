@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider"
 import { motion } from "framer-motion"
 import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react'
 import { Area, AreaChart, ResponsiveContainer, YAxis, XAxis, Tooltip } from "recharts"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface SupplyDemandSandboxProps {
     onComplete?: () => void
@@ -24,6 +25,7 @@ export default function SupplyDemandSandbox({
     const [sliderValue, setSliderValue] = useState(0) // -50 (Supply) to 50 (Demand)
     const [price, setPrice] = useState(initialPrice)
     const [history, setHistory] = useState<{ time: number; price: number }[]>([])
+    const [completed, setCompleted] = useState(false)
 
     // Animation Loop - Slower and smoother
     useEffect(() => {
@@ -186,17 +188,24 @@ export default function SupplyDemandSandbox({
             </Card>
 
             {/* Manual Continue Button since auto-win is removed */}
-            {onComplete && (
+            {onComplete && !completed && (
                 <motion.button
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 2 }}
-                    onClick={onComplete}
+                    onClick={() => setCompleted(true)}
                     className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:shadow-none hover:translate-y-0.5 transition-all"
                 >
-                    Continue to Quiz <ArrowRight className="w-4 h-4" />
+                    Finish Simulation <ArrowRight className="w-4 h-4" />
                 </motion.button>
             )}
+
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete || (() => { })}
+                title="Market Mover!"
+                description="You've seen firsthand how supply and demand dictate price."
+            />
 
         </div>
     )

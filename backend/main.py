@@ -996,7 +996,8 @@ async def generate_content(symbol: str):
             "category": "fundamentals",
             "explanation": explanation_text,
             "type": concept_type,
-            "slides": slides
+            "slides": slides,
+            "sources": raw_concept.get("sources", [])
         }
     else:
         cache_key_concept = f"concept:{symbol}"

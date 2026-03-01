@@ -1,3 +1,9 @@
+---
+name: ui-design-system
+description: Use when building or modifying any UI component in Stocky. Covers color tokens, button classes, card patterns, typography scale, shadow-pop system, and Framer Motion patterns.
+---
+
+
 # Skill: Stocky UI Design System — "Playful Geometry"
 
 ## Core Philosophy

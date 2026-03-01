@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { TrendingUp, TrendingDown, ArrowRight, CheckCircle2, XCircle } from 'lucide-react'
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts"
 import { cn } from "@/lib/utils"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface Scenario {
     id: number
@@ -33,6 +34,7 @@ export function TrendSpotter({
     const [selectedAnswer, setSelectedAnswer] = useState<'bull' | 'bear' | null>(null)
     const [showFeedback, setShowFeedback] = useState(false)
     const [isCorrect, setIsCorrect] = useState(false)
+    const [completed, setCompleted] = useState(false)
 
     const scenarios = config?.scenarios || []
     const currentScenario = scenarios[currentRound]
@@ -81,7 +83,8 @@ export function TrendSpotter({
         if (currentRound < scenarios.length - 1) {
             setCurrentRound(prev => prev + 1)
         } else {
-            if (onComplete) onComplete()
+            setCompleted(true)
+            setShowFeedback(false)
         }
     }
 
@@ -142,91 +145,105 @@ export function TrendSpotter({
                         </AreaChart>
                     </ResponsiveContainer>
 
-                    {/* Feedback Overlay */}
-                    <AnimatePresence>
-                        {showFeedback && (
-                            <motion.div
-                                initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                                animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
-                                className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 z-10 p-4 text-center"
-                            >
-                                <motion.div
-                                    initial={{ scale: 0.5, y: 20 }}
-                                    animate={{ scale: 1, y: 0 }}
-                                    className={cn(
-                                        "flex flex-col items-center p-6 rounded-3xl border-2 shadow-xl bg-white",
-                                        isCorrect ? "border-green-500 shadow-green-200" : "border-red-500 shadow-red-200"
-                                    )}
-                                >
-                                    {isCorrect ? (
-                                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                                            <CheckCircle2 className="w-8 h-8 text-green-600" />
-                                        </div>
-                                    ) : (
-                                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-3">
-                                            <XCircle className="w-8 h-8 text-red-600" />
-                                        </div>
-                                    )}
-
-                                    <h4 className="text-2xl font-black mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                                        {isCorrect ? "Spot On!" : "Not Quite."}
-                                    </h4>
-                                    <p className="text-muted-foreground font-bold text-sm mb-6 max-w-[200px] leading-tight">
-                                        {currentScenario.explanation}
-                                    </p>
-
-                                    {isCorrect ? (
-                                        <button
-                                            onClick={handleNext}
-                                            className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                                        >
-                                            {currentRound < scenarios.length - 1 ? "Next Round" : "Finish Lesson"}
-                                            <ArrowRight className="w-5 h-5" />
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => setShowFeedback(false)}
-                                            className="w-full py-3 bg-muted text-muted-foreground rounded-xl font-bold shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:translate-y-0.5 hover:shadow-none transition-all"
-                                        >
-                                            Try Again
-                                        </button>
-                                    )}
-                                </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </div>
 
                 {/* Controls */}
-                <div className="grid grid-cols-2 w-full p-4 gap-4 bg-muted/20">
+                <div className="grid grid-cols-2 gap-4 w-full p-4 relative z-40 bg-background">
                     <button
                         onClick={() => handleSelect('bear')}
                         disabled={showFeedback}
-                        className="group relative bg-white rounded-2xl border-2 border-foreground p-4 hover:-translate-y-1 hover:shadow-pop-red transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                        className={cn(
+                            "relative h-24 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-1 group overflow-hidden bg-white border-destructive shadow-pop-active text-destructive hover:bg-destructive/5",
+                            showFeedback ? "opacity-50 pointer-events-none" : "active:translate-y-1 active:shadow-none"
+                        )}
                     >
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                                <TrendingDown className="w-6 h-6 text-red-500" />
-                            </div>
-                            <span className="font-black text-foreground text-lg uppercase tracking-wide">Bear</span>
+                        <div className="absolute top-2 right-2 opacity-20">
+                            <TrendingDown size={20} />
+                        </div>
+                        <TrendingDown className="w-8 h-8 z-10 fill-destructive/20" />
+                        <div className="flex flex-col items-center leading-none z-10">
+                            <span className="font-black text-sm uppercase mt-1">BEAR</span>
                         </div>
                     </button>
 
                     <button
                         onClick={() => handleSelect('bull')}
                         disabled={showFeedback}
-                        className="group relative bg-white rounded-2xl border-2 border-foreground p-4 hover:-translate-y-1 hover:shadow-pop-green transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                        className={cn(
+                            "relative h-24 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-1 group overflow-hidden bg-white border-primary shadow-pop-active text-primary hover:bg-primary/5",
+                            showFeedback ? "opacity-50 pointer-events-none" : "active:translate-y-1 active:shadow-none"
+                        )}
                     >
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                                <TrendingUp className="w-6 h-6 text-green-500" />
-                            </div>
-                            <span className="font-black text-foreground text-lg uppercase tracking-wide">Bull</span>
+                        <div className="absolute top-2 right-2 opacity-20">
+                            <TrendingUp size={20} />
+                        </div>
+                        <TrendingUp className="w-8 h-8 z-10 fill-primary/20" />
+                        <div className="flex flex-col items-center leading-none z-10">
+                            <span className="font-black text-sm uppercase mt-1">BULL</span>
                         </div>
                     </button>
                 </div>
 
+                {/* Feedback Overlay */}
+                <AnimatePresence>
+                    {showFeedback && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="absolute inset-0 z-50 bg-background/80 backdrop-blur-[2px] flex items-center justify-center p-6"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.8, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                className="w-[85%] max-w-sm bg-card text-foreground border-2 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
+                            >
+                                <div className={cn(
+                                    "w-16 h-16 rounded-full border-2 shadow-pop-active flex items-center justify-center mx-auto mb-4",
+                                    isCorrect ? "bg-primary/10 text-primary border-primary/20" : "bg-destructive/10 text-destructive border-destructive/20"
+                                )}>
+                                    {isCorrect ? (
+                                        <CheckCircle2 className="w-8 h-8" strokeWidth={3} />
+                                    ) : (
+                                        <XCircle className="w-8 h-8" strokeWidth={3} />
+                                    )}
+                                </div>
+                                <h4 className="font-black text-2xl uppercase tracking-wide mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                                    {isCorrect ? "Spot On!" : "Not Quite."}
+                                </h4>
+                                <p className="text-sm text-muted-foreground font-medium mb-6 px-4">
+                                    {currentScenario.explanation}
+                                </p>
+                                {isCorrect ? (
+                                    <button
+                                        onClick={handleNext}
+                                        className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
+                                    >
+                                        {currentRound < scenarios.length - 1 ? "Next Round" : "Finish Lesson"}
+                                        <ArrowRight className="w-5 h-5" strokeWidth={3} />
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => setShowFeedback(false)}
+                                        className="w-full py-4 bg-muted text-foreground rounded-xl font-bold border-2 border-foreground shadow-[0_4px_0_0_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-none transition-all"
+                                    >
+                                        Try Again
+                                    </button>
+                                )}
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+
+
             </div>
+
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete || (() => { })}
+                title="Trend Spotter!"
+                description="You easily spotted the market's current trajectory."
+            />
         </div>
     )
 }

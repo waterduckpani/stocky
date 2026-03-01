@@ -97,7 +97,7 @@ def get_exchange_context(symbol: str, name: str) -> dict:
     }
 
 
-def apply_rotation_penalties(
+def apply_rotation_penalties(  
     scores: dict[str, int],
     user_history: list[str]
 ) -> dict[str, int]:
@@ -156,7 +156,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_18_liquidity'), None)
+        lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_9_volatility'), None)
         
         if not lesson_ref and True: # FORCE HARDCODED FALLBACK
              print("DEBUG: Force-injecting Lesson 16 (Lookup Failed)")
@@ -329,7 +329,8 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                                "Only selling gold bonds",
                                "Being located in New Delhi"
                            ],
-                           "correctIndex": 1
+                           "correctIndex": 1,
+                           "explanation": "The NSE is India's modern digital exchange — high volume, tech-forward, and similar in spirit to the Nasdaq."
                        },
                        {
                            "question": "Which statement describes the BSE (Bombay Stock Exchange)?",
@@ -339,7 +340,8 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                                "It only lists tech startups",
                                "It is located in the Himalayas"
                            ],
-                           "correctIndex": 0
+                           "correctIndex": 0,
+                           "explanation": "The BSE was founded in 1875, making it Asia's oldest stock exchange — the historic heavyweight of Indian markets."
                        },
                        {
                            "question": "Where are both the NSE and BSE headquartered?",
@@ -349,7 +351,8 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                                "Mumbai",
                                "Kolkata"
                            ],
-                           "correctIndex": 2
+                           "correctIndex": 2,
+                           "explanation": "Both the NSE and BSE are headquartered in Mumbai — India's financial capital, not its political capital Delhi."
                        }
                    ]
             
@@ -359,19 +362,22 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                  dynamic_question = {
                     "question": f"Which exchange is known as the modern market leader in India?",
                     "options": ["The NSE (National Stock Exchange)", "The BSE (Bombay Stock Exchange)", "The New Delhi Market", "The spices market"],
-                    "correctIndex": 0
+                    "correctIndex": 0,
+                    "explanation": "The NSE leads India in trading volume — it's the modern digital powerhouse, while the BSE is the older historic giant."
                 }
             elif exchange_ctx.get("exchange") == "Nasdaq":
                  dynamic_question = {
                     "question": f"Based on what you learned, which exchange does {context.name} list on?",
                     "options": ["The NYSE", "The Nasdaq", "The London Stock Exchange", "A local farmers market"],
-                    "correctIndex": 1
+                    "correctIndex": 1,
+                    "explanation": f"{context.name} lists on the Nasdaq — home to modern tech and digital-first companies."
                 }
             elif exchange_ctx.get("exchange") == "NYSE":
                  dynamic_question = {
                     "question": f"Based on what you learned, which exchange does {context.name} list on?",
                     "options": ["The NYSE", "The Nasdaq", "The Tokyo Stock Exchange", "An online crypto forum"],
-                    "correctIndex": 0
+                    "correctIndex": 0,
+                    "explanation": f"{context.name} lists on the NYSE — the home of historic blue-chip companies on Wall Street."
                 }
             else:
                  # Generic International Question
@@ -379,8 +385,18 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                  dynamic_question = {
                     "question": f"Based on what you learned, which exchange does {context.name} list on?",
                     "options": ["The Nasdaq", "The NYSE", home, "The Moon"],
-                    "correctIndex": 2
+                    "correctIndex": 2,
+                    "explanation": f"{context.name} lists on the {home}, its home exchange outside the US."
                 }
+
+            # Format {company_name} placeholders in the base quiz
+            for question in lesson["quiz"]:
+                q_text = question["question"]
+                if "{company_name}" in q_text or "{symbol}" in q_text:
+                    question["question"] = q_text.format(
+                        company_name=context.name,
+                        symbol=context.symbol
+                    )
 
             if dynamic_question:
                 lesson["quiz"].append(dynamic_question)
@@ -454,16 +470,26 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             
             # Inject into Quiz
             for question in lesson["quiz"]:
-                if "{company_name}" in question["question"]:
-                    question["question"] = question["question"].format(company_name=context.name)
+                q_text = question["question"]
+                if "{company_name}" in q_text or "{symbol}" in q_text:
+                    question["question"] = q_text.format(
+                        company_name=context.name,
+                        symbol=context.symbol
+                    )
                     question["options"] = [
                         opt.format(
+                            company_name=context.name,
                             symbol=context.symbol,
                             fake_1=fake_1,
                             fake_2=fake_2,
                             fake_3=fake_3
                         ) for opt in question["options"]
                     ]
+                    if "explanation" in question:
+                        question["explanation"] = question["explanation"].format(
+                            company_name=context.name,
+                            symbol=context.symbol
+                        )
 
         # === LESSON 5: MARKET CAP (Dynamic Content) ===
         elif lesson["id"] == "lesson_5_market_cap":
@@ -488,10 +514,10 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             slides = lesson["concept"]["slides"]
             if len(slides) > 1:
                 if category in ["Mega Cap", "Large Cap"]:
-                    slides[1]["text"] = f"You searched for **{context.symbol}**, an **Ocean Liner**. It anchors the market with its massive size."
-                    slides[1]["icon"] = "Anchor"
-                else: 
-                    slides[1]["text"] = f"You searched for **{context.symbol}**, a **Speedboat**. It is fast and nimble but easily rocked by waves."
+                    slides[1]["text"] = f"Think of **{context.name}** as an Ocean Liner -that's what a **{category}** looks like.\n\nMassive, stable, hard to sink. A small startup? A speedboat: fast and nimble, but one big wave could flip it."
+                    slides[1]["icon"] = "Gem"
+                else:
+                    slides[1]["text"] = f"**{context.name}** is a speedboat -that's what a **{category}** looks like.\n\nFast and nimble, capable of huge moves. But it can get rocked by waves that an Ocean Liner wouldn't even notice."
                     slides[1]["icon"] = "Zap"
 
             # 3. Dynamic Game Config
@@ -531,30 +557,55 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
             else:
                 lesson["quiz"].append(challenge_question)
 
+        # === LESSON 6: IPO (Dynamic Content) ===
+        elif lesson["id"] == "lesson_6_ipo":
+            try:
+                slides = lesson["concept"]["slides"]
+                for slide in slides:
+                    text = slide.get("text", "")
+                    if "{company_name}" in text:
+                        slide["text"] = text.replace("{company_name}", context.name)
+                if "quiz" in lesson:
+                    for q in lesson["quiz"]:
+                        if "{company_name}" in q.get("question", ""):
+                            q["question"] = q["question"].replace("{company_name}", context.name)
+            except Exception as e:
+                print(f"Error injecting Lesson 6 context: {e}")
+
         # === LESSON 7: SECTORS (Dynamic Content) ===
         elif lesson["id"] == "lesson_7_sectors":
-            # Inject Context into Slide 0 (Introduction)
-            slides = lesson["concept"]["slides"]
-            if len(slides) > 0:
-                try:
+            try:
+                # Inject company_name + sector into Slide 0
+                slides = lesson["concept"]["slides"]
+                if len(slides) > 0:
                     slides[0]["text"] = slides[0]["text"].format(
                         company_name=context.name,
                         sector=context.sector
                     )
-                except Exception as e:
-                    print(f"Error injecting Lesson 7 context: {e}")
+                # Inject company_name into quiz questions
+                if "quiz" in lesson:
+                    for q in lesson["quiz"]:
+                        if "{company_name}" in q.get("question", ""):
+                            q["question"] = q["question"].replace("{company_name}", context.name)
+            except Exception as e:
+                print(f"Error injecting Lesson 7 context: {e}")
 
         # === LESSON 8: VOLUME (Dynamic Content) ===
         elif lesson["id"] == "lesson_8_volume":
-            # Inject Context into Slide 0
-            slides = lesson["concept"]["slides"]
-            if len(slides) > 0:
-                try:
+            try:
+                # Inject company_name into Slide 0
+                slides = lesson["concept"]["slides"]
+                if len(slides) > 0:
                     slides[0]["text"] = slides[0]["text"].format(
                         company_name=context.name
                     )
-                except Exception as e:
-                    print(f"Error injecting Lesson 8 context: {e}")
+                # Inject company_name into quiz questions
+                if "quiz" in lesson:
+                    for q in lesson["quiz"]:
+                        if "{company_name}" in q.get("question", ""):
+                            q["question"] = q["question"].replace("{company_name}", context.name)
+            except Exception as e:
+                print(f"Error injecting Lesson 8 context: {e}")
             
             # Inject Context into Game Scenarios
             if "game_config" in lesson and "scenarios" in lesson["game_config"]:

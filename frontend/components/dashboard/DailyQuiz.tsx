@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Zap, CheckCircle2, XCircle, Sparkles, Lock } from "lucide-react"
 import { supabase } from "@/utils/supabase/client"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface QuizData {
     question: string
@@ -127,8 +128,16 @@ export function DailyQuiz() {
                         Daily Quiz
                     </h3>
                 </div>
-                <div className="p-6 flex items-center justify-center">
-                    <div className="animate-pulse text-muted-foreground">Loading quiz...</div>
+                <div className="p-6 space-y-5">
+                    <Skeleton className="h-6 w-3/4 mb-6" />
+                    <div className="space-y-3">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-foreground/20">
+                                <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+                                <Skeleton className="h-5 w-1/2" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         )

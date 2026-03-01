@@ -3,12 +3,16 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Lightbulb, BookOpen, Target, Store, Scale, Zap, ArrowRight, ArrowLeft, Gem } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 interface Slide {
     title: string
     icon: string
     text: string
+}
+
+interface Source {
+    label: string
+    url: string
 }
 
 interface ConceptData {
@@ -17,6 +21,7 @@ interface ConceptData {
     trigger_id?: string
     type?: "carousel"
     slides?: Slide[]
+    sources?: Source[]
 }
 
 interface StepConceptProps {
@@ -101,7 +106,7 @@ export function StepConcept({ symbol, stockData, concept }: StepConceptProps) {
                                 transition={{ duration: 0.3 }}
                                 className="min-h-[120px] flex items-center"
                             >
-                                <p className="text-xl font-medium leading-relaxed text-slate-900"
+                                <p className="text-xl font-medium leading-relaxed text-foreground"
                                     dangerouslySetInnerHTML={{
                                         __html: slide.text
                                             .replace(/{company_name}/g, stockData?.company_name || stockData?.name || symbol)
@@ -137,8 +142,29 @@ export function StepConcept({ symbol, stockData, concept }: StepConceptProps) {
                                 </div>
                             )}
                         </div>
+
                     </div>
                 </div>
+
+                {/* Sources */}
+                {concept.sources && concept.sources.length > 0 && (
+                    <div className="mt-4 px-2 flex items-center justify-center gap-2 flex-wrap text-xs font-medium text-muted-foreground/80">
+                        <span>📚 Sources:</span>
+                        {concept.sources.map((src, i) => (
+                            <span key={src.url}>
+                                <a
+                                    href={src.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline underline-offset-2 hover:text-foreground transition-colors"
+                                >
+                                    {src.label}
+                                </a>
+                                {i < concept.sources!.length - 1 && <span className="mx-1 opacity-50">·</span>}
+                            </span>
+                        ))}
+                    </div>
+                )}
             </div>
         )
     }
