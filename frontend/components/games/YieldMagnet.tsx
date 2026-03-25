@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Slider } from '@/components/ui/slider'
 import { cn } from '@/lib/utils'
-import { Magnet, DollarSign, CheckCircle2, ArrowRight, Coins } from 'lucide-react'
+import { Magnet, Coins } from 'lucide-react'
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface YieldMagnetProps {
     onComplete: () => void
@@ -66,7 +67,7 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
     const coinCount = Math.min(8, Math.floor(yieldPercent / 0.5))
 
     return (
-        <div className="w-full max-w-xl mx-auto bg-card rounded-[2.5rem] border-4 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
+        <div className="w-full max-w-xl mx-auto bg-card rounded-3xl border-2 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
 
             {/* 1. Header Area */}
             <div className="text-center relative z-10">
@@ -93,12 +94,12 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
                 <motion.div
                     animate={{ scale: price > initialPrice ? 1.05 : (price < initialPrice * 0.5 ? 0.9 : 1) }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="flex-1 w-full bg-background border-2 border-secondary/30 rounded-2xl p-4 text-center relative z-10 shadow-pop"
+                    className="flex-1 w-full bg-background border-2 border-foreground/10 rounded-2xl p-4 text-center relative z-10 shadow-pop"
                 >
-                    <div className="text-[10px] font-black text-secondary uppercase tracking-wider mb-1">
+                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
                         Stock Price
                     </div>
-                    <div className="text-3xl font-black text-secondary" style={{ fontFamily: 'var(--font-heading)' }}>
+                    <div className="text-3xl font-black text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
                         ${price.toFixed(0)}
                     </div>
                 </motion.div>
@@ -109,9 +110,9 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
                     className="relative z-30 shrink-0"
                 >
                     <div className={cn(
-                        "w-16 h-16 rounded-2xl border-4 flex items-center justify-center shadow-pop transition-all duration-300",
+                        "w-16 h-16 rounded-2xl border-2 flex items-center justify-center shadow-pop transition-all duration-300",
                         yieldPercent > 5
-                            ? "bg-tertiary text-tertiary-foreground border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                            ? "bg-primary text-primary-foreground border-foreground"
                             : "bg-background border-foreground text-foreground"
                     )}>
                         <Magnet className="w-8 h-8 transform -rotate-45" strokeWidth={3} />
@@ -155,7 +156,7 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
                                     rotate: i % 2 === 0 ? 360 : -360,
                                 }}
                                 transition={{ duration: 2.5, ease: "easeOut", delay: i * 0.2 }}
-                                className="absolute left-1/2 top-1/2 text-tertiary"
+                                className="absolute left-1/2 top-1/2 text-primary"
                             >
                                 <Coins className="w-8 h-8 drop-shadow-md" fill="currentColor" strokeWidth={1.5} />
                             </motion.div>
@@ -163,22 +164,7 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
                     </AnimatePresence>
                 </div>
 
-                {/* Success Message Overlay */}
-                <AnimatePresence>
-                    {showSuccess && (
-                        <motion.div
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            className="absolute inset-0 bg-background/90 backdrop-blur-[2px] z-30 flex items-center justify-center p-4 rounded-[1.8rem]"
-                        >
-                            <div className="bg-primary text-primary-foreground px-6 py-4 rounded-2xl font-black border-4 border-foreground shadow-pop flex flex-col items-center gap-2 text-center transform rotate-2">
-                                <CheckCircle2 className="w-8 h-8" />
-                                <span className="text-xl">Yield Maximized!</span>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
             </div>
 
             {/* 3. Slider Control */}
@@ -200,7 +186,7 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
 
             {/* 4. Stats Grid */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-muted/20 p-4 rounded-2xl border-2 border-border border-b-4 flex flex-col items-center justify-center gap-1">
+                <div className="bg-muted/20 p-4 rounded-2xl border-2 border-foreground/10 flex flex-col items-center justify-center gap-1">
                     <div className="flex items-center gap-2 text-muted-foreground font-black text-xs uppercase tracking-wider">
                         <Coins className="w-4 h-4" /> Dividend
                     </div>
@@ -213,8 +199,8 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
                 </div>
 
                 <div className={cn(
-                    "p-4 rounded-2xl border-2 border-b-4 flex flex-col items-center justify-center gap-1 transition-colors",
-                    hasInteracted ? "bg-primary/20 border-primary/50" : "bg-muted/20 border-border"
+                    "p-4 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-colors",
+                    hasInteracted ? "bg-primary/20 border-primary/50" : "bg-muted/20 border-foreground/10"
                 )}>
                     <div className="flex items-center gap-2 text-muted-foreground font-black text-xs uppercase tracking-wider">
                         <Magnet className="w-4 h-4" /> Yield %
@@ -231,41 +217,13 @@ export default function YieldMagnet({ onComplete, gameConfig, stockData }: Yield
                 </div>
             </div>
 
-            {/* 5. Success Overlay */}
-            <AnimatePresence>
-                {showSuccess && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-50 bg-card/90 backdrop-blur-[2px] flex items-center justify-center p-4"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.8, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="w-full max-w-xs bg-card border-4 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
-                        >
-                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto border-4 border-foreground shadow-sm transform -rotate-3 bg-primary/20 text-primary">
-                                <CheckCircle2 size={32} strokeWidth={2.5} />
-                            </div>
-
-                            <h3 className="text-2xl font-black text-foreground mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                                Magnet Maxed! 🧲
-                            </h3>
-                            <p className="text-muted-foreground font-medium text-sm mb-4 leading-relaxed">
-                                Buying when prices are low gives you a <span className="font-bold text-primary">higher yield</span> — your money works harder for you!
-                            </p>
-
-                            <button
-                                onClick={onComplete}
-                                className="w-full bg-primary text-primary-foreground rounded-xl py-4 text-base font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                            >
-                                Continue to Quiz <ArrowRight size={18} strokeWidth={3} />
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <MinigameCompletionPopup
+                completed={showSuccess}
+                onComplete={onComplete}
+                title="Magnet Maxed! 🧲"
+                description="Buying when prices are low gives you a higher yield — your money works harder for you!"
+                icon={Magnet}
+            />
         </div>
     )
 }

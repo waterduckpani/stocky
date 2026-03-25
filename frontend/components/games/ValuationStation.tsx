@@ -1,188 +1,292 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Gavel, CheckCircle2, XCircle, Trophy, BarChart2, ArrowRight, Tag, Scale, TrendingUp, Newspaper } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Printer, DollarSign, CheckCircle2, ArrowRight, Gem, ShoppingBag, Handshake } from 'lucide-react'
-
-// Strict "Playful Geometric" Styling
-// - Card: bg-white rounded-[2rem] border-2 border-foreground shadow-pop
-// - Same logic as TheScale.tsx for consistency
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface ValuationStationProps {
     onComplete: () => void
     gameConfig?: {
         pe_ratio?: number
-        valuation_type?: string
         symbol?: string
+        instruction?: string
     }
 }
 
+type Verdict = "bargain" | "fair" | "overpriced"
+
+interface Round {
+    sector: string
+    description: string
+    pe: number
+    correct: Verdict
+    why: string
+}
+
+const STATIC_ROUNDS: Round[] = [
+    {
+        sector: "🏭",
+        description: "Energy giant. Steady profits. Growing 3% a year.",
+        pe: 10,
+        correct: "bargain",
+        why: "Mature, slow-growing companies trade at low P/E — investors don't expect big earnings jumps, so they won't pay a premium."
+    },
+    {
+        sector: "☁️",
+        description: "Cloud software startup. Revenue up 40%/year. No dividends yet.",
+        pe: 42,
+        correct: "fair",
+        why: "High-growth companies command high P/E — investors pay a premium now for the big profits they expect later."
+    }
+]
+
+const VERDICT_CONFIG = {
+    bargain:    { label: "BARGAIN",    sub: "P/E under 15",  Icon: Tag,        border: "border-primary",     text: "text-primary",     hover: "hover:bg-primary/5"     },
+    fair:       { label: "FAIR DEAL",  sub: "P/E 15 – 30",   Icon: Scale,      border: "border-foreground",  text: "text-foreground",  hover: "hover:bg-muted/50"      },
+    overpriced: { label: "OVERPRICED", sub: "P/E above 30",  Icon: TrendingUp, border: "border-destructive", text: "text-destructive", hover: "hover:bg-destructive/5" },
+} as const
+
+function getCorrectVerdict(pe: number): Verdict {
+    if (pe < 15) return "bargain"
+    if (pe <= 30) return "fair"
+    return "overpriced"
+}
+
+function getRound3Why(pe: number, symbol: string): string {
+    if (pe < 15) return `At a P/E of ${pe}, ${symbol} is priced like a value stock — the market expects steady, not spectacular, earnings growth.`
+    if (pe <= 30) return `At a P/E of ${pe}, ${symbol} sits in fair-value territory — the market sees balanced risk and growth ahead.`
+    return `At a P/E of ${pe}, ${symbol} is priced for big growth — investors are betting on a significant earnings jump ahead.`
+}
+
 export default function ValuationStation({ onComplete, gameConfig }: ValuationStationProps) {
-    const peRatio = gameConfig?.pe_ratio || 20
-    const valuationType = gameConfig?.valuation_type || "Average"
-    const parsedPe = Math.round(peRatio)
+    const peRatio = Math.max(1, Math.round(gameConfig?.pe_ratio || 20))
+    const symbol = gameConfig?.symbol || "This Stock"
 
-    // Safety clamp (visuals get weird if PE is too huge or negative)
-    const visualPe = Math.max(1, Math.min(parsedPe, 100))
+    const round3: Round = {
+        sector: "🔍",
+        description: `${symbol} — the stock you searched for.`,
+        pe: peRatio,
+        correct: getCorrectVerdict(peRatio),
+        why: getRound3Why(peRatio, symbol),
+    }
 
-    const [selectedMachine, setSelectedMachine] = useState<'A' | 'B' | null>(null)
-    const [showFeedback, setShowFeedback] = useState(false)
+    const ALL_ROUNDS = [...STATIC_ROUNDS, round3]
 
-    // Machine A: "The Value Machine" (P/E 10)
-    // Machine B: "This Stock" (Dynamic P/E)
-    // Concept: User has to "Buy" the machine representing the stock.
-    // Wait, the instruction says "Which Money Machine is this stock behaving like?" 
-    // But P/E is exact.
-    // Let's make it simpler: "Buy this Stock's Machine".
-    // Left: "Standard Machine ($20)" vs Right: "This Stock Machine ($X)"
-    // User clicks ONLY the stock machine to reveal if it's cheap or expensive.
+    const [gameState, setGameState] = useState<"intro" | "playing" | "complete">("intro")
+    const [currentRound, setCurrentRound] = useState(0)
+    const [score, setScore] = useState(0)
+    const [selected, setSelected] = useState<Verdict | null>(null)
 
-    // Actually, let's stick to the Implementation Plan: 
-    // "Compare 'Cheap' vs 'Expensive' money machines"
-    // Let's display TWO machines.
-    // Machine 1: The "Market Average" ($20 for $1 earnings) = P/E 20
-    // Machine 2: "{Symbol}" ($X for $1 earnings) = P/E X
-    // User must TAP the {Symbol} machine to see the verdict.
+    const round = ALL_ROUNDS[currentRound]
+    const isCorrect = selected !== null && selected === round.correct
 
-    const handleSelect = (machine: 'A' | 'B') => {
-        setSelectedMachine(machine)
-        if (machine === 'B') { // Machine B is always the stock
-            setShowFeedback(true)
+    const handleVerdict = (verdict: Verdict) => {
+        if (selected !== null) return
+        setSelected(verdict)
+        if (verdict === round.correct) setScore(prev => prev + 1)
+    }
+
+    const handleNext = () => {
+        if (currentRound < ALL_ROUNDS.length - 1) {
+            setCurrentRound(prev => prev + 1)
+            setSelected(null)
+        } else {
+            setGameState("complete")
         }
     }
 
-    const isExpensive = peRatio > 25
-    const isCheap = peRatio < 15
-
-    const feedbackTitle = isExpensive
-        ? "Premium Price! 🚀"
-        : (isCheap ? "Bargain Price! 🏷️" : "Fair Price ⚖️")
-
-    const feedbackText = isExpensive
-        ? `You are paying $${visualPe} for every $1 of profit. Investors expect huge growth!`
-        : (isCheap
-            ? `You are only paying $${visualPe} for every $1 of profit. It's on sale!`
-            : `You are paying $${visualPe}, which is standard for a healthy company.`)
+    const completionTitle = score === 3 ? "Market Analyst! 🏆" : score === 2 ? "Sharp Eye! 👁️" : "Keep Watching! 📊"
+    const completionDesc = score === 3
+        ? "Perfect score! P/E only makes sense compared to the right peer group — and you knew that."
+        : `${score}/3 correct. Remember: always compare P/E within the same sector, not the whole market.`
 
     return (
-        <div className="w-full max-w-xl mx-auto bg-card rounded-[2.5rem] border-4 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
+        <div className="w-full max-w-xl mx-auto bg-card rounded-[2rem] border-2 border-foreground shadow-pop p-6 flex flex-col gap-5 select-none">
 
-            {/* Header */}
-            <div className="text-center relative z-10">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary border-2 border-primary/20 shadow-sm transform -rotate-2">
-                        <Printer className="w-6 h-6 text-primary" strokeWidth={2.5} />
+            {/* ── HEADER ── */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-primary/20 text-primary border-2 border-primary/30 shadow-sm flex items-center justify-center -rotate-2 shrink-0">
+                        <Gavel className="w-6 h-6" strokeWidth={2.5} />
                     </div>
-                    <h3 className="text-2xl font-black text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-                        The Valuation Station
-                    </h3>
-                </div>
-                <p className="text-muted-foreground font-bold text-base leading-tight max-w-sm mx-auto">
-                    Compare the Price Tags
-                </p>
-            </div>
-
-            {/* Main Stage */}
-            <div className="w-full grid grid-cols-2 gap-4 grow min-h-[200px]">
-
-                {/* Machine A (Benchmark) */}
-                <div className="bg-tertiary/20 rounded-[2rem] border-2 border-tertiary/50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                    {/* Decorative Blob */}
-                    <div className="absolute -top-12 -left-12 w-24 h-24 bg-tertiary/20 rounded-full blur-2xl pointer-events-none" />
-
-                    <div className="w-16 h-16 bg-tertiary/30 rounded-full flex items-center justify-center mb-3 border-2 border-tertiary/50 shadow-sm relative z-10">
-                        <Printer size={28} className="text-tertiary-foreground" />
-                    </div>
-                    <div className="text-center relative z-10">
-                        <div className="text-[10px] font-black text-tertiary-foreground/70 uppercase tracking-wider mb-1">
-                            Market Avg
-                        </div>
-                        <div className="text-3xl font-black text-tertiary-foreground">
-                            $20.00
-                        </div>
-                        <div className="text-[10px] text-tertiary-foreground/60 font-bold mt-1">
-                            Standard Price
-                        </div>
+                    <div>
+                        <h3 className="text-xl font-black text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
+                            Judge the Market
+                        </h3>
+                        <p className="text-sm text-muted-foreground font-bold">
+                            Score: {score}/{ALL_ROUNDS.length} · Is it a bargain?
+                        </p>
                     </div>
                 </div>
 
-                {/* Machine B (The Stock) - INTERACTIVE */}
-                <button
-                    onClick={() => handleSelect('B')}
-                    className={cn(
-                        "bg-background rounded-[2rem] border-4 border-foreground flex flex-col items-center justify-center p-4 transition-all relative overflow-hidden group",
-                        selectedMachine === 'B'
-                            ? "ring-4 ring-secondary/20 translate-y-[4px] translate-x-[4px] shadow-none"
-                            : "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none"
-                    )}
-                >
-                    <div className={cn(
-                        "w-16 h-16 rounded-full flex items-center justify-center mb-3 border-2 border-foreground shadow-sm transition-transform group-hover:scale-110",
-                        "bg-secondary/20 text-secondary border-secondary/30"
-                    )}>
-                        <DollarSign size={32} strokeWidth={3} />
-                    </div>
-                    <div className="text-center relative z-10">
-                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
-                            {gameConfig?.symbol || "Stock"}
-                        </div>
-                        <div className="text-3xl font-black text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-                            ${visualPe.toFixed(2)}
-                        </div>
-                        <div className="text-[10px] text-secondary font-bold mt-1 group-hover:underline decoration-2 underline-offset-2">
-                            TAP TO REVEAL
-                        </div>
-                    </div>
-                </button>
-
+                {/* Progress dots */}
+                <div className="flex gap-1.5 items-center shrink-0">
+                    {ALL_ROUNDS.map((_, i) => (
+                        <div key={i} className={cn(
+                            "h-2 rounded-full transition-all duration-300 border border-foreground/10",
+                            i === currentRound ? "w-8 bg-primary" :
+                            i < currentRound  ? "w-2 bg-primary/40" : "w-2 bg-muted/50"
+                        )} />
+                    ))}
+                </div>
             </div>
 
-            {/* Footer Instruction */}
-            <div className="bg-muted/30 rounded-xl p-3 border-2 border-foreground/5 text-center text-xs font-bold text-muted-foreground">
-                Which machine offers better value?
-            </div>
+            {/* ── VISUAL STAGE ── */}
+            <div className="relative w-full h-80 bg-background rounded-[1.5rem] border-2 border-foreground overflow-hidden flex items-center justify-center p-6">
 
-
-            {/* Feedback Overlay */}
-            <AnimatePresence>
-                {showFeedback && (
+                {/* Intro overlay — same pattern as TheEarningsReaction */}
+                {gameState === "intro" && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-50 bg-card/90 backdrop-blur-[2px] flex items-center justify-center p-4"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm p-8 text-center gap-5"
                     >
-                        <motion.div
-                            initial={{ scale: 0.8, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="w-full max-w-xs bg-card border-4 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
-                        >
-                            <div className={cn(
-                                "w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto border-4 border-foreground shadow-sm transform -rotate-3",
-                                isExpensive ? "bg-tertiary/20 text-tertiary-foreground" : (isCheap ? "bg-primary/20 text-primary" : "bg-secondary/20 text-secondary")
-                            )}>
-                                {isExpensive ? <Gem size={32} strokeWidth={2.5} /> : (isCheap ? <ShoppingBag size={32} strokeWidth={2.5} /> : <Handshake size={32} strokeWidth={2.5} />)}
-                            </div>
-
-                            <h3 className="text-2xl font-black text-foreground mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                                {feedbackTitle}
+                        <div className="w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-sm flex items-center justify-center">
+                            <Newspaper className="w-8 h-8" strokeWidth={2} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                                3 Stocks. 3 Verdicts.
                             </h3>
-                            <p className="text-muted-foreground font-medium text-sm mb-6 leading-tight max-w-[90%] mx-auto">
-                                {feedbackText}
+                            <p className="text-muted-foreground text-sm font-medium max-w-[240px] mx-auto">
+                                See the P/E. Decide if it's a{" "}
+                                <span className="text-primary font-bold">Bargain</span>,{" "}
+                                <span className="text-foreground font-bold">Fair Deal</span>, or{" "}
+                                <span className="text-destructive font-bold">Overpriced</span>.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setGameState("playing")}
+                            className="px-8 py-3 bg-primary text-primary-foreground rounded-xl font-bold border-2 border-foreground shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all"
+                        >
+                            Start Judging
+                        </button>
+                    </motion.div>
+                )}
+
+                {/* Company card (per round) */}
+                {gameState === "playing" && (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={`company-${currentRound}`}
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -30 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="flex flex-col items-center gap-4 text-center w-full"
+                        >
+                            <div className="text-6xl leading-none">{round.sector}</div>
+                            <p className="text-base font-bold text-foreground leading-snug">
+                                {round.description}
+                            </p>
+
+                            {/* P/E badge — prominent */}
+                            <div className="flex items-center gap-4 bg-primary/10 rounded-2xl px-8 py-4 border-2 border-primary/30">
+                                <div className="text-center">
+                                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">P/E Ratio</p>
+                                    <p className="text-6xl font-black text-primary leading-none" style={{ fontFamily: 'var(--font-heading)' }}>
+                                        {round.pe}
+                                    </p>
+                                </div>
+                                <div className="text-left border-l-2 border-primary/20 pl-4">
+                                    <p className="text-sm text-muted-foreground font-bold leading-snug">
+                                        per $1<br />of earnings
+                                    </p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                )}
+            </div>
+
+            {/* ── CONTROLS ── */}
+            {gameState === "playing" && (
+                <AnimatePresence mode="wait">
+                    {selected === null ? (
+                        /* Verdict buttons — squarish 3-col grid matching TheEarningsReaction */
+                        <motion.div
+                            key="buttons"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="grid grid-cols-3 gap-3"
+                        >
+                            {(["bargain", "fair", "overpriced"] as Verdict[]).map((v) => {
+                                const { label, sub, Icon, border, text, hover } = VERDICT_CONFIG[v]
+                                return (
+                                    <button
+                                        key={v}
+                                        onClick={() => handleVerdict(v)}
+                                        className={cn(
+                                            "relative h-24 rounded-2xl border-2 bg-card transition-all duration-200 shadow-pop hover:translate-y-0.5 hover:shadow-none active:translate-y-0.5 active:shadow-none flex flex-col items-center justify-center gap-1 overflow-hidden",
+                                            border, text, hover
+                                        )}
+                                    >
+                                        {/* Ghost corner icon */}
+                                        <div className="absolute top-2 right-2 opacity-20">
+                                            <Icon size={20} />
+                                        </div>
+
+                                        {/* Main icon */}
+                                        <Icon className="w-8 h-8 z-10" strokeWidth={2} />
+
+                                        {/* Label */}
+                                        <div className="flex flex-col items-center leading-none z-10">
+                                            <span className="font-black text-[11px] uppercase tracking-wide mt-1">{label}</span>
+                                            <span className="text-[10px] opacity-60 font-bold">{sub}</span>
+                                        </div>
+                                    </button>
+                                )
+                            })}
+                        </motion.div>
+                    ) : (
+                        /* Feedback card */
+                        <motion.div
+                            key="feedback"
+                            initial={{ scale: 0.92, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                            className={cn(
+                                "rounded-2xl border-2 p-4 flex flex-col gap-3",
+                                isCorrect ? "bg-primary/10 border-primary/40" : "bg-destructive/10 border-destructive/40"
+                            )}
+                        >
+                            <div className="flex items-center gap-2">
+                                {isCorrect
+                                    ? <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                                    : <XCircle className="w-5 h-5 text-destructive shrink-0" />
+                                }
+                                <span className={cn("font-black text-base", isCorrect ? "text-primary" : "text-destructive")}>
+                                    {isCorrect ? "Correct!" : `Answer: ${VERDICT_CONFIG[round.correct].label}`}
+                                </span>
+                            </div>
+                            <p className="text-sm text-foreground/80 font-medium leading-relaxed">
+                                {round.why}
                             </p>
 
                             <button
-                                onClick={onComplete}
+                                onClick={handleNext}
                                 className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
                             >
-                                Continue to Quiz <ArrowRight size={20} strokeWidth={3} />
+                                {currentRound < ALL_ROUNDS.length - 1
+                                    ? <><span>Next</span><ArrowRight className="w-5 h-5" strokeWidth={3} /></>
+                                    : <><span>See Results</span><Trophy className="w-5 h-5" /></>
+                                }
                             </button>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>
+            )}
 
+            <MinigameCompletionPopup
+                completed={gameState === "complete"}
+                onComplete={onComplete}
+                title={completionTitle}
+                description={completionDesc}
+                icon={score >= 2 ? Trophy : BarChart2}
+            />
         </div>
     )
 }

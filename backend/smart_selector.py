@@ -156,7 +156,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
-        lesson_ref = next((l for l in TIER_1_LESSONS if l['id'] == 'lesson_11_revenue_profit'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
         
         if not lesson_ref and True: # FORCE HARDCODED FALLBACK
              print("DEBUG: Force-injecting Lesson 16 (Lookup Failed)")
@@ -250,8 +250,8 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                     if slides:
                         # Construct f-string directly
                         new_text = (
-                            f"You searched for **{context.name}**. Its **Dividend Yield** is **{yield_percent:.2f}%**.\n\n"
-                            f"This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{context.symbol}**."
+                            f"You searched for **{context.name}**. Its **Dividend Yield** is **{yield_percent:.2f}%**. "
+                            f"That's the annual cash it pays you just for holding **{context.symbol}**, straight to your account, every year."
                         )
                         print(f"DEBUG: Setting Slide 0 text to: {new_text}")
                         slides[0]["text"] = new_text
@@ -265,10 +265,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                     lesson["game_config"]["base_dividend"] = div_rate
 
                 # 4. Update Quiz Question explicitly
-                if "quiz" in lesson and lesson["quiz"]:
-                    print(f"DEBUG: Updating Quiz Question")
-                    q0_template = "If {company_name} pays a dividend and the stock price drops, what happens to the Yield %?"
-                    lesson["quiz"][0]["question"] = q0_template.replace("{company_name}", str(context.name))
+                # Quiz {company_name} replacements handled by frontend fillPlaceholders()
 
             except Exception as e:
                 print(f"DEBUG: CRITICAL ERROR IN LESSON 14 INJECTION: {e}")
@@ -795,11 +792,12 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # === LESSON 12: EPS (Dynamic Content) ===
         elif lesson["id"] == "lesson_12_eps":
              slides = lesson["concept"]["slides"]
-             if len(slides) > 0:
-                 try:
-                     slides[0]["text"] = slides[0]["text"].replace("{company_name}", context.name)
-                 except Exception as e:
-                     print(f"Error injecting Lesson 12 context: {e}")
+             try:
+                 for slide in slides:
+                     if "{company_name}" in slide.get("text", ""):
+                         slide["text"] = slide["text"].replace("{company_name}", context.name)
+             except Exception as e:
+                 print(f"Error injecting Lesson 12 context: {e}")
 
         # === LESSON 15: BETA (Dynamic Content) ===
         elif lesson["id"] == "lesson_15_beta":

@@ -808,18 +808,18 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Meaning 🍕",
-                    "text": "You searched for **{company_name}**. If the company's total profit is a giant **Pizza**, **EPS** is the amount of pizza on **Your Single Slice** (Share).",
-                    "icon": "PieChart"
+                    "text": "**{company_name}**'s **Earnings Per Share (EPS)** is **{eps}** right now. That's how much of the company's profit belongs to a single share — your slice of the pizza.",
+                    "icon": "Gem"
                 },
                 {
                     "title": "The Formula ➗",
-                    "text": "It's simple division:\n\n**Total Profit** ÷ **Total Shares** = **EPS**.\n\nA higher EPS means your slice of the profit pie is bigger and tastier!",
-                    "icon": "Divide"
+                    "text": "It's simple: **Total Profit** divided by **Total Shares** gives you **EPS**. If profits grow but the number of shares stays the same, every slice gets bigger. That's the goal.",
+                    "icon": "Scale"
                 },
                 {
                     "title": "The Growth Engine 🚀",
-                    "text": "Investors love seeing EPS grow. It means the company is becoming more efficient at making money for every share you hold.",
-                    "icon": "TrendingUp"
+                    "text": "When **{company_name}**'s EPS rises quarter after quarter, investors take notice. It's the clearest sign a company is making more profit per share you own.",
+                    "icon": "Zap"
                 }
             ],
             "sources": [
@@ -837,32 +837,35 @@ TIER_2_LESSONS = [
             {
                 "question": "What does EPS stand for?",
                 "options": [
-                    "Earnings Per Share",
                     "Earnings Per Stock",
                     "Every Pizza Slice",
+                    "Earnings Per Share",
                     "Extra Profit Source"
                 ],
-                "correctIndex": 0
+                "correctIndex": 2,
+                "explanation": "EPS stands for Earnings Per Share — it tells you how much of the company's total profit belongs to a single share you own."
             },
             {
                 "question": "If a company has $100 Profit and 10 Shares, what is the EPS?",
                 "options": [
-                    "$1",
                     "$10",
+                    "$1",
                     "$100",
                     "$1000"
                 ],
-                "correctIndex": 1
+                "correctIndex": 0,
+                "explanation": "EPS is Total Profit divided by Total Shares. $100 divided by 10 shares = $10 per share. Simple division!"
             },
             {
-                "question": "Why is a Rising EPS good?",
+                "question": "If {company_name} reports EPS of $5 this year, up from $3 last year, what does that tell you?",
                 "options": [
-                    "It means the company is printing more shares",
-                    "It means the pizza is getting smaller",
-                    "It means each share is becoming more valuable",
-                    "It's not good, it's bad"
+                    "The stock price doubled automatically",
+                    "The company is paying less tax",
+                    "The company issued a lot more shares",
+                    "Each share you own earned more profit this year"
                 ],
-                "correctIndex": 2
+                "correctIndex": 3,
+                "explanation": "Rising EPS means the company squeezed more profit out per share. Going from $3 to $5 EPS is a 67% jump — a strong sign the business is healthier."
             }
         ]
     },
@@ -949,53 +952,59 @@ TIER_2_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "The Price Tag for Earnings 🏷️",
-                    "text": "**{company_name}** has a price -but is it cheap or expensive? That's what the **P/E Ratio** answers: how much are you paying for every **$1 of this company's profit?**",
+                    "title": "Your Stock's Price Tag 🏷️",
+                    "text": "**{company_name}**'s **Price-to-Earnings (P/E) Ratio** is **{pe_ratio}** right now.\n\nThat's how much you're paying for every **$1** of its profit. High or low? Let's find out what it means.",
                     "icon": "Tag"
                 },
                 {
                     "title": "The Money Machine 🖨️",
-                    "text": "Imagine a machine that prints **$1 every year**.\n\n• If you pay **$10** for it, the P/E is **10** (Cheap/Value).\n• If you pay **$50** for it, the P/E is **50** (Expensive/Growth).",
+                    "text": "Think of **{company_name}** as a Money Machine. It earns **$1 a year**. Right now, the market's price for it is **{pe_ratio}**. That's what investors pay for every **$1** of profit — betting growth is ahead.",
                     "icon": "Banknote"
                 },
                 {
-                    "title": "Growth vs. Value ⚖️",
-                    "text": "**High P/E (>30):** Investors pay extra because they expect the machine to print MORE money in the future (e.g., Tech/AI).\n\n**Low P/E (<15):** The machine is steady but boring (e.g., Banks/Energy).",
+                    "title": "High vs. Low ⚖️",
+                    "text": "**Low P/E (under 15):** Steady, mature business. Investors aren't expecting fireworks.\n\n**High P/E (over 30):** Investors believe earnings will explode — they're paying now for future profits.",
                     "icon": "Scale"
+                },
+                {
+                    "title": "Compare Right, Not Wrong 🎯",
+                    "text": "Don't compare **{company_name}**'s P/E to the whole market. Compare it to rivals in the **same sector** — a P/E of 40 is normal for Tech, but pricey for a supermarket.",
+                    "icon": "Target"
                 }
             ],
             "sources": [
                 {"label": "Investopedia", "url": "https://www.investopedia.com/terms/p/price-earningsratio.asp"},
-                {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"}
+                {"label": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds"}
             ]
         },
-        "breakdown": "Price gives you the cost. P/E gives you the value.",
+        "breakdown": "P/E answers the real question: is this stock's price actually worth it?",
         "news": [],
         "game_config": {
             "type": "valuation_station",
-            "instruction": "Which Money Machine is this stock behaving like?"
+            "instruction": "Which Money Machine is this stock behaving like?",
+            "pe_ratio": "{pe_ratio}"
         },
         "quiz": [
             {
                 "id": "q1",
-                "question": "What does the P/E Ratio tell you?",
-                "options": ["The total debt of the company", "How much you pay for $1 of earnings", "The CEO's salary", "The stock price divided by 10"],
-                "correctIndex": 1,
-                "explanation": "P/E stands for Price-to-Earnings. It measures the price you pay for each dollar of profit."
+                "question": "What does a stock's P/E Ratio measure?",
+                "options": ["How much debt the company has", "The company's total annual revenue", "How much you pay per $1 of the company's earnings", "What dividend the stock pays each year"],
+                "correctIndex": 2,
+                "explanation": "P/E stands for Price-to-Earnings. It's the price investors pay for every $1 of profit the company generates."
             },
             {
                 "id": "q2",
-                "question": "If a stock has a P/E of 100, what does it usually mean?",
-                "options": ["It is going bankrupt", "It is very cheap", "Investors expect huge future growth", "It is a bank"],
-                "correctIndex": 2,
-                "explanation": "A high P/E means investors are willing to pay a premium now because they expect earnings to explode later."
+                "question": "A stock has a P/E of 90. What does that most likely signal?",
+                "options": ["Investors expect its earnings to grow massively", "The stock is very cheap right now", "The company is paying huge dividends", "The CEO owns 90% of the shares"],
+                "correctIndex": 0,
+                "explanation": "A very high P/E means investors are paying a big premium — usually because they expect the company's profits to grow fast in the future."
             },
             {
                 "id": "q3",
-                "question": "Which company typically has a LOWER P/E ratio?",
-                "options": ["A brand new AI startup", "A flying car company", "A biotech researcher", "A stable Utility company"],
+                "question": "If {company_name}'s P/E is much higher than a bank stock, what's the most likely reason?",
+                "options": ["Banks are just poorly run companies", "It's a glitch in the stock data", "{company_name} pays way more in dividends", "Investors expect {company_name} to grow earnings much faster"],
                 "correctIndex": 3,
-                "explanation": "Stable, slow-growing companies (Value Stocks) usually trade at lower P/E ratios than high-growth tech stocks."
+                "explanation": "Companies expected to grow faster command higher P/E ratios. Investors pay a premium today for profits they expect to collect tomorrow."
             }
         ]
     },
@@ -1010,12 +1019,12 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Context 🧲",
-                    "text": "You searched for **{company_name}**. Its **Dividend Yield** is **{dividendYield}%**. That's how much 'Cashback' you earn every year just for owning **{symbol}** -paid in cash, straight to you.",
+                    "text": "You searched for **{company_name}**. Its **Dividend Yield** is **{dividendYield}%**. That's the annual cash it pays you just for holding **{symbol}**, straight to your account, every year.",
                     "icon": "Magnet"
                 },
                 {
-                    "title": "The Analogy 🏦",
-                    "text": "Think of it like the **Interest Rate** on a savings account. If you put $100 in and get $5 back in a year, your yield is 5%. It's the money the stock pays you just for being an owner.",
+                    "title": "The Rental Analogy 🏠",
+                    "text": "Think of owning a share like renting out a room. You paid $100 for it. It pays you $5 back every year — no extra work. That's $5 ÷ $100 = your **5% Dividend Yield**.",
                     "icon": "Banknote"
                 },
                 {
@@ -1033,32 +1042,52 @@ TIER_2_LESSONS = [
         "game_config": {
             "type": "yield_magnet",
             "instruction": "Slide the price down to see your 'Yield Magnet' grow stronger!",
-            "base_dividend": "{dividendRate}"
+            "base_dividend": 2.0
         },
         "quiz": [
             {
-                "question": "If {company_name} pays a fixed dividend, and its stock price suddenly drops by half, what happens to the Dividend Yield %?",
-                "options": ["It Doubles (Goes Up)", "It gets cut in half (Goes Down)", "It stays exactly the same"],
-                "correctIndex": 0,
-                "explanation": "Yield and Price move in opposite directions. Only paying half price for the same cash payout means your return doubles!"
-            },
-            {
-                "question": "What is Dividend Yield essentially?",
-                "options": ["The total profit the company made", "The tax you pay on the stock", "The 'Interest Rate' you earn on your investment", "The growth rate of the stock price"],
+                "question": "What is a Dividend Yield?",
+                "options": [
+                    "How much the stock price grew this year",
+                    "The fee your broker charges to buy dividend stocks",
+                    "The annual cash a stock pays you per dollar you invest",
+                    "The company's total profit divided by its debt"
+                ],
                 "correctIndex": 2,
-                "explanation": "Dividend Yield is like the interest rate on a savings account—it tells you how much cash flow you get for every dollar invested."
+                "explanation": "Dividend Yield = annual dividend per share divided by stock price. It tells you how much cash you earn each year just for holding the stock."
             },
             {
-                "question": "You see a stock with a massive 15% yield. Is this always a good sign?",
-                "options": ["Yes! Free money!", "Yes, high yield always means high quality", "No, it could be a 'Yield Trap' signaling trouble"],
-                "correctIndex": 2,
-                "explanation": "Extremely high yields often mean the stock price has crashed due to business problems. The dividend might be cut soon (a 'Yield Trap')."
+                "question": "{company_name} pays $4 per share each year. If the stock price falls from $100 to $50, what happens to the yield?",
+                "options": [
+                    "It drops from 4% to 2% along with the price",
+                    "It stays at 4% because the dividend did not change",
+                    "The company cancels the dividend automatically",
+                    "It rises from 4% to 8% because you are paying less for the same payout"
+                ],
+                "correctIndex": 3,
+                "explanation": "Yield = dividend divided by price. Same $4 dividend, but now you only paid $50 for the stock. $4 divided by $50 = 8%. Lower price, higher yield."
             },
             {
-                "question": "Which type of company is most likely to pay a steady dividend?",
-                "options": ["A mature, profitable utility company", "A brand new tech startup", "A crypto token", "A company losing money every year"],
+                "question": "{company_name} suddenly shows a yield of 18%. What should you check first?",
+                "options": [
+                    "Whether the CEO got a big bonus that year",
+                    "If the stock price crashed and the dividend might get cut soon",
+                    "Nothing. A high yield is obviously great news",
+                    "Whether the company sells food or tech products"
+                ],
+                "correctIndex": 1,
+                "explanation": "A very high yield often means the stock price crashed badly. The company may cut the dividend soon too. This is called a Yield Trap and it catches a lot of beginners."
+            },
+            {
+                "question": "Which company is most likely to pay a reliable dividend every quarter?",
+                "options": [
+                    "A profitable electricity company that has paid dividends for 20 years",
+                    "A startup that has never turned a profit",
+                    "A crypto exchange that launched last year",
+                    "A tech company reinvesting every dollar back into growth"
+                ],
                 "correctIndex": 0,
-                "explanation": "Mature, profitable companies (like Utilities or Consumer Staples) share profits because they don't need to reinvest everything into growth."
+                "explanation": "Mature companies with stable, predictable revenue, like utilities, share profits as dividends because they do not need to reinvest everything to keep growing."
             }
         ]
     },

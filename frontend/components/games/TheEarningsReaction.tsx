@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence, useAnimation } from "framer-motion"
-import { ArrowBigUp, ArrowBigDown, CheckCircle2, TrendingUp, Newspaper, Zap, ArrowRight, X } from "lucide-react"
+import { ArrowBigUp, ArrowBigDown, CheckCircle2, TrendingUp, Newspaper, Zap, ArrowRight, X, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface TheEarningsReactionProps {
     onComplete: () => void
@@ -225,44 +226,13 @@ export default function TheEarningsReaction({ onComplete, ticker }: TheEarningsR
                     </div>
                 )}
 
-                {/* Complete State */}
-                {gameState === "complete" && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="absolute inset-0 z-50 bg-background/80 backdrop-blur-[2px] flex items-center justify-center p-6"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.8, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="w-full bg-card text-foreground border-2 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
-                        >
-                            <div className="w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-pop-active flex items-center justify-center mx-auto mb-4">
-                                {score >= 2 ? (
-                                    <CheckCircle2 className="w-8 h-8" strokeWidth={3} />
-                                ) : (
-                                    <X className="w-8 h-8 text-destructive" strokeWidth={3} />
-                                )}
-                            </div>
-                            <h4 className="font-black text-2xl uppercase tracking-wide mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                                {score >= 2 ? "Great Trade!" : "Volatile!"}
-                            </h4>
-                            <p className="text-sm text-muted-foreground font-medium mb-6 px-4">
-                                You scored {score}/{TOTAL_ROUNDS}. <br />
-                                {score >= 2
-                                    ? "You reacted perfectly to market news."
-                                    : "News moves fast. Keep practicing."}
-                            </p>
-                            <button
-                                onClick={onComplete}
-                                className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                            >
-                                Continue Lesson
-                                <ArrowRight className="w-5 h-5" strokeWidth={3} />
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
+                <MinigameCompletionPopup
+                    completed={gameState === "complete"}
+                    onComplete={onComplete}
+                    title={score >= 3 ? "Great Trade! 🚀" : "Market Volatility! 📉"}
+                    description={`You scored ${score}/${TOTAL_ROUNDS}. ${score >= 3 ? "You reacted perfectly to market news!" : "News moves fast. Keep practicing to master the reaction!"}`}
+                    icon={score >= 3 ? Trophy : Zap}
+                />
             </div>
 
             {/* 3. Controls (Matching BetaShadow Chunky Buttons) */}

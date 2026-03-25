@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { ArrowRight, CheckCircle2, AlertTriangle, Zap, DollarSign, TrendingDown, ArrowBigDown, ArrowBigUp } from "lucide-react"
+import { ArrowRight, CheckCircle2, AlertTriangle, Zap, DollarSign, TrendingDown, ArrowBigDown, ArrowBigUp, Trophy } from "lucide-react"
 import confetti from "canvas-confetti"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface TheLiquidityExitProps {
     onComplete: () => void
@@ -320,74 +321,69 @@ export default function TheLiquidityExit({ onComplete, ticker = "STOCK" }: TheLi
 
             {/* ── 3. Controls (Copied from TheEarningsReaction Buy/Sell buttons) ── */}
             <div className="grid grid-cols-2 gap-4">
-                {!allDone ? (
-                    <>
-                        {/* HIGH LIQUIDITY — Copied from TheEarningsReaction BUY button */}
-                        <button
-                            onClick={() => !activeMode && !completedHigh && setActiveMode("HIGH")}
-                            className={cn(
-                                "relative h-24 rounded-2xl border-2 transition-all duration-200 active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden",
-                                completedHigh
-                                    ? "bg-primary/10 border-primary/30 text-primary cursor-default"
-                                    : activeMode === "HIGH"
-                                        ? "bg-primary/10 border-primary shadow-pop-active text-primary"
-                                        : activeMode !== null
-                                            ? "bg-white border-border text-muted-foreground opacity-50 cursor-not-allowed"
-                                            : "bg-white border-primary shadow-pop-active text-primary hover:bg-primary/5"
-                            )}
-                        >
-                            <div className="absolute top-2 right-2 opacity-20">
-                                <Zap size={20} />
-                            </div>
-                            {completedHigh ? (
-                                <CheckCircle2 className="w-8 h-8 z-10" />
-                            ) : (
-                                <Zap className="w-8 h-8 z-10 fill-primary/20" />
-                            )}
-                            <div className="flex flex-col items-center leading-none z-10">
-                                <span className="font-black text-sm uppercase mt-1">{completedHigh ? "DONE" : "HIGH"}</span>
-                                <span className="text-[10px] opacity-70 font-bold">{completedHigh ? "COMPLETED" : "LOTS OF BUYERS"}</span>
-                            </div>
-                        </button>
+                <button
+                    onClick={() => !activeMode && !completedHigh && setActiveMode("HIGH")}
+                    className={cn(
+                        "relative h-24 rounded-2xl border-2 transition-all duration-200 active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden",
+                        completedHigh
+                            ? "bg-primary/10 border-primary/30 text-primary cursor-default"
+                            : activeMode === "HIGH"
+                                ? "bg-primary/10 border-primary shadow-pop-active text-primary"
+                                : activeMode !== null
+                                    ? "bg-white border-border text-muted-foreground opacity-50 cursor-not-allowed"
+                                    : "bg-white border-primary shadow-pop-active text-primary hover:bg-primary/5"
+                    )}
+                >
+                    <div className="absolute top-2 right-2 opacity-20">
+                        <Zap size={20} />
+                    </div>
+                    {completedHigh ? (
+                        <CheckCircle2 className="w-8 h-8 z-10" />
+                    ) : (
+                        <Zap className="w-8 h-8 z-10 fill-primary/20" />
+                    )}
+                    <div className="flex flex-col items-center leading-none z-10">
+                        <span className="font-black text-sm uppercase mt-1">{completedHigh ? "DONE" : "HIGH"}</span>
+                        <span className="text-[10px] opacity-70 font-bold">{completedHigh ? "COMPLETED" : "LOTS OF BUYERS"}</span>
+                    </div>
+                </button>
 
-                        {/* LOW LIQUIDITY — Copied from TheEarningsReaction SELL button */}
-                        <button
-                            onClick={() => !activeMode && !completedLow && setActiveMode("LOW")}
-                            className={cn(
-                                "relative h-24 rounded-2xl border-2 transition-all duration-200 active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden",
-                                completedLow
-                                    ? "bg-tertiary/10 border-tertiary/30 text-tertiary cursor-default"
-                                    : activeMode === "LOW"
-                                        ? "bg-tertiary/10 border-tertiary shadow-pop-active text-tertiary"
-                                        : activeMode !== null
-                                            ? "bg-white border-border text-muted-foreground opacity-50 cursor-not-allowed"
-                                            : "bg-white border-tertiary shadow-pop-active text-tertiary hover:bg-tertiary/5"
-                            )}
-                        >
-                            <div className="absolute top-2 right-2 opacity-20">
-                                <AlertTriangle size={20} />
-                            </div>
-                            {completedLow ? (
-                                <CheckCircle2 className="w-8 h-8 z-10" />
-                            ) : (
-                                <AlertTriangle className="w-8 h-8 z-10 fill-tertiary/20" />
-                            )}
-                            <div className="flex flex-col items-center leading-none z-10">
-                                <span className="font-black text-sm uppercase mt-1">{completedLow ? "DONE" : "LOW"}</span>
-                                <span className="text-[10px] opacity-70 font-bold">{completedLow ? "COMPLETED" : "FEW BUYERS"}</span>
-                            </div>
-                        </button>
-                    </>
-                ) : (
-                    <button
-                        onClick={onComplete}
-                        className="col-span-2 w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                    >
-                        Continue to Quiz
-                        <ArrowRight className="w-5 h-5" strokeWidth={3} />
-                    </button>
-                )}
+                {/* LOW LIQUIDITY — Copied from TheEarningsReaction SELL button */}
+                <button
+                    onClick={() => !activeMode && !completedLow && setActiveMode("LOW")}
+                    className={cn(
+                        "relative h-24 rounded-2xl border-2 transition-all duration-200 active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-1 group overflow-hidden",
+                        completedLow
+                            ? "bg-tertiary/10 border-tertiary/30 text-tertiary cursor-default"
+                            : activeMode === "LOW"
+                                ? "bg-tertiary/10 border-tertiary shadow-pop-active text-tertiary"
+                                : activeMode !== null
+                                    ? "bg-white border-border text-muted-foreground opacity-50 cursor-not-allowed"
+                                    : "bg-white border-tertiary shadow-pop-active text-tertiary hover:bg-tertiary/5"
+                    )}
+                >
+                    <div className="absolute top-2 right-2 opacity-20">
+                        <AlertTriangle size={20} />
+                    </div>
+                    {completedLow ? (
+                        <CheckCircle2 className="w-8 h-8 z-10" />
+                    ) : (
+                        <AlertTriangle className="w-8 h-8 z-10 fill-tertiary/20" />
+                    )}
+                    <div className="flex flex-col items-center leading-none z-10">
+                        <span className="font-black text-sm uppercase mt-1">{completedLow ? "DONE" : "LOW"}</span>
+                        <span className="text-[10px] opacity-70 font-bold">{completedLow ? "COMPLETED" : "FEW BUYERS"}</span>
+                    </div>
+                </button>
             </div>
+
+            <MinigameCompletionPopup
+                completed={allDone}
+                onComplete={onComplete}
+                title="Liquidity Legend! 🌊"
+                description="You've mastered the exit! Whether it's a flood of buyers or a desert, you know how to find the price that gets the deal done."
+                icon={Trophy}
+            />
 
         </div>
     )

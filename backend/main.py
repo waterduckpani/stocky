@@ -840,8 +840,8 @@ async def generate_content(symbol: str):
                     slides = selected_concept["concept"]["slides"]
                     if slides:
                         new_text = (
-                            f"You searched for **{stock_context.name}**. Its **Dividend Yield** is **{yield_percent:.2f}%**.\n\n"
-                            f"This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{stock_context.symbol}**."
+                            f"You searched for **{stock_context.name}**. Its **Dividend Yield** is **{yield_percent:.2f}%**. "
+                            f"That's the annual cash it pays you just for holding **{stock_context.symbol}**, straight to your account, every year."
                         )
                         slides[0]["text"] = new_text
                         selected_concept["debug_trace"] = f"MainPy_Injected: {yield_percent:.2f}%"
@@ -850,16 +850,52 @@ async def generate_content(symbol: str):
                 if game_config:
                     game_config["base_dividend"] = div_rate
 
-                # 5. Update Quiz
-                if "quiz" in selected_concept and selected_concept["quiz"]:
-                    q0_template = "If {company_name} pays a dividend and the stock price drops, what happens to the Yield %?"
-                    selected_concept["quiz"][0]["question"] = q0_template.replace("{company_name}", str(stock_context.name))
-                    
+                # 5. Quiz — {company_name} in Q2/Q3 is handled by frontend fillPlaceholders()
+
             except Exception as e:
                 print(f"DEBUG_MAIN: Error injecting {e}")
                 import traceback
                 traceback.print_exc()
         
+        elif concept_id == "lesson_12_eps":
+            try:
+                trailing_eps = info.get('trailingEps')
+                if trailing_eps is not None:
+                    eps_str = f"${trailing_eps:.2f}" if trailing_eps >= 0 else f"-${abs(trailing_eps):.2f}"
+                else:
+                    eps_str = "N/A"
+                if "concept" in selected_concept and "slides" in selected_concept["concept"]:
+                    slides = selected_concept["concept"]["slides"]
+                    if slides:
+                        slides[0]["text"] = (
+                            f"**{stock_context.name}**'s **Earnings Per Share (EPS)** is **{eps_str}** right now. "
+                            f"That's how much of the company's profit belongs to a single share — your slice of the pizza."
+                        )
+            except Exception as e:
+                print(f"Error injecting Lesson 12 EPS: {e}")
+
+        elif concept_id == "lesson_13_pe_ratio":
+            try:
+                pe_val = stock_context.pe_ratio
+                if pe_val is not None:
+                    pe_str = f"{pe_val:.1f}"
+                else:
+                    pe_str = "N/A"
+                # Inject into slide 3 (0-indexed) placeholders
+                if "concept" in selected_concept and "slides" in selected_concept["concept"]:
+                    slides = selected_concept["concept"]["slides"]
+                    for slide in slides:
+                        if "{pe_ratio}" in slide.get("text", ""):
+                            slide["text"] = slide["text"].replace("{pe_ratio}", pe_str)
+                        if "{company_name}" in slide.get("title", ""):
+                            slide["title"] = slide["title"].replace("{company_name}", str(stock_context.name))
+                # Inject pe_ratio into game_config so ValuationStation uses the real value
+                if game_config:
+                    game_config["pe_ratio"] = pe_val if pe_val is not None else 20.0
+                    game_config["symbol"] = stock_context.symbol
+            except Exception as e:
+                print(f"Error injecting Lesson 13 PE Ratio: {e}")
+
         elif concept_id == "lesson_15_beta":
             try:
                 beta_val = stock_context.beta if stock_context.beta is not None else 1.0
@@ -1107,8 +1143,8 @@ async def generate_content(symbol: str):
              # Force update concept data slides
              if "slides" in concept_data and concept_data["slides"]:
                  new_text = (
-                    f"You searched for **{stock_context.name}**. Its **Dividend Yield** is **{final_yield_pct:.2f}%**.\n\n"
-                    f"This number tells you exactly how much 'Cashback' you earn every year relative to the price of **{stock_context.symbol}**."
+                    f"You searched for **{stock_context.name}**. Its **Dividend Yield** is **{final_yield_pct:.2f}%**. "
+                    f"That's the annual cash it pays you just for holding **{stock_context.symbol}**, straight to your account, every year."
                  )
                  concept_data["slides"][0]["text"] = new_text
         except Exception:

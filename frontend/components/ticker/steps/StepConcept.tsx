@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Lightbulb, BookOpen, Target, Store, Scale, Zap, ArrowRight, ArrowLeft, Gem } from "lucide-react"
+import { Lightbulb, BookOpen, Target, Store, Scale, Zap, ArrowRight, ArrowLeft, Gem, Tag, Banknote, Magnet } from "lucide-react"
 
 interface Slide {
     title: string
@@ -35,7 +35,10 @@ const ICON_MAP: Record<string, any> = {
     "Store": Store,
     "Scale": Scale,
     "Zap": Zap,
-    "Gem": Gem
+    "Gem": Gem,
+    "Tag": Tag,
+    "Banknote": Banknote,
+    "Magnet": Magnet,
 }
 
 export function StepConcept({ symbol, stockData, concept }: StepConceptProps) {

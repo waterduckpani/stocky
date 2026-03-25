@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
-import { Anchor, ArrowRight, CheckCircle2, Ruler, TrendingUp, TrendingDown, HelpCircle, X } from "lucide-react"
+import { Anchor, ArrowRight, CheckCircle2, Ruler, TrendingUp, TrendingDown, HelpCircle, X, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface ThePriceAnchorProps {
     onComplete: () => void
@@ -320,38 +321,13 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
                 )}
             </div>
 
-            {/* Summary State */}
-            {gameState === "complete" && (
-                <div className="absolute inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center p-6">
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="w-full bg-card text-foreground border-2 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
-                    >
-                        <div className="w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-pop-active flex items-center justify-center mx-auto mb-4">
-                            {score >= 2 ? (
-                                <CheckCircle2 className="w-8 h-8" strokeWidth={3} />
-                            ) : (
-                                <X className="w-8 h-8 text-destructive" strokeWidth={3} />
-                            )}
-                        </div>
-                        <h4 className="font-black text-2xl uppercase tracking-wide mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                            {score >= 2 ? "Range Master!" : "Keep Watching!"}
-                        </h4>
-                        <p className="text-sm text-muted-foreground font-medium mb-6 px-4">
-                            You scored {score}/{scenarios.length}. <br />
-                            Understanding the 52-week range helps you know if a stock is cheap or expensive.
-                        </p>
-                        <button
-                            onClick={onComplete}
-                            className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                        >
-                            Continue to Quiz
-                            <ArrowRight className="w-5 h-5" strokeWidth={3} />
-                        </button>
-                    </motion.div>
-                </div>
-            )}
+            <MinigameCompletionPopup
+                completed={gameState === "complete"}
+                onComplete={onComplete}
+                title={score >= 2 ? "Range Master! ⚓" : "Keep Watching! 👀"}
+                description={`You scored ${score}/${scenarios.length}. ${score >= 2 ? "Understanding the 52-week range helps you know if a stock is cheap or expensive." : "Stock prices are like moods — they swing from high to low. Keep practicing!"}`}
+                icon={score >= 2 ? Trophy : Anchor}
+            />
 
         </div>
     )

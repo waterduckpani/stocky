@@ -19,6 +19,38 @@ Target reader: 16-year-old who's never invested. Short attention span. On a phon
 | 3 | **The Mechanic** | How it actually works. Max 2 sentences. Numbers preferred. |
 | 4 | **The Rule** *(optional)* | One bold takeaway. What should they remember 1 week later? |
 
+## ⚠️ CRITICAL: Content Quality Audit Checklist
+
+Before finalising any lesson, verify every slide passes ALL of these checks:
+
+1. **Define before you use** — Every financial acronym or term must be spelled out in full
+   on its FIRST appearance. Never drop an acronym cold.
+   - ✅ "**Earnings Per Share (EPS)** is..." → then use "EPS" freely after that
+   - ❌ "**EPS** is your slice" ← first mention, acronym never defined — FAIL
+
+2. **Connected Hook (when live data exists)** — If the lesson has a live data placeholder
+   (`{eps}`, `{beta}`, `{dividendYield}`, etc.), Slide 1 MUST use that real number to
+   connect the company directly to the concept. Don't just name the company — show their
+   actual data first, then explain what it means.
+   - ✅ "**{company_name}**'s EPS is **{eps}** right now. That's how much profit each share earns."
+   - ❌ "You searched for **{company_name}**. EPS is how profit is divided among shares." (generic, disconnected)
+
+3. **Analogy is physical** — Not another financial comparison.
+   - ✅ pizza, speedboat, lemonade stand
+   - ❌ "like a bond", "similar to another stock"
+
+4. **{company_name} on slide 1** — No exceptions.
+
+5. **Word count ≤ 40 per slide** — Count them. Cut ruthlessly.
+
+6. **No banned words** — see Voice Rules below.
+
+7. **correctIndex spread** — see Answer Position Rule in Quiz section.
+
+Run this checklist top-to-bottom on every audit. Fail = fix before moving on.
+
+---
+
 ## Hard Rules
 
 **Word limit:** Max 40 words per slide. Count them. Cut ruthlessly.
@@ -75,6 +107,29 @@ These are your BEST slides from the existing lessons. Match this quality:
 
 **Good wrong option:** "Because Apple is a fruit" (funny, memorable)
 **Bad wrong option:** "The market explodes" (too absurd, teaches nothing)
+
+### ⚠️ CRITICAL: Answer Position Rule — Read This Every Time
+
+**NEVER put the correct answer at index 0 for more than one question in a quiz.**
+**NEVER have the same `correctIndex` for two consecutive questions.**
+
+Before finalising any quiz, check all `correctIndex` values together and ensure they are spread across 0, 1, 2, 3.
+
+✅ Good spread — all different positions:
+```python
+# Q1: correctIndex: 2
+# Q2: correctIndex: 0
+# Q3: correctIndex: 3
+```
+
+❌ Bad — correct answer always at index 0 (a recurring bug):
+```python
+# Q1: correctIndex: 0
+# Q2: correctIndex: 0
+# Q3: correctIndex: 0
+```
+
+**Required check:** After writing all questions, list out every `correctIndex` and confirm no value repeats across the quiz. If they repeat, reorder the options in the affected question until all positions are unique.
 
 ## Dynamic Placeholder Reference
 

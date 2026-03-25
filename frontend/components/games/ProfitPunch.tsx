@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { ArrowDown, DollarSign, Sparkles, ArrowRight } from 'lucide-react'
 import confetti from "canvas-confetti"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 // Geometric Components Re-implmented for Profit Punch
 // Style Reference: ValuationStation.tsx & globals.css
@@ -29,6 +30,7 @@ export function ProfitPunch({
     fiscalYear = "TTM"
 }: ProfitPunchProps) {
     const [gameState, setGameState] = useState<GameState>("intro")
+    const [completed, setCompleted] = useState(false)
 
     // 1. Calculate Real Profit Margin
     const revenue = totalRevenue || 1
@@ -339,16 +341,23 @@ export function ProfitPunch({
                         </div>
 
                         <button
-                            onClick={onComplete}
+                            onClick={() => setCompleted(true)}
                             className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 text-xl"
                         >
-                            Continue to Quiz
+                            Continue
                             <ArrowRight className="w-6 h-6" strokeWidth={3} />
                         </button>
                     </motion.div>
                 )}
 
             </AnimatePresence>
+
+            <MinigameCompletionPopup
+                completed={completed}
+                onComplete={onComplete}
+                title="Reality Check!"
+                description="You've mastered the difference between what comes in and what you keep."
+            />
         </div>
     )
 }
