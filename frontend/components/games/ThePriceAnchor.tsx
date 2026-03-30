@@ -48,7 +48,7 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
             description: "Investors were extremely greedy and optimistic. The stock was dangerously expensive.",
             targetPrice: peakTarget,
             icon: TrendingUp,
-            color: "text-green-500"
+            color: "text-primary"
         }
 
         // Scenario 2: The Panic (Low)
@@ -59,7 +59,7 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
             description: "Fear took over. Everyone was selling, creating a massive discount.",
             targetPrice: panicTarget,
             icon: TrendingDown,
-            color: "text-red-500"
+            color: "text-destructive"
         }
 
         // Scenario 3: The Recovery (Dip Buy)
@@ -70,17 +70,17 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
             description: "Smart money stepped in after the panic. Where do you think the first bounce went?",
             targetPrice: recoveryTarget,
             icon: TrendingUp,
-            color: "text-yellow-600"
+            color: "text-secondary"
         }
 
         // Scenario 4: The Reality (Current)
         const currentScenario = {
             id: "current",
             title: "Right Now",
-            description: "Where is the stock choosing to sit today relative to its history?",
+            description: "Where does this stock sit on its 1-year map today?",
             targetPrice: price,
             icon: HelpCircle,
-            color: "text-blue-500"
+            color: "text-foreground"
         }
 
         setScenarios([peakScenario, panicScenario, recoveryScenario, currentScenario])
@@ -146,12 +146,12 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
     const constraintsRef = useRef(null)
 
     return (
-        <div className="w-full max-w-xl mx-auto bg-card rounded-[2rem] border-2 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
+        <div className="w-full max-w-xl mx-auto bg-card rounded-3xl border-2 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
 
             {/* Header */}
             <div className="text-center relative z-10">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20 text-primary border-2 border-primary/30 shadow-pop-active transform rotate-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20 text-primary border-2 border-primary/30 shadow-pop transform rotate-3">
                         <Anchor className="w-6 h-6" strokeWidth={2.5} />
                     </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-black uppercase tracking-wider border-2 border-border">
@@ -241,10 +241,10 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
                                     <motion.div
                                         initial={{ scale: 0, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
-                                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm z-10"
+                                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-primary rounded-full border-2 border-card shadow-sm z-10"
                                         style={{ left: `${getSliderFromPrice(currentScenario.targetPrice)}%`, marginLeft: '-8px' }}
                                     >
-                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
+                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
                                             Target
                                         </div>
                                     </motion.div>
@@ -269,10 +269,10 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
                                 style={{ left: `${sliderValue}%` }}
                             >
                                 <div className={cn(
-                                    "w-10 h-10 rounded-full bg-white border-4 shadow-pop flex items-center justify-center transition-colors",
-                                    showResult && feedback?.type === 'success' ? "border-green-500 text-green-500" :
-                                        showResult && feedback?.type === 'error' ? "border-red-500 text-red-500" :
-                                            "border-primary text-primary"
+                                    "w-10 h-10 rounded-full bg-card border-2 shadow-pop flex items-center justify-center transition-colors",
+                                    showResult && feedback?.type === 'success' ? "border-primary text-primary" :
+                                        showResult && feedback?.type === 'error' ? "border-destructive text-destructive" :
+                                            "border-foreground text-foreground"
                                 )}>
                                     <Anchor className="w-5 h-5" />
                                 </div>
@@ -296,9 +296,9 @@ export default function ThePriceAnchor({ onComplete, ticker, stockData }: ThePri
                             exit={{ opacity: 0 }}
                             className={cn(
                                 "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-3 rounded-xl border-2 shadow-pop z-40 text-center min-w-[200px]",
-                                feedback.type === 'success' ? "bg-green-100 border-green-600 text-green-800" :
-                                    feedback.type === 'warning' ? "bg-yellow-100 border-yellow-600 text-yellow-800" :
-                                        "bg-red-100 border-red-600 text-red-800"
+                                feedback.type === 'success' ? "bg-primary/10 border-primary text-primary" :
+                                    feedback.type === 'warning' ? "bg-muted border-foreground/20 text-foreground" :
+                                        "bg-destructive/10 border-destructive text-destructive"
                             )}
                         >
                             <div className="font-black text-lg mb-1">{feedback.type === 'success' ? "Great!" : feedback.type === 'error' ? "Oops!" : "Close!"}</div>

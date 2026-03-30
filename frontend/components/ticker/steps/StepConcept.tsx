@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Lightbulb, BookOpen, Target, Store, Scale, Zap, ArrowRight, ArrowLeft, Gem, Tag, Banknote, Magnet } from "lucide-react"
+import { Lightbulb, BookOpen, Target, Store, Scale, Zap, ArrowRight, ArrowLeft, Gem, Tag, Banknote, Magnet, Activity, Users, ShieldCheck, FileText, Columns, Ruler, Anchor, TrendingUp, LogOut, AlertTriangle, Globe, Lock } from "lucide-react"
 
 interface Slide {
     title: string
@@ -39,6 +39,18 @@ const ICON_MAP: Record<string, any> = {
     "Tag": Tag,
     "Banknote": Banknote,
     "Magnet": Magnet,
+    "Activity": Activity,
+    "Users": Users,
+    "ShieldCheck": ShieldCheck,
+    "FileText": FileText,
+    "Columns": Columns,
+    "Ruler": Ruler,
+    "Anchor": Anchor,
+    "TrendingUp": TrendingUp,
+    "LogOut": LogOut,
+    "AlertTriangle": AlertTriangle,
+    "Globe": Globe,
+    "Lock": Lock,
 }
 
 export function StepConcept({ symbol, stockData, concept }: StepConceptProps) {

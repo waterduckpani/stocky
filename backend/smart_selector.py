@@ -156,64 +156,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_15_beta'), None)
-        
-        if not lesson_ref and True: # FORCE HARDCODED FALLBACK
-             print("DEBUG: Force-injecting Lesson 16 (Lookup Failed)")
-             lesson_ref = {
-                "id": "lesson_16_earnings_reports",
-                "title": "Earnings Reports",
-                "concept": {
-                    "name": "The Quarterly Scorecard",
-                    "category": "valuation_health",
-                    "type": "carousel",
-                    "slides": [
-                        {
-                            "title": "What is an Earnings Report? 📋",
-                            "text": "Every 3 months, public companies like **{company_name}** are required by law to file a **10-Q report**. This isn't just news—it is a verified document showing exactly how much money they made and where it went.",
-                            "icon": "FileText"
-                        },
-                        {
-                            "title": "The Three Pillars 🏛️",
-                            "text": "Investors focus on three key numbers compared to last year: **Revenue** (Total Sales), **Net Income** (Bottom Line Profit), and **EPS** (Profit per Share). If a company grows all three, it’s usually a 'winner.'",
-                            "icon": "Columns"
-                        },
-                        {
-                            "title": "Estimates vs. Actuals ⚖️",
-                            "text": "The market doesn't just care about the numbers; it cares about the **Expectations Gap**. Before the report, analysts release 'Consensus Estimates.' If {symbol} reports $1B but everyone expected $1.2B, it’s a **Miss**—and the price will likely fall.",
-                            "icon": "Scale"
-                        },
-                        {
-                            "title": "Guidance: The Forward Look 🔮",
-                            "text": "The past is history. Investors care most about **Guidance**—the CEO's official prediction for the next quarter. A 'Beat' on current earnings paired with 'Lowered Guidance' is a common reason for a stock crash.",
-                            "icon": "Zap"
-                        }
-                    ]
-                },
-                "breakdown": "Earnings season is volatile.",
-                "news": [],
-                "game_config": {
-                    "type": "earnings_reaction",
-                    "instruction": "Read the News Flash. TAP FAST: Buy (Green) for Good News, Sell (Red) for Bad News!"
-                },
-                "quiz": [
-                     {
-                        "question": "What is an Earnings Report?",
-                        "options": ["Daily Email", "Quarterly Report Card", "Secret Doc", "Birthday List"],
-                        "correctIndex": 1
-                    },
-                    {
-                        "question": "If {company_name} beats profit but drops, why?",
-                        "options": ["Missed Expectations", "Fake Profit", "Illegal", "Glitch"],
-                        "correctIndex": 0
-                    },
-                    {
-                        "question": "What is Guidance?",
-                        "options": ["Prediction for Next Quarter", "Office Map", "Fashion Advice", "History"],
-                        "correctIndex": 0
-                    }
-                ]
-            }
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
 
         if lesson_ref:
             lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution
@@ -815,15 +758,16 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                  if "game_config" in lesson:
                      lesson["game_config"]["base_beta"] = beta_val
                      
-                 # 4. Inject Quiz
+                 # 4. Inject Quiz (question + explanation)
                  if "quiz" in lesson and lesson["quiz"]:
                      for q in lesson["quiz"]:
-                         q_text = q.get("question", "")
-                         if "{beta}" in q_text:
-                             q["question"] = q_text.replace("{beta}", beta_str)
-                             q_text = q["question"] # Update for next check
-                         if "{company_name}" in q_text:
-                             q["question"] = q_text.replace("{company_name}", str(context.name))
+                         for field in ("question", "explanation"):
+                             val = q.get(field, "")
+                             if "{beta}" in val:
+                                 val = val.replace("{beta}", beta_str)
+                             if "{company_name}" in val:
+                                 val = val.replace("{company_name}", str(context.name))
+                             q[field] = val
              except Exception as e:
                  print(f"Error injecting Lesson 15 context: {e}")
 
@@ -873,8 +817,10 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
                  # Inject into Quiz
                  if "quiz" in lesson:
                      for q in lesson["quiz"]:
-                         # Add any specific quiz injections if needed
-                         pass
+                         for field in ("question", "explanation"):
+                             val = q.get(field, "")
+                             if "{company_name}" in val:
+                                 q[field] = val.replace("{company_name}", context.name)
              except Exception as e:
                  print(f"Error injecting Lesson 17 context: {e}")
                  high = context.week_52_high if context.week_52_high else context.price * 1.2

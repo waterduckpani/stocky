@@ -8,7 +8,7 @@ import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface TheEarningsReactionProps {
     onComplete: () => void
-    ticker: string
+    ticker?: string
 }
 
 type GameState = "intro" | "playing" | "complete"
@@ -112,12 +112,12 @@ export default function TheEarningsReaction({ onComplete, ticker }: TheEarningsR
     }
 
     return (
-        <div className="w-full max-w-xl mx-auto bg-card rounded-[2rem] border-2 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
+        <div className="w-full max-w-xl mx-auto bg-card rounded-3xl border-2 border-foreground shadow-pop p-6 relative overflow-hidden flex flex-col gap-6 animate-pop-in select-none">
 
             {/* 1. Header Area (Matching BetaShadow) */}
             <div className="text-center relative z-10">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20 text-primary border-2 border-primary/30 shadow-pop-active transform -rotate-2">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20 text-primary border-2 border-primary/30 shadow-pop transform -rotate-2">
                         <TrendingUp className="w-6 h-6" strokeWidth={2.5} />
                     </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-black uppercase tracking-wider border-2 border-border">
@@ -148,7 +148,7 @@ export default function TheEarningsReaction({ onComplete, ticker }: TheEarningsR
                         animate={{ opacity: 1, scale: 1 }}
                         className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm p-6 text-center"
                     >
-                        <div className="w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-pop-active flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-pop flex items-center justify-center mb-4">
                             <Newspaper className="w-8 h-8" strokeWidth={2.5} />
                         </div>
                         <h3 className="text-xl font-black mb-2" style={{ fontFamily: 'var(--font-heading)' }}>Trade the News</h3>
@@ -196,7 +196,7 @@ export default function TheEarningsReaction({ onComplete, ticker }: TheEarningsR
                             <motion.div
                                 animate={ballControls}
                                 className={cn(
-                                    "w-16 h-16 rounded-full bg-white border-4 shadow-pop flex items-center justify-center relative z-10 transition-colors duration-300",
+                                    "w-16 h-16 rounded-full bg-card border-2 shadow-pop flex items-center justify-center relative z-10 transition-colors duration-300",
                                     feedback?.type === 'success' ? "border-primary text-primary" :
                                         feedback?.type === 'error' ? "border-destructive text-destructive" :
                                             "border-foreground text-foreground"

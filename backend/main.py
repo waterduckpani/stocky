@@ -913,22 +913,16 @@ async def generate_content(symbol: str):
                 if game_config:
                     game_config["base_beta"] = beta_val
                 
-                # 3. Update Quiz
+                # 3. Update Quiz (question + explanation)
                 if "quiz" in selected_concept and selected_concept["quiz"]:
-                    print(f"DEBUG_MAIN: Processing Quiz for {stock_context.name}")
                     for q in selected_concept["quiz"]:
-                         q_text = q.get("question", "")
-                         print(f"DEBUG_MAIN: Checking Q: {q_text}")
-                         
-                         if "{beta}" in q_text:
-                             q["question"] = q_text.replace("{beta}", beta_str)
-                             print(f"DEBUG_MAIN: Replaced beta -> {q['question']}")
-                             # Update local var for next check
-                             q_text = q["question"]
-                             
-                         if "{company_name}" in q_text:
-                             q["question"] = q_text.replace("{company_name}", str(stock_context.name))
-                             print(f"DEBUG_MAIN: Replaced name -> {q['question']}")
+                        for field in ("question", "explanation"):
+                            val = q.get(field, "")
+                            if "{beta}" in val:
+                                val = val.replace("{beta}", beta_str)
+                            if "{company_name}" in val:
+                                val = val.replace("{company_name}", str(stock_context.name))
+                            q[field] = val
 
             except Exception as e:
                 print(f"DEBUG_MAIN: Error injecting beta {e}")

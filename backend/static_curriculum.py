@@ -879,22 +879,22 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "What is an Earnings Report? 📋",
-                    "text": "Every 3 months, public companies like **{company_name}** are required by law to file a **10-Q report**. This isn't just news—it is a verified document showing exactly how much money they made and where it went.",
+                    "text": "Every 3 months, public companies like **{company_name}** are required by law to file a **10-Q report**. This isn't just news. It's a verified document showing exactly how much money they made and where it went.",
                     "icon": "FileText"
                 },
                 {
                     "title": "The Three Pillars 🏛️",
-                    "text": "Investors focus on three key numbers compared to last year: **Revenue** (Total Sales), **Net Income** (Bottom Line Profit), and **EPS** (Profit per Share). If a company grows all three, it’s usually a 'winner.'",
+                    "text": "Investors track three numbers every quarter: **Revenue** (Total Sales), **Net Income** (Bottom Line Profit), and **EPS** (Earnings per Share). If a company grows all three, it’s usually a strong sign.",
                     "icon": "Columns"
                 },
                 {
                     "title": "Estimates vs. Actuals ⚖️",
-                    "text": "The market doesn’t just care about the numbers — it cares about the **Expectations Gap**. Before the report, analysts publish their estimates. If {symbol} earns $1B but everyone expected $1.2B, it’s a **Miss** — and the price will likely fall.",
+                    "text": "The market doesn’t just care about the numbers. It cares about the **Expectations Gap**. Before the report, analysts publish their estimates. If {symbol} earns $1B but everyone expected $1.2B, it’s a **Miss** and the price will likely fall.",
                     "icon": "Scale"
                 },
                 {
                     "title": "Guidance: The Forward Look 🔮",
-                    "text": "The past is history. Investors care most about **Guidance**—the CEO's official prediction for the next quarter. A 'Beat' on current earnings paired with 'Lowered Guidance' is a common reason for a stock crash.",
+                    "text": "The past is history. Investors care most about **Guidance**, the CEO's official prediction for the next quarter. A 'Beat' on current earnings with 'Lowered Guidance' is one of the most common reasons a stock crashes after a good report.",
                     "icon": "Zap"
                 }
             ],
@@ -933,15 +933,15 @@ TIER_2_LESSONS = [
                 "explanation": "Markets trade on expectations. Even if they made money, if it was LESS than expected, it counts as a failure."
             },
             {
-                "question": "What is 'Guidance'?",
+                "question": "{company_name} beats earnings this quarter but lowers its Guidance for next quarter. What should you expect?",
                 "options": [
-                    "A map of the office",
-                    "Advice on how to dress",
-                    "The CEO's prediction for the COMING quarter",
-                    "The history of the company"
+                    "The stock will surge because the beat is all that matters",
+                    "Nothing changes — guidance is just an opinion",
+                    "The stock may fall despite the beat, because the future outlook weakened",
+                    "The company is about to pay a special dividend"
                 ],
                 "correctIndex": 2,
-                "explanation": "Guidance is the company's own forecast. It is often MORE important than the current numbers because stock prices are about the future."
+                "explanation": "Guidance is often more important than current earnings. Investors price in the future, so a weaker forecast can erase a good quarter instantly."
             }
         ]
     },
@@ -1106,7 +1106,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "The Analogy 🏃",
-                    "text": "Think of the Market as a **Lead Runner**.\n\n• **Beta 1.0:** You run at the same pace.\n• **Beta > 1.5 (Sprinter):** Every market jog, you sprint -amplified gains AND crashes.\n• **Beta < 0.8 (Stroller):** You move slower, on your own schedule.",
+                    "text": "Think of the Market as a **Lead Runner**.\n\n• **Beta 1.0:** You match its pace exactly.\n• **Beta above 1.5 (Sprinter):** Every market jog, you sprint. Bigger gains, bigger crashes.\n• **Beta below 0.8 (Stroller):** You move slower, on your own schedule.",
                     "icon": "Users"
                 },
                 {
@@ -1125,26 +1125,52 @@ TIER_2_LESSONS = [
         "game_config": {
             "type": "beta_shadow",
             "instruction": "Set the Beta Mode to match the Market's moves!",
-            "base_beta": "{beta}"
+            "base_beta": 1.0
         },
         "quiz": [
             {
-                "question": "Analysts calculate a Beta of {beta} for {company_name}. What is Beta essentially measuring?",
-                "options": ["The company's total debt", "The CEO's performance", "The stock's volatility relative to the market", "The dividend payout date"],
-                "correctIndex": 2,
-                "explanation": "Beta measures how closely a stock's price follows the overall market's movements -how tightly it tracks the market's ups and downs."
+                "question": "What does Beta measure in a stock?",
+                "options": [
+                    "The company's total debt load",
+                    "How much the stock moves compared to the overall market",
+                    "The dividend the company pays each quarter",
+                    "How profitable the company was last year"
+                ],
+                "correctIndex": 1,
+                "explanation": "Beta measures how much a stock moves when the market moves. A high Beta means it swings more than the market. A low Beta means it barely reacts."
             },
             {
-                "question": "What does a Beta of 1.0 mean?",
-                "options": ["The stock rarely moves", "The stock is extremely risky", "The stock is bankrupt", "The stock moves exactly in sync with the market"],
+                "question": "The market drops 10%. A stock has a Beta of 2.0. How much does the stock likely drop?",
+                "options": [
+                    "About 5% — it moves half as much",
+                    "About 10% — it moves in sync",
+                    "It goes up 10% — Beta means it reverses",
+                    "About 20% — it amplifies the market move"
+                ],
                 "correctIndex": 3,
-                "explanation": "A Beta of 1.0 means the stock has a 1:1 correlation with the market's movements."
+                "explanation": "Beta 2.0 means the stock moves roughly twice as much as the market. A 10% market drop becomes a 20% drop for this stock."
             },
             {
-                "question": "Which type of stock typically has a LOW Beta (< 0.5)?",
-                "options": ["A boring Utility company", "A trendy Tech IPO", "A crypto-mining company", "A leveraged ETF"],
+                "question": "{company_name} has a Beta of {beta}. What does that tell you about investing in it?",
+                "options": [
+                    "It tells you nothing useful about risk",
+                    "It shows how much the company earned last quarter",
+                    "It shows whether the stock swings more or less than the broader market",
+                    "It confirms the company pays dividends"
+                ],
+                "correctIndex": 2,
+                "explanation": "Beta is your risk preview. A Beta above 1 means {company_name} tends to swing harder than the market. Below 1 means it's calmer."
+            },
+            {
+                "question": "Which type of company typically has a low Beta?",
+                "options": [
+                    "A steady utility that people rely on regardless of the economy",
+                    "A new AI startup chasing rapid growth",
+                    "A crypto exchange with daily price swings",
+                    "A leveraged fund that amplifies market moves"
+                ],
                 "correctIndex": 0,
-                "explanation": "Utilities are 'Defensive'—people need electricity even in a recession, so their stock price stays stable (Low Beta)."
+                "explanation": "Utilities are defensive. People pay their electricity bill in recessions too, so the stock price barely budges when markets fall."
             }
         ]
     },
@@ -1249,7 +1275,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "The Breakout 📈",
-                    "text": "When **{symbol}** smashes through its yearly high, that's a **52-Week Breakout**. Every investor who bought in the last year is now in profit -so there's less pressure to sell and momentum tends to accelerate.",
+                    "text": "When **{symbol}** smashes through its yearly high, that's a **52-Week Breakout**. Every investor who bought in the last year is now in profit. Less pressure to sell means momentum tends to accelerate.",
                     "icon": "TrendingUp"
                 }
             ],
@@ -1258,42 +1284,45 @@ TIER_2_LESSONS = [
                 {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"}
             ]
         },
-        "breakdown": "The 52-Week Range is your stock's yearly scoreboard -it shows where the price has been so you can see where it stands today.",
+        "breakdown": "The 52-Week Range is your stock's yearly scoreboard. It shows where the price has been so you can see where it stands today.",
         "news": [],
         "game_config": {
             "type": "sentiment_zone",
-            "instruction": "Analyze the technical position of {symbol} relative to its 1-year boundaries."
+            "instruction": "Where does {symbol} sit on its 1-year price map? Drag to guess!"
         },
         "quiz": [
             {
                 "question": "What is the 52-Week Range used for?",
                 "options": [
-                    "Analyzing relative performance over the last year",
+                    "Showing where a stock has traded over the past year",
                     "Predicting the exact price tomorrow",
                     "Calculating the CEO's bonus",
                     "It has no use"
                 ],
-                "correctIndex": 0
+                "correctIndex": 0,
+                "explanation": "The 52-week high and low are reference points. They show where the stock has been, so you can judge where it stands today."
             },
             {
                 "question": "If a stock breaks above its 52-Week High, what does this often signal?",
                 "options": [
                     "The company is going bankrupt",
                     "Everyone is selling",
-                    "Strong momentum and lack of resistance",
+                    "Strong buying pressure with no overhead resistance",
                     "The market is broken"
                 ],
-                "correctIndex": 2
+                "correctIndex": 2,
+                "explanation": "When a stock hits a new 52-week high, every investor who bought in the last year is in profit. No one is desperate to sell, so the price can keep climbing."
             },
             {
-                "question": "Why do the 52-Week High and Low act as 'Anchors'?",
+                "question": "{company_name} is sitting near its 52-Week Low. What does that usually mean for buyers?",
                 "options": [
-                    "They weigh the stock down",
-                    "They are legal limits set by the government",
-                    "They are random numbers",
-                    "They are psychological levels of Support and Resistance"
+                    "They will panic and sell immediately",
+                    "The 52-week low is meaningless",
+                    "It is an automatic guarantee of future gains",
+                    "The stock is at a discount and some buyers see a potential bounce"
                 ],
-                "correctIndex": 3
+                "correctIndex": 3,
+                "explanation": "Near the 52-week low, value hunters often step in expecting a bounce. It is not a guarantee, but it is a level where buying pressure tends to increase."
             }
         ]
     }, {
