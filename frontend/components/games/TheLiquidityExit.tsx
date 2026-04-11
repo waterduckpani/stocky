@@ -330,8 +330,8 @@ export default function TheLiquidityExit({ onComplete, ticker = "STOCK" }: TheLi
                             : activeMode === "HIGH"
                                 ? "bg-primary/10 border-primary shadow-pop-active text-primary"
                                 : activeMode !== null
-                                    ? "bg-white border-border text-muted-foreground opacity-50 cursor-not-allowed"
-                                    : "bg-white border-primary shadow-pop-active text-primary hover:bg-primary/5"
+                                    ? "bg-card border-border text-muted-foreground opacity-50 cursor-not-allowed"
+                                    : "bg-card border-primary shadow-pop-active text-primary hover:bg-primary/5"
                     )}
                 >
                     <div className="absolute top-2 right-2 opacity-20">
@@ -358,8 +358,8 @@ export default function TheLiquidityExit({ onComplete, ticker = "STOCK" }: TheLi
                             : activeMode === "LOW"
                                 ? "bg-tertiary/10 border-tertiary shadow-pop-active text-tertiary"
                                 : activeMode !== null
-                                    ? "bg-white border-border text-muted-foreground opacity-50 cursor-not-allowed"
-                                    : "bg-white border-tertiary shadow-pop-active text-tertiary hover:bg-tertiary/5"
+                                    ? "bg-card border-border text-muted-foreground opacity-50 cursor-not-allowed"
+                                    : "bg-card border-tertiary shadow-pop-active text-tertiary hover:bg-tertiary/5"
                     )}
                 >
                     <div className="absolute top-2 right-2 opacity-20">

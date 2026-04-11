@@ -182,7 +182,7 @@ export function LearningFlow({ symbol, stockData, llmContent, onStepChange }: Le
                 />
                 break
             case "liquidity_exit":
-                GameComponent = <TheLiquidityExit onComplete={handleNext} />
+                GameComponent = <TheLiquidityExit onComplete={handleNext} ticker={symbol} />
                 break
             case "supply_squeeze":
                 GameComponent = <TheSupplySqueeze

@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { TrendingUp, Users, Box, ArrowRight, CheckCircle2, AlertTriangle, RefreshCcw } from "lucide-react"
+import { Users, Box, CheckCircle2, AlertTriangle, RefreshCcw, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { MinigameCompletionPopup } from "./MinigameCompletionPopup"
 
 interface TheSupplySqueezeProps {
     onComplete: () => void
-    ticker: string
-    stockData: any
+    ticker?: string
+    stockData?: any
 }
 
 type Mode = "HIGH" | "LOW" | null
@@ -21,7 +22,6 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
     // Progress Tracking
     const [doneHigh, setDoneHigh] = useState(false)
     const [doneLow, setDoneLow] = useState(false)
-    const [showCompletion, setShowCompletion] = useState(false)
 
     // Reset loop for simulation
     useEffect(() => {
@@ -53,13 +53,6 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
         }
     }, [mode])
 
-    // Check for total completion
-    useEffect(() => {
-        if (doneHigh && doneLow) {
-            const t = setTimeout(() => setShowCompletion(true), 1500)
-            return () => clearTimeout(t)
-        }
-    }, [doneHigh, doneLow])
 
     const handleReset = () => {
         setMode(null)
@@ -99,9 +92,12 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                         <span className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Current Price</span>
                         <motion.span
                             key={price}
-                            initial={{ scale: 1.05, color: mode === "LOW" && price > 110 ? "#ef4444" : "#1e293b" }}
-                            animate={{ scale: 1, color: mode === "LOW" && price > 110 ? "#ef4444" : "#1e293b" }}
-                            className="text-2xl font-black"
+                            initial={{ scale: 1.05 }}
+                            animate={{ scale: 1 }}
+                            className={cn(
+                                "text-2xl font-black transition-colors duration-300",
+                                mode === "LOW" && price > 110 ? "text-destructive" : "text-foreground"
+                            )}
                         >
                             ${price}
                         </motion.span>
@@ -130,7 +126,7 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                                         !isAvailable
                                             ? "bg-transparent" // Empty space
                                             : hasBuyer
-                                                ? "bg-amber-400 scale-95 shadow-[0_0_10px_rgba(251,191,36,0.5)] border border-amber-500" // Sold -> Amber!
+                                                ? "bg-primary scale-95 border border-primary/50" // Sold
                                                 : "bg-primary/20" // Available
                                     )}
                                 >
@@ -140,7 +136,7 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                                             initial={{ scale: 0.8 }}
                                             animate={{ scale: [1, 1.1, 1] }} // Reduced bounce from 1.5 to 1.1
                                             transition={{ repeat: Infinity, duration: 0.8 }}
-                                            className="w-full h-full bg-red-500 rounded-full shadow-sm opacity-80"
+                                            className="w-full h-full bg-destructive rounded-full shadow-sm opacity-80"
                                         />
                                     )}
                                 </motion.div>
@@ -164,7 +160,7 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                                 key="high-feedback"
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="text-sm font-medium text-emerald-600"
+                                className="text-sm font-medium text-primary"
                             >
                                 Smooth! Buyers found shares easily. <br />Price stays stable.
                             </motion.div>
@@ -174,7 +170,7 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                                 key="low-feedback"
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="text-sm font-bold text-red-600 flex items-center gap-2"
+                                className="text-sm font-bold text-destructive flex items-center gap-2"
                             >
                                 <AlertTriangle className="w-4 h-4" />
                                 SQUEEZE! Too many buyers, zero shares. <br />Price must go up!
@@ -193,11 +189,11 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                         "relative h-20 rounded-xl border-2 transition-all active:translate-y-1 active:shadow-none flex flex-col items-center justify-center overflow-hidden group",
                         doneHigh
                             ? "bg-muted border-foreground/10 text-muted-foreground opacity-50"
-                            : "bg-white border-primary shadow-pop-active hover:bg-primary/5 text-primary"
+                            : "bg-card border-primary shadow-pop-active hover:bg-primary/5 text-primary"
                     )}
                 >
                     {doneHigh && (
-                        <div className="absolute top-2 right-2 text-emerald-500">
+                        <div className="absolute top-2 right-2 text-primary">
                             <CheckCircle2 size={16} />
                         </div>
                     )}
@@ -212,7 +208,7 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                         "relative h-20 rounded-xl border-2 transition-all active:translate-y-1 active:shadow-none flex flex-col items-center justify-center overflow-hidden group",
                         doneLow
                             ? "bg-muted border-foreground/10 text-muted-foreground opacity-50"
-                            : "bg-white border-destructive shadow-pop-active hover:bg-destructive/5 text-destructive"
+                            : "bg-card border-destructive shadow-pop-active hover:bg-destructive/5 text-destructive"
                     )}
                 >
                     {doneLow && (
@@ -235,40 +231,13 @@ export default function TheSupplySqueeze({ onComplete, ticker, stockData }: TheS
                 </button>
             )}
 
-            {/* ── Completion Modal ── */}
-            <AnimatePresence>
-                {showCompletion && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-50 bg-foreground/20 backdrop-blur-sm flex items-center justify-center p-6"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 10 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="w-full bg-card text-foreground border-2 border-foreground rounded-[2rem] shadow-pop p-6 text-center"
-                        >
-                            <div className="w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary/20 shadow-pop-active flex items-center justify-center mx-auto mb-4">
-                                <TrendingUp className="w-8 h-8" strokeWidth={3} />
-                            </div>
-                            <h4 className="font-black text-2xl uppercase tracking-wide mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                                Concept Unlock!
-                            </h4>
-                            <p className="text-sm text-muted-foreground font-medium mb-6 px-4">
-                                <strong>Supply Constraints</strong> drive price volatility. When everyone wants a slice of a tiny pie, the price explodes.
-                            </p>
-                            <button
-                                onClick={onComplete}
-                                className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-pop hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2"
-                            >
-                                Continue to Quiz
-                                <ArrowRight className="w-5 h-5" strokeWidth={3} />
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <MinigameCompletionPopup
+                completed={doneHigh && doneLow}
+                onComplete={onComplete}
+                title="Supply Squeeze Mastered! 📦"
+                description="Supply Constraints drive price volatility. When everyone wants a slice of a tiny pie, the price explodes."
+                icon={TrendingUp}
+            />
         </div>
     )
 }

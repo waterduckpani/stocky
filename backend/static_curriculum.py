@@ -20,17 +20,17 @@ TIER_1_LESSONS = [
                 },
                 {
                     "title": "The Airport Code",
-                    "text": "Think of a **ticker symbol** like an airport code. 'Los Angeles International Airport' is a mouthful — so travelers just say 'LAX'. Short, unique, and impossible to mix up. Same idea.",
+                    "text": "Think of a **ticker symbol** like an airport code. 'Los Angeles International Airport' is a mouthful, so travelers just say 'LAX'. Short, unique, and impossible to mix up. Same idea.",
                     "icon": "Plane"
                 },
                 {
                     "title": "How It Works",
-                    "text": "Every stock gets a unique code so brokers don't mix up orders. **{symbol}** has no suffix (like '.KS' for Korea) — that means it trades right here on the **US market**.",
+                    "text": "Every stock gets a unique code so brokers don't mix up orders. **{symbol}** has no suffix (like '.KS' for Korea), which means it trades right here on the **US market**.",
                     "icon": "Globe"
                 },
                 {
                     "title": "The Golden Rule",
-                    "text": "Company names can look identical — there's a 'First Solar' and a 'First Solar Finance'. Always search by **ticker symbol**. It's the only thing that's guaranteed to be unique.",
+                    "text": "Company names can look identical: there's a 'First Solar' and a 'First Solar Finance'. Always search by **ticker symbol**. It's the only thing that's guaranteed to be unique.",
                     "icon": "Shield"
                 }
             ],
@@ -56,7 +56,7 @@ TIER_1_LESSONS = [
                     "A secret code only brokers are allowed to read"
                 ],
                 "correctIndex": 0,
-                "explanation": "A ticker is just a stock's unique ID — like a username that never changes. Every company on the market has one."
+                "explanation": "A ticker is just a stock's unique ID, like a username that never changes. Every company on the market has one."
             },
             {
                 "question": "Two companies are both named 'Green Energy Solutions Inc.' How do traders avoid buying the wrong one?",
@@ -113,12 +113,12 @@ TIER_1_LESSONS = [
                 {
                     "title": "The Two Giants",
                     "icon": "Scale",
-                    "text": "The US market has two main exchanges:\n\n🏛️ **NYSE:** Wall Street's oldest floor. Home to traditional giants — Walmart, Coca-Cola.\n\n💻 **Nasdaq:** Built for tech. Amazon, Google, and Apple all live here."
+                    "text": "The US market has two main exchanges:\n\n🏛️ **NYSE:** Wall Street's oldest floor. Home to traditional giants: Walmart, Coca-Cola.\n\n💻 **Nasdaq:** Built for tech. Amazon, Google, and Apple all live here."
                 },
                 {
                     "title": "What's a Blue Chip?",
                     "icon": "Gem",
-                    "text": "In poker, blue chips are the highest-value. In stocks, a **Blue Chip** is a huge, time-tested company that's survived crashes without folding — think Coca-Cola, Walmart."
+                    "text": "In poker, blue chips are the highest-value. In stocks, a **Blue Chip** is a huge, time-tested company that's survived crashes without folding. Think Coca-Cola, Walmart."
                 }
             ],
             "sources": [
@@ -243,7 +243,7 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Bull Market 🐂",
-                    "text": "Right now **{company_name}** is swimming in a current. A **Bull Market** is when that current runs upward — prices rising, confidence high, and the overall mood is one of optimism.",
+                    "text": "Right now **{company_name}** is swimming in a current. A **Bull Market** is when that current runs upward: prices rising, confidence high, the overall mood is optimism.",
                     "icon": "TrendingUp"
                 },
                 {
@@ -317,7 +317,7 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Real Price Tag 🏷️",
-                    "text": "You searched for **{company_name}**. Its share price isn't the full story. The real number — what it'd cost to buy the entire company -is its **Market Cap**. That's what investors actually compare.",
+                    "text": "You searched for **{company_name}**. Its share price isn't the full story. The real number (what it'd cost to buy the entire company) is its **Market Cap**. That's what investors actually compare.",
                     "icon": "Target"
                 },
                 {
@@ -327,12 +327,12 @@ TIER_1_LESSONS = [
                 },
                 {
                     "title": "The Simple Math ➗",
-                    "text": "**Market Cap** = Stock Price × Total Shares.\n\nIf **{company_name}** has 1 billion shares at $100 each — it's a $100 billion company. One formula, the whole picture.",
+                    "text": "**Market Cap** = Stock Price × Total Shares.\n\nIf **{company_name}** has 1 billion shares at $100 each, that's a $100 billion company. One formula, the whole picture.",
                     "icon": "Scale"
                 },
                 {
                     "title": "Don't Judge by Price Alone 💡",
-                    "text": "A $1 stock can belong to a trillion-dollar company. Don't be fooled — always check **Market Cap**, not just share price. That's how you know what you're actually buying into.",
+                    "text": "A $1 stock can belong to a trillion-dollar company. Don't be fooled. Always check **Market Cap**, not just share price. That's how you know what you're actually buying into.",
                     "icon": "Gem"
                 }
             ],
@@ -371,7 +371,7 @@ TIER_1_LESSONS = [
                 "question": "Which stock is generally MORE volatile?",
                 "options": ["Mega Cap (Ocean Liner)", "They are the same", "None of the above", "Small Cap (Speedboat)"],
                 "correctIndex": 3,
-                "explanation": "Small Caps are like speedboats—easier to push around, meaning higher volatility."
+                "explanation": "Small Caps are like speedboats, easier to push around, meaning higher volatility."
             },
             {
                 "id": "q3",
@@ -390,7 +390,7 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "The Birth of a Stock 🐣",
-                    "text": "Before {company_name} appeared on any watchlist, it had to go public. That moment is called an **IPO (Initial Public Offering)** — when a private company sells shares to the public for the very first time.",
+                    "text": "Before {company_name} appeared on any watchlist, it had to go public. That moment is called an **IPO (Initial Public Offering)**: when a private company sells shares to the public for the very first time.",
                     "icon": "Target"
                 },
                 {
@@ -400,12 +400,12 @@ TIER_1_LESSONS = [
                 },
                 {
                     "title": "Pop and Drop 🎢",
-                    "text": "**Volatility** is the IPO's defining trait. With no trading history, {company_name}'s price is driven by pure excitement. 'Pop and Drop' — huge opening gains followed by a crash — is one of the most common patterns.",
+                    "text": "**Volatility** is the IPO's defining trait. With no trading history, {company_name}'s price is driven by pure excitement. 'Pop and Drop' (huge opening gains followed by a crash) is one of the most common patterns.",
                     "icon": "Zap"
                 },
                 {
                     "title": "The Golden Rule 💡",
-                    "text": "Don't get swept up in Day 1 excitement. Smart investors wait for the **Lock-Up Period** to expire — that's when insiders can finally sell, pressure clears, and the real price settles.",
+                    "text": "Don't get swept up in Day 1 excitement. Smart investors wait for the **Lock-Up Period** to expire. That's when insiders can finally sell, pressure clears, and the real price settles.",
                     "icon": "Gem"
                 }
             ],
@@ -426,14 +426,14 @@ TIER_1_LESSONS = [
                 "question": "What does IPO stand for?",
                 "options": ["International Profit Organization", "Immediate Price Option", "Initial Public Offering", "Internet Protocol Owner"],
                 "correctIndex": 2,
-                "explanation": "It stands for Initial Public Offering — the first time shares are offered to the general public."
+                "explanation": "It stands for Initial Public Offering: the first time shares are offered to the general public."
             },
             {
                 "id": "q2",
                 "question": "Who usually buys the stock BEFORE it hits the public market?",
                 "options": ["Big Banks and Institutions", "You and me", "Government officials", "Nobody — it appears by magic"],
                 "correctIndex": 0,
-                "explanation": "Institutional investors get 'allocations' at the IPO price. Retail investors (us) usually buy after it hits the exchange — often at a higher price."
+                "explanation": "Institutional investors get 'allocations' at the IPO price. Retail investors (us) usually buy after it hits the exchange, often at a higher price."
             },
             {
                 "id": "q3",
@@ -454,22 +454,22 @@ TIER_1_LESSONS = [
             "slides": [
                 {
                     "title": "Your Stock's Family 🏠",
-                    "text": "Every stock has a family. {company_name} belongs to the **{sector}** sector — one of 11 official groups the entire market's sorted into. Your stock's sector shapes how it moves.",
+                    "text": "Every stock has a family. {company_name} belongs to the **{sector}** sector, one of 11 official groups the entire market's sorted into. Your stock's sector shapes how it moves.",
                     "icon": "Target"
                 },
                 {
                     "title": "The Shopping Mall 🛍️",
-                    "text": "Think of the market as a shopping mall. **Sectors** are the stores — Tech, Healthcare, Energy and 8 more. When the economy's hot, some stores pack out. When it slows, others barely notice.",
+                    "text": "Think of the market as a shopping mall. **Sectors** are the stores: Tech, Healthcare, Energy and 8 more. When the economy's hot, some stores pack out. When it slows, others barely notice.",
                     "icon": "Store"
                 },
                 {
                     "title": "Cyclical vs. Defensive ⚖️",
-                    "text": "**Cyclical** sectors (Tech, Energy) boom with the economy and crash with it. **Defensive** sectors (Healthcare, Utilities) stay steady — people need medicine and electricity no matter what the market's doing.",
+                    "text": "**Cyclical** sectors (Tech, Energy) boom with the economy and crash with it. **Defensive** sectors (Healthcare, Utilities) stay steady. People need medicine and electricity no matter what the market's doing.",
                     "icon": "Scale"
                 },
                 {
                     "title": "The Golden Rule 💎",
-                    "text": "Don't pour everything into one sector. **Diversification** — owning stocks across multiple families — means a Tech crash won't take down your whole portfolio.",
+                    "text": "Don't pour everything into one sector. **Diversification** (owning stocks across multiple families) means a Tech crash won't take down your whole portfolio.",
                     "icon": "Gem"
                 }
             ],
@@ -496,7 +496,7 @@ TIER_1_LESSONS = [
                 "question": "How many official sectors is the stock market divided into?",
                 "options": ["5", "11", "50", "It changes every year"],
                 "correctIndex": 1,
-                "explanation": "The market is split into exactly 11 official sectors by the Global Industry Classification Standard (GICS) — from Technology to Consumer Staples to Utilities."
+                "explanation": "The market is split into exactly 11 official sectors by the Global Industry Classification Standard (GICS): from Technology to Consumer Staples to Utilities."
             },
             {
                 "id": "q2",
@@ -508,7 +508,7 @@ TIER_1_LESSONS = [
                     "All sectors crash equally — no exceptions"
                 ],
                 "correctIndex": 1,
-                "explanation": "Defensive sectors sell things people can't live without — medicine, electricity, food. Demand barely flinches even when the economy slows."
+                "explanation": "Defensive sectors sell things people can't live without: medicine, electricity, food. Demand barely flinches even when the economy slows."
             },
             {
                 "id": "q3",
@@ -616,7 +616,7 @@ TIER_1_LESSONS = [
                     "Low volume means the company is doing great"
                 ],
                 "correctIndex": 1,
-                "explanation": "Low volume means there aren't many buyers. One decent-sized sell order can push the price down — making it hard to exit at a fair price."
+                "explanation": "Low volume means there aren't many buyers. One decent-sized sell order can push the price down, making it hard to exit at a fair price."
             }
         ]
     },
@@ -645,7 +645,7 @@ TIER_1_LESSONS = [
                 },
                 {
                     "title": "Beta: The Wiggle Score",
-                    "text": "Investors use a number called **Beta** to score a stock's wiggle.\n\nA **Beta above 1.0** means it's jumpier than the average market. A **Beta below 1.0** means it's steadier. Neither is bad — it just depends on how much of a ride you're okay with.",
+                    "text": "Investors use a number called **Beta** to score a stock's wiggle.\n\nA **Beta above 1.0** means it's jumpier than the average market. A **Beta below 1.0** means it's steadier. Neither is bad. It just depends on how much of a ride you're okay with.",
                     "icon": "Target"
                 }
             ],
@@ -654,7 +654,7 @@ TIER_1_LESSONS = [
                 {"label": "FINRA", "url": "https://www.finra.org/investors/learn-to-invest/key-investing-concepts/risk-and-return"}
             ]
         },
-        "breakdown": "Volatility isn't 'bad'—it's just a measure of intensity. Understanding the wiggle helps you choose stocks that match your comfort level.",
+        "breakdown": "Volatility isn't 'bad', it's just a measure of intensity. Understanding the wiggle helps you choose stocks that match your comfort level.",
         "news": [],
         "game_config": {
             "type": "wiggle_tamer",
@@ -808,7 +808,7 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Meaning 🍕",
-                    "text": "**{company_name}**'s **Earnings Per Share (EPS)** is **{eps}** right now. That's how much of the company's profit belongs to a single share — your slice of the pizza.",
+                    "text": "**{company_name}**'s **Earnings Per Share (EPS)** is **{eps}** right now. That's how much of the company's profit belongs to a single share. Your slice of the pizza.",
                     "icon": "Gem"
                 },
                 {
@@ -843,7 +843,7 @@ TIER_2_LESSONS = [
                     "Extra Profit Source"
                 ],
                 "correctIndex": 2,
-                "explanation": "EPS stands for Earnings Per Share — it tells you how much of the company's total profit belongs to a single share you own."
+                "explanation": "EPS stands for Earnings Per Share. It tells you how much of the company's total profit belongs to a single share you own."
             },
             {
                 "question": "If a company has $100 Profit and 10 Shares, what is the EPS?",
@@ -865,7 +865,7 @@ TIER_2_LESSONS = [
                     "Each share you own earned more profit this year"
                 ],
                 "correctIndex": 3,
-                "explanation": "Rising EPS means the company squeezed more profit out per share. Going from $3 to $5 EPS is a 67% jump — a strong sign the business is healthier."
+                "explanation": "Rising EPS means the company squeezed more profit out per share. Going from $3 to $5 EPS is a 67% jump, a strong sign the business is healthier."
             }
         ]
     },
@@ -958,17 +958,17 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "The Money Machine 🖨️",
-                    "text": "Think of **{company_name}** as a Money Machine. It earns **$1 a year**. Right now, the market's price for it is **{pe_ratio}**. That's what investors pay for every **$1** of profit — betting growth is ahead.",
+                    "text": "Think of **{company_name}** as a Money Machine. It earns **$1 a year**. Right now, the market's price for it is **{pe_ratio}**. That's what investors pay for every **$1** of profit. They're betting growth is ahead.",
                     "icon": "Banknote"
                 },
                 {
                     "title": "High vs. Low ⚖️",
-                    "text": "**Low P/E (under 15):** Steady, mature business. Investors aren't expecting fireworks.\n\n**High P/E (over 30):** Investors believe earnings will explode — they're paying now for future profits.",
+                    "text": "**Low P/E (under 15):** Steady, mature business. Investors aren't expecting fireworks.\n\n**High P/E (over 30):** Investors believe earnings will explode. They're paying now for future profits.",
                     "icon": "Scale"
                 },
                 {
                     "title": "Compare Right, Not Wrong 🎯",
-                    "text": "Don't compare **{company_name}**'s P/E to the whole market. Compare it to rivals in the **same sector** — a P/E of 40 is normal for Tech, but pricey for a supermarket.",
+                    "text": "Don't compare **{company_name}**'s P/E to the whole market. Compare it to rivals in the **same sector**. A P/E of 40 is normal for Tech, but pricey for a supermarket.",
                     "icon": "Target"
                 }
             ],
@@ -997,7 +997,7 @@ TIER_2_LESSONS = [
                 "question": "A stock has a P/E of 90. What does that most likely signal?",
                 "options": ["Investors expect its earnings to grow massively", "The stock is very cheap right now", "The company is paying huge dividends", "The CEO owns 90% of the shares"],
                 "correctIndex": 0,
-                "explanation": "A very high P/E means investors are paying a big premium — usually because they expect the company's profits to grow fast in the future."
+                "explanation": "A very high P/E means investors are paying a big premium, usually because they expect the company's profits to grow fast in the future."
             },
             {
                 "id": "q3",
@@ -1024,7 +1024,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "The Rental Analogy 🏠",
-                    "text": "Think of owning a share like renting out a room. You paid $100 for it. It pays you $5 back every year — no extra work. That's $5 ÷ $100 = your **5% Dividend Yield**.",
+                    "text": "Think of owning a share like renting out a room. You paid $100 for it. It pays you $5 back every year. No extra work. That's $5 ÷ $100 = your **5% Dividend Yield**.",
                     "icon": "Banknote"
                 },
                 {
@@ -1235,7 +1235,7 @@ TIER_2_LESSONS = [
                     "Zero"
                 ],
                 "correctIndex": 1,
-                "explanation": "Profit is Revenue minus Expenses. When costs beat revenue, the company is running at a loss — it's spending more than it's making."
+                "explanation": "Profit is Revenue minus Expenses. When costs beat revenue, the company is running at a loss, spending more than it's making."
             },
             {
                 "question": "If {company_name} reported $10B in Revenue but spent $9.8B on costs, what does that tell you?",
@@ -1246,7 +1246,7 @@ TIER_2_LESSONS = [
                     "Revenue and costs cancel out, so it's fine"
                 ],
                 "correctIndex": 2,
-                "explanation": "Revenue only tells you what came in. When costs eat up $9.8B of a $10B revenue, only $200M in profit remains — a razor-thin 2% margin. Always check the Bottom Line."
+                "explanation": "Revenue only tells you what came in. When costs eat up $9.8B of a $10B revenue, only $200M in profit remains, a razor-thin 2% margin. Always check the Bottom Line."
             }
         ]
     },
@@ -1260,7 +1260,7 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "The Yearly Scoreboard 📏",
-                    "text": "You searched for **{company_name}**. Think of its **52-Week Range** as a yearly scoreboard — the high is the best it's done, the low is its worst. Right now, you can see exactly where **{symbol}** sits on that scoreboard.",
+                    "text": "You searched for **{company_name}**. Think of its **52-Week Range** as a yearly scoreboard. The high is the best it's done, the low is its worst. Right now, you can see exactly where **{symbol}** sits on that scoreboard.",
                     "icon": "Ruler"
                 },
                 {
@@ -1270,7 +1270,7 @@ TIER_2_LESSONS = [
                 },
                 {
                     "title": "Reading the Position 🚀",
-                    "text": "Near the 52-week high? That's strong **Buying Pressure** — the crowd is confident. Near the low? That's **Selling Pressure** — people are exiting. The position on the range tells you which side is winning.",
+                    "text": "Near the 52-week high? That's strong **Buying Pressure**: the crowd is confident. Near the low? That's **Selling Pressure**: people are exiting. The position on the range tells you which side is winning.",
                     "icon": "Activity"
                 },
                 {
@@ -1335,17 +1335,17 @@ TIER_2_LESSONS = [
             "slides": [
                 {
                     "title": "Defining Liquidity 🚪",
-                    "text": "You searched for **{company_name}**. **Liquidity** is how fast you can sell your shares for cash without moving the price. In a liquid stock like **{symbol}**, thousands of buyers and sellers are active every second.",
+                    "text": "Say you buy **{company_name}** and need to sell fast. Can you? **Liquidity** is how quickly you can turn **{symbol}** shares into cash without crashing the price. Some stocks let you exit in seconds. Others trap you for days.",
                     "icon": "LogOut"
                 },
                 {
-                    "title": "The Volume Engine ⚙️",
-                    "text": "**High Trading Volume** is the primary driver of liquidity. When volume is high, the \"Bid-Ask Spread\" (the gap between what buyers offer and sellers want) is tiny. This ensures you get a \"Fair Price\" immediately.",
-                    "icon": "Zap"
+                    "title": "The Busy Market 🏪",
+                    "text": "Think of a farmers market with hundreds of stalls. You can sell your apples instantly because buyers are everywhere. A stock with **High Volume** works the same: thousands of buyers mean you exit fast at a fair price.",
+                    "icon": "Store"
                 },
                 {
                     "title": "Slippage & Market Impact ⚠️",
-                    "text": "Try to dump a big block of a **Low Liquidity** stock and you'll experience **Slippage** -your own sell order is so large that it pushes the price down as you exit, costing you money in the process.",
+                    "text": "Try to dump a big block of a **Low Liquidity** stock and you'll experience **Slippage**. Your own sell order is so large that it pushes the price down as you exit, costing you money in the process.",
                     "icon": "AlertTriangle"
                 }
             ],
@@ -1369,27 +1369,30 @@ TIER_2_LESSONS = [
                     "How easily you can sell shares without moving the price",
                     "The stock's dividend yield"
                 ],
-                "correctIndex": 2
+                "correctIndex": 2,
+                "explanation": "Liquidity is about how fast you can convert shares to cash at a fair price. Cash on hand is a balance sheet metric. Completely different thing."
             },
             {
-                "question": "What drives high liquidity?",
+                "question": "What drives high liquidity in a stock?",
                 "options": [
                     "Low Trading Volume",
                     "Market Holidays",
                     "Secret Meetings",
                     "High Trading Volume"
                 ],
-                "correctIndex": 3
+                "correctIndex": 3,
+                "explanation": "High volume means lots of buyers and sellers are active. That competition keeps the bid-ask spread tiny, so you can trade instantly at a fair price."
             },
             {
-                "question": "What is Slippage?",
+                "question": "You try to sell a big position in {company_name} but the stock has low liquidity. What happens?",
                 "options": [
-                    "Losing money because your order moved the price",
-                    "Falling on a wet floor",
-                    "The fee paid to a broker",
-                    "A type of stock chart pattern"
+                    "Your order fills instantly at the listed price",
+                    "The exchange waives your trade fee",
+                    "Your sell order pushes the price down, so you get less than expected",
+                    "The CEO personally buys your shares"
                 ],
-                "correctIndex": 0
+                "correctIndex": 2,
+                "explanation": "In a low-liquidity stock, a large sell order overwhelms the available buyers. The price drops as you fill. That's slippage, and it costs you real money."
             }
         ]
     },
@@ -1403,17 +1406,17 @@ TIER_2_LESSONS = [
              "slides": [
                 {
                     "title": "The Total Universe 🌌",
-                    "text": "You searched for **{company_name}**. Since its inception, this company has issued a total of **{sharesOutstanding}** shares. This number represents the total ownership of the company.",
+                    "text": "**{company_name}** has issued **{sharesOutstanding}** shares total. Every ownership slice that exists. But here's the twist: not all of them can actually be bought or sold.",
                     "icon": "Globe"
                 },
                 {
-                    "title": "The Restricted Zone 🔒",
-                    "text": "Not every share is allowed to be sold. A significant portion of **{sharesOutstanding}** is often 'Restricted' or 'Closely Held' by insiders and board members. These shares are locked away.",
+                    "title": "The Reserved Lot 🅿️",
+                    "text": "Think of **{company_name}**'s shares like a parking lot. Most spaces are reserved for insiders: founders, board members, employees. They can't sell. Only the public spaces are left for everyday investors.",
                     "icon": "Lock"
                 },
                 {
                     "title": "The Public Float 🏊",
-                    "text": "For **{company_name}**, only **{floatShares}** shares are actually in the **Public Float**. This is the Liquid Supply—the pool of shares everyday investors can buy and sell.",
+                    "text": "For **{company_name}**, only **{floatShares}** shares are in the **Public Float**, the open pool everyday investors can actually buy and sell.",
                     "icon": "Users"
                 },
                 {
@@ -1427,7 +1430,7 @@ TIER_2_LESSONS = [
                 {"label": "SEC Investor.gov", "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/stocks"}
             ]
         },
-        "breakdown": "Supply and Demand isn't just a theory—it's a mechanical reality. Let's see how restricted supply creates explosive moves.",
+        "breakdown": "Supply and Demand isn't just a theory, it's a mechanical reality. Let's see how restricted supply creates explosive moves.",
         "news": [],
         "game_config": {
             "type": "supply_squeeze",
@@ -1435,34 +1438,37 @@ TIER_2_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What is the 'Public Float'?",
+                "question": "What is the Public Float?",
                 "options": [
                     "The number of shares owned by the CEO",
                     "Shares available for trading by the general public",
                     "Money set aside for a rainy day",
                     "A parade float sponsored by the company"
                 ],
-                "correctIndex": 1
+                "correctIndex": 1,
+                "explanation": "The Public Float is only the shares that can actually be traded, not the ones locked up with insiders. It's smaller than the total shares outstanding."
             },
             {
-                "question": "If a stock has a 'Low Float', what does that typically mean for volatility?",
+                "question": "If a stock has a very small float, what happens when a lot of buyers show up?",
                 "options": [
-                    "It will never move",
-                    "It is very stable and boring",
-                    "It can be extremely volatile and prone to squeezes",
-                    "It means the company is bankrupt"
+                    "The price stays flat because supply doesn't matter",
+                    "The company automatically creates more shares",
+                    "The price spikes sharply because buyers compete for scarce shares",
+                    "Trading is halted permanently"
                 ],
-                "correctIndex": 2
+                "correctIndex": 2,
+                "explanation": "With a tiny float, even modest buying pressure overwhelms the available supply. Prices have to rise until enough sellers appear. That's a short squeeze in action."
             },
             {
-                "question": "What is the relationship between Total Shares and Float?",
+                "question": "{company_name} has a float of only 5% of its total shares. What does that tell you?",
                 "options": [
-                    "Float = Total Shares - Restricted Shares",
-                    "Float = Total Shares + Restricted Shares",
-                    "Float is always equal to Total Shares",
-                    "They are unrelated"
+                    "It is a very safe, stable investment",
+                    "The company is about to go bankrupt",
+                    "The stock always moves slowly",
+                    "95% of shares are locked with insiders and can't be traded"
                 ],
-                "correctIndex": 0
+                "correctIndex": 3,
+                "explanation": "A 5% float means 95% of shares are restricted, held by insiders who can't or won't sell. The tiny tradeable supply makes the price extremely sensitive to any new demand."
             }
         ]
     }

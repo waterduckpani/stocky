@@ -19,6 +19,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def sanitize_float(v):
+    """Return None for NaN/inf so json.dumps never raises ValueError."""
+    if v is None:
+        return None
+    try:
+        if math.isnan(v) or math.isinf(v):
+            return None
+    except (TypeError, ValueError):
+        pass
+    return v
+
 def fetch_google_news(query: str, limit: int = 3):
     """Fetch news from Google News RSS feed."""
     try:
@@ -246,11 +257,11 @@ async def get_ticker_data(symbol: str):
                 elif change_percent < -2:
                     sentiment_label = "Bearish"
                     sentiment_score = 30
-                
+
                 technicals = {
-                    "rsi": {"value": round(rsi_val, 1), "label": rsi_label},
-                    "macd": {"value": round(macd_val, 2), "signal": macd_signal},
-                    "ma50": {"value": round(ma50_val, 2), "trend": ma50_trend},
+                    "rsi": {"value": sanitize_float(round(rsi_val, 1)), "label": rsi_label},
+                    "macd": {"value": sanitize_float(round(macd_val, 2)), "signal": macd_signal},
+                    "ma50": {"value": sanitize_float(round(ma50_val, 2)), "trend": ma50_trend},
                     "volume": {"value": format_large_number(curr_vol), "relative": f"{rel_vol}x Avg"},
                     "sentiment": {"score": sentiment_score, "label": sentiment_label}
                 }
@@ -272,18 +283,18 @@ async def get_ticker_data(symbol: str):
             "description": info.get('longBusinessSummary') or "No description available.",
             "sector": info.get('sector') or "Unknown Sector",
             "marketCap": format_large_number(info.get('marketCap', 0)),
-            "peRatio": round(info.get('trailingPE', 0), 2) if info.get('trailingPE') else "N/A",
+            "peRatio": sanitize_float(round(info.get('trailingPE', 0), 2)) if sanitize_float(info.get('trailingPE')) else "N/A",
             "ipoYear": ipo_year,
             "ipoPrice": ipo_price,
             "chart": chart_data,
             "news": formatted_news,
             "technicals": technicals,
             "currencyConfig": currency_config,
-            "revenue": info.get('totalRevenue'),
-            "netIncome": info.get('netIncomeToCommon') or info.get('netIncome'),
-            "eps": info.get('trailingEps'),
-            "dividendYield": round(info.get('dividendYield', 0) * 100, 2) if info.get('dividendYield') else None,
-            "dividendRate": info.get('dividendRate')
+            "revenue": sanitize_float(info.get('totalRevenue')),
+            "netIncome": sanitize_float(info.get('netIncomeToCommon') or info.get('netIncome')),
+            "eps": sanitize_float(info.get('trailingEps')),
+            "dividendYield": sanitize_float(round(info.get('dividendYield', 0) * 100, 2)) if sanitize_float(info.get('dividendYield')) else None,
+            "dividendRate": sanitize_float(info.get('dividendRate'))
         }
         
         return response
@@ -638,20 +649,20 @@ async def generate_content(symbol: str):
                     sentiment_score = 30
                 
                 technicals = {
-                    "rsi": {"value": round(rsi_val, 1), "label": rsi_label},
-                    "macd": {"value": round(macd_val, 2), "signal": macd_signal},
-                    "ma50": {"value": round(ma50_val, 2), "trend": ma50_trend},
+                    "rsi": {"value": sanitize_float(round(rsi_val, 1)), "label": rsi_label},
+                    "macd": {"value": sanitize_float(round(macd_val, 2)), "signal": macd_signal},
+                    "ma50": {"value": sanitize_float(round(ma50_val, 2)), "trend": ma50_trend},
                     "volume": {"value": format_large_number(curr_vol), "relative": f"{rel_vol}x Avg"},
                     "sentiment": {"score": sentiment_score, "label": sentiment_label}
                 }
         except Exception as e:
             print(f"Error calculating technicals: {e}")
-        
+
         # Get Fiscal Year and Financials
         fiscal_year = "TTM"
-        revenue = info.get('totalRevenue')
-        net_income = info.get('netIncomeToCommon') or info.get('netIncome')
-        beta = info.get('beta')
+        revenue = sanitize_float(info.get('totalRevenue'))
+        net_income = sanitize_float(info.get('netIncomeToCommon') or info.get('netIncome'))
+        beta = sanitize_float(info.get('beta'))
         if beta is None:
             beta = 1.0  # Default to market perform
         
@@ -710,17 +721,17 @@ async def generate_content(symbol: str):
 
         # Stock data for concept selection
         stock_data = {
-            "change_percent": change_percent,
-            "market_cap_raw": market_cap,
-            "ytd_return": ytd_return,
+            "change_percent": sanitize_float(change_percent),
+            "market_cap_raw": sanitize_float(market_cap),
+            "ytd_return": sanitize_float(ytd_return),
             "is_crypto": is_crypto,
             "technicals": technicals,
             "revenue": revenue,
             "netIncome": net_income,
             "currencyCode": info.get('currency', 'USD'),
             "fiscalYear": fiscal_year,
-            "dividend_yield": div_yield, # Decimal (e.g., 0.0037)
-            "dividend_rate": div_rate,    # Dollar Amount
+            "dividend_yield": sanitize_float(div_yield), # Decimal (e.g., 0.0037)
+            "dividend_rate": sanitize_float(div_rate),   # Dollar Amount
             "beta": beta
         }
     except Exception as e:

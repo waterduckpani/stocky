@@ -123,6 +123,6 @@ Export Style
 Named export preferred to match existing pattern:
 
 tsx
-export function YourGame({ onComplete, ticker, stockData, gameConfig }: YourGameProps) {
+export function YourGame({ onComplete, ticker, stockData, gameConfig }: YourGameProps) 
 
 Some existing games use default export — be consistent with surrounding files if refactoring.
