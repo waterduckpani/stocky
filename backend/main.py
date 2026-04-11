@@ -527,6 +527,8 @@ async def generate_content(symbol: str):
     symbol = symbol.upper()
     
     div_rate = None # CRITICAL: Init early to prevent UnboundLocalError
+    short_pct_float_display = None
+    short_ratio_display = None
     # First, get stock info from yfinance for context
     try:
         ticker = yf.Ticker(symbol)
