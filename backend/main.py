@@ -719,6 +719,12 @@ async def generate_content(symbol: str):
         if div_rate and div_rate > 0 and price > 0:
             div_yield = div_rate / price
 
+        # Short Interest Data
+        short_pct_of_float = sanitize_float(info.get('shortPercentOfFloat'))
+        short_pct_float_display = round(short_pct_of_float * 100, 1) if short_pct_of_float else None
+        short_ratio = sanitize_float(info.get('shortRatio'))
+        short_ratio_display = round(short_ratio, 1) if short_ratio else None
+
         # Stock data for concept selection
         stock_data = {
             "change_percent": sanitize_float(change_percent),
@@ -732,7 +738,9 @@ async def generate_content(symbol: str):
             "fiscalYear": fiscal_year,
             "dividend_yield": sanitize_float(div_yield), # Decimal (e.g., 0.0037)
             "dividend_rate": sanitize_float(div_rate),   # Dollar Amount
-            "beta": beta
+            "beta": beta,
+            "shortPercentFloat": short_pct_float_display,
+            "shortRatio": short_ratio_display,
         }
     except Exception as e:
         print(f"Error fetching stock data for {symbol}: {e}")
@@ -962,6 +970,33 @@ async def generate_content(symbol: str):
                             
             except Exception as e:
                 print(f"Error injecting supply data: {e}")
+
+        elif concept_id == "lesson_20_short_interest":
+            try:
+                short_pct_str = str(short_pct_float_display) if short_pct_float_display is not None else "N/A"
+                short_ratio_str = str(short_ratio_display) if short_ratio_display is not None else "N/A"
+
+                # 1. Update Slides
+                if "concept" in selected_concept and "slides" in selected_concept["concept"]:
+                    for slide in selected_concept["concept"]["slides"]:
+                        txt = slide.get("text", "")
+                        txt = txt.replace("{shortPercentFloat}", short_pct_str)
+                        txt = txt.replace("{shortRatio}", short_ratio_str)
+                        txt = txt.replace("{company_name}", company_name)
+                        slide["text"] = txt
+
+                # 2. Update Quiz
+                if "quiz" in selected_concept and selected_concept["quiz"]:
+                    for q in selected_concept["quiz"]:
+                        for field in ("question", "explanation"):
+                            val = q.get(field, "")
+                            val = val.replace("{shortPercentFloat}", short_pct_str)
+                            val = val.replace("{shortRatio}", short_ratio_str)
+                            val = val.replace("{company_name}", company_name)
+                            q[field] = val
+
+            except Exception as e:
+                print(f"Error injecting short interest data: {e}")
     else:
         lesson_topic = selected_concept.name
         concept_id = selected_concept.id

@@ -156,7 +156,7 @@ def select_best_concept(context: StockContext, user_history: list[str]) -> any:
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_17_52_week_range'), None)
         # lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_16_earnings_reports'), None)
-        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_19_supply_constraint'), None)
+        lesson_ref = next((l for l in TIER_2_LESSONS if l['id'] == 'lesson_20_short_interest'), None)
 
         if lesson_ref:
             lesson = copy.deepcopy(lesson_ref) # CRITICAL: Copy to avoid shared state pollution

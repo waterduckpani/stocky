@@ -29,6 +29,7 @@ import TheEarningsReaction from "../games/TheEarningsReaction"
 import ThePriceAnchor from "../games/ThePriceAnchor"
 import TheLiquidityExit from "../games/TheLiquidityExit"
 import TheSupplySqueeze from "../games/TheSupplySqueeze"
+import { ShortSqueeze } from "../games/ShortSqueeze"
 
 import { cn } from "@/lib/utils"
 
@@ -189,6 +190,14 @@ export function LearningFlow({ symbol, stockData, llmContent, onStepChange }: Le
                     onComplete={handleNext}
                     ticker={symbol}
                     stockData={stockData}
+                />
+                break
+            case "short_squeeze":
+                GameComponent = <ShortSqueeze
+                    onComplete={handleNext}
+                    ticker={symbol}
+                    stockData={stockData}
+                    gameConfig={gameConfig}
                 />
                 break
         }
