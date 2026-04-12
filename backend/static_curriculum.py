@@ -1481,29 +1481,29 @@ TIER_2_LESSONS = [
             "type": "carousel",
             "slides": [
                 {
-                    "title": "Who's Betting Against It? 🐻",
-                    "text": "Right now, **{shortPercentFloat}%** of **{company_name}**'s float is **Shorted** — investors borrowed shares, sold them, and are betting the price falls. That percentage is called **Short Interest**.",
+                    "title": "Wait — You Can Bet Against a Stock? 🤯",
+                    "text": "Most investors buy shares hoping the price goes up. But right now, **{shortPercentFloat}%** of **{company_name}**'s shares are held by investors hoping it **drops**. How is that even possible?",
                     "icon": "Activity"
                 },
                 {
                     "title": "The Borrowed Bet",
-                    "text": "Imagine borrowing a friend's bike and selling it for $200. You're betting you can buy it back for $150, return it, and pocket $50. That's exactly how **Short Sellers** operate — but with shares instead of bikes.",
+                    "text": "Imagine borrowing a friend's bike, selling it for $200, and waiting. Your plan: buy it back for $150, return it, and pocket $50. That's exactly how **Short Sellers** make money — borrow shares, sell them, then buy them back cheaper.",
                     "icon": "Banknote"
                 },
                 {
-                    "title": "Days to Cover ⏱️",
-                    "text": "**{company_name}**'s **Short Ratio** is **{shortRatio}** days. That's how long it'd take all short sellers to buy back their shares at current volume. Higher = more explosive if the trade goes wrong.",
+                    "title": "That Number Is Short Interest",
+                    "text": "**Short Interest** is the percentage of a company's shares currently borrowed and sold this way. **{company_name}**'s is **{shortPercentFloat}%** — that's how many investors are actively on the 'drop' side of this bet.",
                     "icon": "Ruler"
                 },
                 {
-                    "title": "The Double-Edged Sword 🚀",
-                    "text": "High **Short Interest** is a bearish signal. But it's also a loaded spring: if good news hits, shorts are **forced to buy** to cut losses. All that buying pushes the price even higher — that's a **Short Squeeze**.",
+                    "title": "The Trap Gets Sprung 🚀",
+                    "text": "If **{company_name}**'s price rises instead, short sellers are **forced to buy back** shares fast to stop their losses. All that panic-buying pushes the price even higher — that chain reaction is called a **Short Squeeze**.",
                     "icon": "Target"
                 }
             ],
             "sources": [
                 {"label": "Investopedia", "url": "https://www.investopedia.com/terms/s/shortinterest.asp"},
-                {"label": "FINRA", "url": "https://www.finra.org/investors/learn-to-invest/key-investing-concepts/short-selling"}
+                {"label": "FINRA Investor Education", "url": "https://www.finra.org/investors/learn-to-invest/key-investing-concepts/short-selling"}
             ]
         },
         "breakdown": "Short Interest tells you how many investors are actively betting against a stock. But beware — it's a double-edged signal that can flip into a rocket.",
@@ -1514,37 +1514,37 @@ TIER_2_LESSONS = [
         },
         "quiz": [
             {
-                "question": "What does Short Interest measure?",
+                "question": "What does Short Interest tell you about a stock?",
                 "options": [
                     "How much cash the company has in its bank account",
-                    "The number of analyst upgrades this quarter",
-                    "The percentage of a stock's float that investors have borrowed and sold short",
-                    "How quickly the stock pays its dividends"
+                    "How many investors are following it on social media",
+                    "The percentage of shares that investors have borrowed and sold, betting the price will fall",
+                    "How often the CEO has publicly talked about the stock"
                 ],
                 "correctIndex": 2,
-                "explanation": "Short Interest is the share of the float currently sold short. It tells you how many investors are actively betting the price will fall."
+                "explanation": "Short Interest measures what percentage of a company's shares are currently being 'bet against' — investors borrowed those shares, sold them, and are hoping to buy them back cheaper later."
             },
             {
-                "question": "A stock's short interest jumps from 5% to 30% in one month. What does this signal?",
+                "question": "A stock's Short Interest jumps from 5% to 30% in one month. What does that signal?",
                 "options": [
-                    "A growing number of investors are betting the price will fall",
+                    "A lot more investors are now betting the price will fall",
                     "The company just announced a dividend increase",
-                    "Institutional investors are buying the dip",
-                    "The stock is about to split"
+                    "The CEO is about to retire",
+                    "The stock is about to split into cheaper shares"
                 ],
                 "correctIndex": 0,
-                "explanation": "Surging short interest means more investors are borrowing and selling the stock, expecting a drop. It's a clear bearish signal — but not a guarantee the bears are right."
+                "explanation": "Rising Short Interest means more investors are borrowing and selling the stock, expecting a price drop. It's a warning sign — though it doesn't guarantee they're right."
             },
             {
-                "question": "{company_name} has a Short Interest of {shortPercentFloat}% and a Short Ratio of {shortRatio} days. Great earnings just dropped. What might happen?",
+                "question": "{company_name} has a Short Interest of {shortPercentFloat}% and great earnings just dropped. What might happen next?",
                 "options": [
-                    "Nothing — short interest only matters in bear markets",
-                    "The dividend gets cancelled",
-                    "Trading halts automatically",
-                    "Shorts panic-buy to cover losses, pushing the price up even faster — a Short Squeeze"
+                    "Nothing changes — short interest doesn't react to earnings",
+                    "The dividend gets cancelled to cover losses",
+                    "Trading gets paused until short sellers exit",
+                    "Short sellers panic-buy shares to stop their losses, pushing the price up even faster — a Short Squeeze"
                 ],
                 "correctIndex": 3,
-                "explanation": "When positive news hits a heavily shorted stock, short sellers rush to buy back shares to cut their losses. That forced buying adds fuel to the rally — the classic Short Squeeze."
+                "explanation": "When good news hits a heavily shorted stock, short sellers rush to buy back shares before their losses grow. That wave of forced buying adds rocket fuel to the rally — that's a Short Squeeze."
             }
         ]
     }

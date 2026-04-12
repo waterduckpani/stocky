@@ -57,7 +57,7 @@ export function ShortSqueeze({ onComplete, ticker, stockData, gameConfig }: Shor
                                     {gameConfig?.instruction || "Bears are trapped — squeeze them out!"}
                                 </p>
                                 <p className="text-sm text-muted-foreground text-center mt-1">
-                                    <span className="font-bold text-foreground">{shortPct}%</span> of {companyName}&apos;s float is shorted. Good news just dropped — force them to cover.
+                                    <span className="font-bold text-foreground">{shortPct}%</span> of {companyName}&apos;s shares are bet against. Good news just dropped — now those short sellers are trapped.
                                 </p>
                             </div>
 
