@@ -23,6 +23,8 @@ interface StockSearchProps {
     isLoading?: boolean
     autoFocus?: boolean
     resultsVariant?: "overlay" | "inline"
+    placeholder?: string
+    onFocusChange?: (focused: boolean) => void
 }
 
 export function StockSearch({
@@ -31,7 +33,9 @@ export function StockSearch({
     popularStocks = [],
     isLoading = false,
     autoFocus = false,
-    resultsVariant = "overlay"
+    resultsVariant = "overlay",
+    placeholder = "Search stocks, ETFs, crypto...",
+    onFocusChange,
 }: StockSearchProps) {
     const [query, setQuery] = useState("")
     const [isFocused, setIsFocused] = useState(autoFocus) // Auto-focus initial state
@@ -141,13 +145,13 @@ export function StockSearch({
                     className={`w-full pl-14 pr-6 h-[60px] text-lg font-bold bg-card border-2 rounded-full shadow-sm hover:border-primary/50 hover:shadow-pop transition-all outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-muted-foreground/70 ${error ? 'border-destructive' : 'border-foreground/20'}`}
                     value={query}
                     autoFocus={autoFocus}
-                    placeholder="Search stocks, ETFs, crypto..."
+                    placeholder={placeholder}
                     onChange={(e) => {
                         setQuery(e.target.value)
                         setError(null)
                     }}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+                    onFocus={() => { setIsFocused(true); onFocusChange?.(true) }}
+                    onBlur={() => setTimeout(() => { setIsFocused(false); onFocusChange?.(false) }, 200)}
                     onKeyDown={handleKeyDown}
                 />
                 {isSearching && (
