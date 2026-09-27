@@ -9,6 +9,7 @@
 ![backend: FastAPI](https://img.shields.io/badge/backend-FastAPI-3BB273?style=flat-square)
 ![lessons: 20](https://img.shields.io/badge/lessons-20-3BB273?style=flat-square)
 ![status: in development](https://img.shields.io/badge/status-in%20development-3BB273?style=flat-square)
+[![license: source-available](https://img.shields.io/badge/license-source--available-3BB273?style=flat-square)](LICENSE)
 
 **Learn investing through lessons, minigames and quizzes, all built around a real stock in real time.**<br>
 <sub>Web app · Next.js · FastAPI · yfinance</sub>
@@ -22,6 +23,9 @@
   <br>
   <sub>One full lesson on NVDA: the live chart, the concept, the Short Interest Radar minigame, and the challenge.</sub>
 </p>
+
+> [!IMPORTANT]
+> **Source-available, not open source.** This repository is public as a portfolio work sample. You may read the code, but reuse, modification and redistribution are not permitted. See [LICENSE](LICENSE).
 
 ## Overview
 
@@ -166,7 +170,9 @@ In active development and run locally; not deployed yet.
 
 ## License
 
-No licence has been published for this project yet, so all rights are reserved by default.
+**Source-available, view-only; not open source.** This repository is public as a portfolio work sample. You may read the code, but copying, modifying, reusing or redistributing any part of it is not permitted without my written permission. See [LICENSE](LICENSE) for the full terms.
+
+For permission requests: **bharatkhanna117@gmail.com**
 
 ---
 

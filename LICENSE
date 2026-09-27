@@ -1,0 +1,41 @@
+Stocky — Proprietary License (Source-Available, View-Only)
+
+Copyright (c) 2026 Bharat Khanna. All rights reserved.
+
+This repository and its contents (the "Software") are made publicly viewable
+solely for the purpose of demonstrating the author's work — a portfolio and
+code sample. The Software is NOT open-source software. Public visibility does
+not grant any of the rights normally associated with open-source licenses.
+
+1. Permission is granted to any person to VIEW and READ the source code in
+   this repository for personal evaluation and reference only.
+
+2. You MAY NOT, without the prior written permission of the copyright holder:
+     a. copy, reproduce, or store the Software (in whole or in part) beyond the
+        transient copies required to view it through GitHub or a git client;
+     b. modify, adapt, translate, or create derivative works from the Software;
+     c. use the Software or any portion of it in any other project, product,
+        or service, whether commercial or non-commercial;
+     d. redistribute, sublicense, sell, or otherwise make the Software
+        available to any third party;
+     e. remove or alter this license or any copyright notice.
+
+3. The name "Stocky", its logo, lesson content, minigame designs, and visual
+   design are the property of the author and are not licensed for reuse.
+
+4. No trademark, patent, or other intellectual-property rights are granted by
+   this license, whether expressly, by implication, or by estoppel. Third-party
+   libraries and data sources used by this project are licensed separately by
+   their respective owners.
+
+5. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+   FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+For any use beyond viewing — including reuse, modification, or distribution —
+contact the copyright holder to request written permission:
+bharatkhanna117@gmail.com
